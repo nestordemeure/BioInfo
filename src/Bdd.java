@@ -2,9 +2,10 @@ import exceptions.CharInvalideException;
 
 public class Bdd 
 {
-//on incremente des valeurs tampon puis les push sur la base
-//en cas de détections d'un caractere interdit, le tampon est vidé 
-//et on fait remonter une exception char_invalide qu'il faut matcher
+//on incremente des valeurs tampon
+//en cas d'erreur (CDS_invalide) il faut faire un clear de la base
+//en cas de succès il faut faire un push de la base
+//fait remonter une exception char_invalide qu'il faut matcher
 	
 //-----------------------------------------------------------------------------
 //variable d'instance
@@ -24,13 +25,9 @@ public class Bdd
 	private int tableautrinucleotides[][] = new int[3][64]; //tableautrinucleotides[phase][trinucleotide]
 	
 //tampon
-	
-	private int tampon_nb_CDS = 0;
-	
+		
 	private int tampon_nb_trinucleotides = 0;
-	
-	private int tampon_nb_CDS_non_traites = 0;
-	
+		
 	//TODO : initialise par defaud a 0 ?
 	private int tampon_tableautrinucleotides[][] = new int[3][64]; //tableautrinucleotides[phase][trinucleotide]
 
@@ -44,43 +41,27 @@ public class Bdd
 		chemin = chem;
 	}
 	
-//incrementeurs (tampon)
+//incrementeurs
 	void incr_nb_CDS ()
 	{
-		tampon_nb_CDS++;
+		nb_CDS++;
 	}
 	
+	void incr_nb_CDS_non_traites ()
+	{
+		nb_CDS_non_traites++;
+	}
+	
+	//tampon
 	void incr_nb_trinucleotides ()
 	{
 		tampon_nb_trinucleotides++;
 	}
 	
-	void incr_nb_CDS_non_traites ()
-	{
-		tampon_nb_CDS_non_traites++;
-	}
-	
+	//tampon
 	void incr_tableautrinucleotides (int phase, char nucleotide1, char nucleotide2, char nucleotide3) throws CharInvalideException
 	{
 		tampon_tableautrinucleotides[phase][position_of_trinucleotide(nucleotide1,nucleotide2,nucleotide3)]++;
-	}
-	
-//operation tampon
-	void push()
-	{
-		nb_CDS += tampon_nb_CDS;
-		nb_trinucleotides += tampon_nb_trinucleotides;
-		nb_CDS_non_traites += tampon_nb_CDS_non_traites;
-		
-		for(int i = 0 ; i<3 ; i++)
-		{
-			for(int j = 0 ; j<64 ; j++)
-			{
-				tableautrinucleotides[i][j]+=tampon_tableautrinucleotides[i][j];
-			}
-		}
-		
-		clear_tampon();
 	}
 	
 //setters (resultat final)
@@ -130,12 +111,26 @@ public class Bdd
 	
 //tampon
 	
+	//déplace le contenus du tampon dans la mémoire
+		void push_tampon()
+		{
+			nb_trinucleotides += tampon_nb_trinucleotides;
+			
+			for(int i = 0 ; i<3 ; i++)
+			{
+				for(int j = 0 ; j<64 ; j++)
+				{
+					tableautrinucleotides[i][j]+=tampon_tableautrinucleotides[i][j];
+				}
+			}
+			
+			clear_tampon();
+		}
+	
 	//remet un tampon à 0
 	void clear_tampon()
 	{
-		tampon_nb_CDS = 0;
 		tampon_nb_trinucleotides = 0;
-		tampon_nb_CDS_non_traites = 0;
 		
 		for(int i = 0 ; i<3 ; i++)
 		{
@@ -144,13 +139,6 @@ public class Bdd
 				tampon_tableautrinucleotides[i][j]=0;
 			}
 		}
-	}
-	
-	//on a detecter un caractere inconnus, on abandonne le cds (nettois le tampon) et demande a passer a la suite
-	void exception_char_invalide() throws CharInvalideException
-	{
-		clear_tampon();
-		throw new CharInvalideException();
 	}
 	
 //acces tableau
@@ -175,7 +163,7 @@ public class Bdd
 				res=res+48;
 				break;
 			default:
-				exception_char_invalide();
+				throw new CharInvalideException();
 		}
 		
 		switch(nucleotide2)
@@ -192,7 +180,7 @@ public class Bdd
 				res=res+12;
 				break;
 			default:
-				exception_char_invalide();
+				throw new CharInvalideException();
 		}
 		
 		switch(nucleotide3)
@@ -209,19 +197,20 @@ public class Bdd
 				res=res+3;
 				break;
 			default:
-				exception_char_invalide();
+				throw new CharInvalideException();
 		}
 		
 		return res;
 	}
 	
 	//renvois une chaine de caracteres (trinucleotide en majuscule) correspondant a une position dans le tableau
-	//TODO : ne test pas les nombres trop grand ou negatif
-	String int_to_trinucleotide (int num)
+	String int_to_trinucleotide (int num) throws CharInvalideException
 	{
+		if ((num<0)||(num>63)) { throw new CharInvalideException(); }
+		
 		String res = "";
 		int val = num;
-
+		
 		//Test 1
 		if (val >= 48) 
 		{
