@@ -25,20 +25,18 @@ public class Bdd
 	//TODO : placeholder en attendant de connaitre le format d'un chemin
 	private String chemin;
 	
-	private int nb_CDS = 0;
+	private int nb_CDS;
 	
-	private int nb_trinucleotides = 0;
+	private int nb_trinucleotides;
 	
-	private int nb_CDS_non_traites = 0;
+	private int nb_CDS_non_traites;
 	
-	//TODO : initialise par defaud a 0 ?
-	private int tableautrinucleotides[][] = new int[3][64]; //tableautrinucleotides[phase][trinucleotide]
+	private int tableautrinucleotides[][]; //tableautrinucleotides[phase][trinucleotide]
 	
 	//tampon
-	private int tampon_nb_trinucleotides = 0;
+	private int tampon_nb_trinucleotides;
 		
-	//TODO : initialise par defaud a 0 ?
-	private int tampon_tableautrinucleotides[][] = new int[3][64]; //tableautrinucleotides[phase][trinucleotide]
+	private int tampon_tableautrinucleotides[][]; //tableautrinucleotides[phase][trinucleotide]
 
 	
 //-----------------------------------------------------------------------------	
@@ -48,6 +46,14 @@ public class Bdd
 	Bdd (String chem)
 	{
 		chemin = chem;
+		
+		nb_CDS = 0;
+		nb_trinucleotides = 0;
+		nb_CDS_non_traites = 0;
+		
+		tampon_nb_trinucleotides = 0;
+		tableautrinucleotides = new int[3][64];
+		tampon_tableautrinucleotides = new int[3][64];
 	}
 	
 //incrementeurs
@@ -62,10 +68,16 @@ public class Bdd
 	}
 	
 	//tampon
-	void ajoute_trinucleotide (int phase, int nucleotide1, int nucleotide2, int nucleotide3)
+	void ajoute_trinucleotide (int phase, int nucleotide1, int nucleotide2, int nucleotide3) throws CharInvalideException
 	{
 		tampon_tableautrinucleotides[phase][position_of_trinucleotide(nucleotide1,nucleotide2,nucleotide3)]++;
 		tampon_nb_trinucleotides++;
+		
+		//TODO affichage pour le debugage
+		try {
+			System.out.println(int_to_trinucleotide(position_of_trinucleotide(nucleotide1,nucleotide2,nucleotide3)));
+		} catch (CharInvalideException e) {
+		}
 	}
 	
 //getters (resultat final)
@@ -84,12 +96,18 @@ public class Bdd
 		return nb_CDS_non_traites;
 	}
 	
-	int get_tableautrinucleotides (int phase, int nucleotide1, int nucleotide2, int nucleotide3)
+	int get_tableautrinucleotides (int phase, int nucleotide1, int nucleotide2, int nucleotide3) throws CharInvalideException
 	{
 		return tableautrinucleotides[phase][position_of_trinucleotide(nucleotide1,nucleotide2,nucleotide3)];
 	}
 	
 //tampon
+	
+	int get_nb_trinucleotides_tampon ()
+	{
+		return tampon_nb_trinucleotides;
+	}
+	
 	//déplace le contenus du tampon dans la mémoire
 		void push_tampon()
 		{
@@ -122,13 +140,18 @@ public class Bdd
 	
 //acces tableau
 	//renvois la position du tableau associee a un triplet de caractere (sous forme d'entier)
-	int position_of_trinucleotide (int nucleotide1, int nucleotide2, int nucleotide3)
+	//renvois une erreur si un des caracteres est invalide (codé par un -1)
+	int position_of_trinucleotide (int nucleotide1, int nucleotide2, int nucleotide3) throws CharInvalideException
 	{
+		if ( (nucleotide1<0) || (nucleotide2<0) || (nucleotide3<0) )
+		{	
+			throw new CharInvalideException();
+		}
+		
 		return nucleotide1*16 + nucleotide2*4 + nucleotide3;
 	}
 	
 	//renvois une chaine de caracteres (trinucleotide en majuscule) correspondant a une position dans le tableau
-	//TODO fonction à vérifier
 	//il est beaucoup plus efficasse de mettre les case du tableau à coté de valeur notées en dur à l'avance étant donné qu'on sais d'offfice à quoi correspond chaque case
 	String int_to_trinucleotide (int num) throws CharInvalideException
 	{

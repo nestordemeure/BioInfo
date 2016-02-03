@@ -21,6 +21,7 @@ public class Parser
 	{
 		base_de_donnees = base;
 		texte = txt;
+		position_CDS = new ArrayList<Integer>();
 	}
 	
 	//repere l'origine du code génétique
@@ -33,12 +34,12 @@ public class Parser
 		if (deb_features == -1) { throw new NoOriginException(); }
 		
 		//Cherche le mot clé CDS
-		int deb_cds = texte.indexOf("CDS", deb_features);
+		int deb_cds = texte.indexOf("CDS", deb_features+8);
 		
 		while (deb_cds != -1)
 		{
 			position_CDS.add(deb_cds);
-			deb_cds = texte.indexOf("CDS", deb_cds);
+			deb_cds = texte.indexOf("CDS", deb_cds+3); //on ne veux pas reselectionner le cds precedent
 		}
 		
 		origine = texte.indexOf("ORIGIN", (int) position_CDS.get(position_CDS.size()-1));
@@ -51,12 +52,37 @@ public class Parser
 	{
 		//le string "CDS             " fait 16char
 		int position_actuelle = position+16;
-		//TODO on devrait désormais se trouver sur le charactère de début de séquence
 		
 		//l'automate qui va parcourir cette séquence, dans le sens directe par défaut
 		Automate_lecteur_de_genes auto = new Automate_lecteur_de_genes(true);
 		
 		automate_sequence(position_actuelle, auto);
+		
+		//on test le codon stop et la taille du CDS
+		test_CDS(auto);
+	}
+	
+	//test le codon stop et vérifie que la taille du cds est un multiple de trois
+	void test_CDS(Automate_lecteur_de_genes auto) throws CDSInvalideException
+	{
+		//taille
+		//on vérifie que la taille de la sequence est bien un multiple de trois
+		if (auto.get_phase() != 0)
+		{
+			throw new CDSInvalideException("taille invalide");
+		}
+		else
+		{				
+			//codon stop
+			//on vérifie que le dernier triplet est bien un codon stop (TAA,TAG,TGA)
+			int n1 = auto.get_nucleotide1();
+			int n2 = auto.get_nucleotide2();
+			int n3 = auto.get_nucleotide3();
+			if ( ! ((n1 == 3) && ((n2==0)&&((n3==2)||(n3==0))) || ((n2==2)&&(n3==0))) )
+			{
+				throw new CDSInvalideException("codon stop invalide " +n1+n2+n3);
+			}
+		}
 	}
 	
 	//fonction qui fait tourner le parseur
@@ -74,6 +100,7 @@ public class Parser
 			try
 			{
 				lecture_de_CDS(p);
+				
 				base_de_donnees.push_tampon();
 				base_de_donnees.incr_nb_CDS();
 			}
@@ -135,7 +162,7 @@ public class Parser
 	int automate_complement(int position, Automate_lecteur_de_genes auto) throws CDSInvalideException
 	{
 		//on verifie qu'on est bien face au mot "complement("
-		if ( !texte.startsWith("complement(",position) ) { throw new CDSInvalideException(); }
+		if ( !texte.startsWith("complement(",position) ) { throw new CDSInvalideException("token complement mal redige"); }
 		
 		//on lit la sequence en changeant le sens de lecture
 		auto.renverser_sens_de_lecture();
@@ -143,7 +170,7 @@ public class Parser
 		auto.renverser_sens_de_lecture();
 		
 		//on vérifie qu'on a bien un ')'
-		if (texte.charAt(new_position) != ')') { throw new CDSInvalideException(); }
+		if (texte.charAt(new_position) != ')') { throw new CDSInvalideException("parenthese non fermee sur un complement"); }
 		
 		return new_position+1;
 	}
@@ -152,7 +179,7 @@ public class Parser
 	int automate_join(int position, Automate_lecteur_de_genes auto) throws CDSInvalideException
 	{
 		//on verifie qu'on est bien face au mot "join("
-		if ( !texte.startsWith("join(",position) ) { throw new CDSInvalideException(); }
+		if ( !texte.startsWith("join(",position) ) { throw new CDSInvalideException("token join mal redige"); }
 		
 		//on lit une sequences
 		int new_position = automate_sequence(position+5 , auto);
@@ -164,7 +191,7 @@ public class Parser
 		}
 		
 		//on vérifie qu'on a bien un ')'
-		if (texte.charAt(new_position) != ')') { throw new CDSInvalideException(); }
+		if (texte.charAt(new_position) != ')') { throw new CDSInvalideException("parenthese mal fermee sur un join"); }
 		
 		return new_position+1;
 	}
@@ -187,9 +214,9 @@ public class Parser
 				new_position++; //il y avait un chiffre a la position, on avance à la position suivante
 		}
 		} catch (NumberFormatException eint1) {
-		
+			
 		//on vérifie qu'on a bien un ".."
-		if ( !texte.startsWith("..",new_position) ) { throw new CDSInvalideException(); }
+		if ( !texte.startsWith("..",new_position) ) { throw new CDSInvalideException("separateur different de .."); }
 		new_position = new_position+2;
 
 		//on lit le second entier
@@ -200,7 +227,7 @@ public class Parser
 				new_position++; //il y avait un chiffre a la position, on avance à la position suivante
 		}
 		} catch (NumberFormatException eint2) {
-		
+			
 		try 
 		{
 			//char_erreur si il croise un caractère qui n'est pas un AGCT
@@ -211,7 +238,7 @@ public class Parser
 		}
 		catch (CharInvalideException echar)
 		{
-			throw new CDSInvalideException();
+			throw new CDSInvalideException("char invalide dans la sequence");
 		} } } 
 	}
 	
@@ -238,7 +265,7 @@ public class Parser
 		//exprimé en position dans la chaine de caracteres
 		int debut_sequence;
 		int fin_sequence;
-		
+				
 		//nucleotides en mémoire
 		//si l'automate a été amorcé, il ne faut pas réinitialiser ces valeurs
 		int nucleotide1;
@@ -254,6 +281,26 @@ public class Parser
 			already_started=false;
 		}
 		
+		int get_phase()
+		{
+			return phase;
+		}
+		
+		int get_nucleotide1()
+		{
+			return nucleotide1;
+		}
+		
+		int get_nucleotide2()
+		{
+			return nucleotide2;
+		}
+		
+		int get_nucleotide3()
+		{
+			return nucleotide3;
+		}
+		
 		//-----
 		
 		void renverser_sens_de_lecture()
@@ -263,10 +310,13 @@ public class Parser
 		
 		void lire_sequence(int debut, int fin) throws CharInvalideException, CDSInvalideException
 		{
-			if (debut>fin) { throw new CDSInvalideException(); }
+			if (debut>fin) { throw new CDSInvalideException("debut superieur à fin"); }
 			
 			debut_sequence = position_string_of_numeros_nucleotide(debut);
 			fin_sequence = position_string_of_numeros_nucleotide(fin);
+			
+			//permet de tester le codon start sans perdre le point de depart
+			int position_sequence_tampon;
 			
 			try { 	//vérifier que les entiers ne sortes pas du texte
 			if (sens_de_lecture)
@@ -279,6 +329,13 @@ public class Parser
 					nucleotide1=nucleotide3;
 					lire_nucleotide_sens_directe();
 					nucleotide2=nucleotide3;
+					
+					//test codon start
+					//on enregistre le nucleotide3 sans perturber la position de debut sequence
+					position_sequence_tampon = debut_sequence;
+					lire_nucleotide_sens_directe();
+					debut_sequence=position_sequence_tampon;
+					test_codon_start();
 					
 					lire_sequence_sens_directe();
 				}
@@ -301,6 +358,13 @@ public class Parser
 					lire_nucleotide_sens_complement();
 					nucleotide2=nucleotide3;
 					
+					//test codon start
+					//on enregistre le nucleotide3 sans perturber la position de fin sequence
+					position_sequence_tampon = fin_sequence;
+					lire_nucleotide_sens_complement();
+					fin_sequence=position_sequence_tampon;
+					test_codon_start();
+					
 					lire_sequence_sens_complement();
 				}
 				else  //on reprend après un join
@@ -312,7 +376,7 @@ public class Parser
 				}
 			}
 			}
-			catch (StringIndexOutOfBoundsException e) { throw new CDSInvalideException(); }
+			catch (StringIndexOutOfBoundsException e) { throw new CDSInvalideException("index out of bound"); }
 		}
 		
 		//-----
@@ -320,7 +384,8 @@ public class Parser
 		//on lit du début à la fin
 		void lire_sequence_sens_directe() throws CharInvalideException
 		{
-			//importe le nucléotide situé en debut de séqence dans nucleotide3 et décalle l'indice de début de séquence
+			//importe le nucléotide situé en debut de séqence dans nucleotide3
+			//et décalle l'indice de début de séquence
 			lire_nucleotide_sens_directe();
 			
 			//si on a finit de lire la séquence, on arrete
@@ -335,7 +400,8 @@ public class Parser
 		//on lit de la fin au début
 		void lire_sequence_sens_complement() throws CharInvalideException
 		{
-			//importe le nucléotide situé en fin de séqence dans nucleotide3 et décalle l'indice de début de séquence
+			//importe le nucléotide situé en fin de séqence dans nucleotide3 
+			//et décalle l'indice de début de séquence
 			lire_nucleotide_sens_complement();
 			
 			//si on a finit de lire la séquence, on arrete
@@ -350,7 +416,9 @@ public class Parser
 		//-----
 		
 		//importe le nucléotide situé en debut de séqence dans nucleotide3 et décalle l'indice de début de séquence
-		void lire_nucleotide_sens_directe() throws CharInvalideException
+		//cette fonction ne devrait jamais rencontrer de chiffre
+		//retourne un -1 si le caractere est invalide
+		void lire_nucleotide_sens_directe()
 		{
 			switch(texte.charAt(debut_sequence))
 			{
@@ -379,12 +447,16 @@ public class Parser
 					lire_nucleotide_sens_directe();
 					break;
 				default:
-					throw new CharInvalideException();
+					nucleotide3=-1; 
+					debut_sequence++;
+					break;
 			}
 		}
 		
 		//importe le nucléotide situé en fin de séqence dans nucleotide3 et décalle l'indice de début de séquence
-		void lire_nucleotide_sens_complement() throws CharInvalideException
+		//cette fonction ne devrait jamais rencontree de '\n'
+		//retourne un -1 si le caractere est invalide
+		void lire_nucleotide_sens_complement()
 		{
 			switch(texte.charAt(fin_sequence))
 			{
@@ -449,13 +521,15 @@ public class Parser
 					lire_nucleotide_sens_complement();
 					break;
 				default:
-					throw new CharInvalideException();
+					nucleotide3=-1; 
+					fin_sequence--;
+					break;
 			}
 		}
 				
 		//ajoute un trinucléotide à la bdd
 		//change de phase et décale chaque nucléotide
-		void ajoute_trinucleotide()
+		void ajoute_trinucleotide() throws CharInvalideException
 		{
 			base_de_donnees.ajoute_trinucleotide(phase, nucleotide1, nucleotide2, nucleotide3);
 			incrementer_phase(); 
@@ -469,10 +543,23 @@ public class Parser
 			//position d'origine plus taille de la première ligne +
 			//10 car en tete de chaque ligne de 60 nucléotides +
 			//1 char en tete de chaque bloc de 10 nucleotides
-			// ( origine+12 ) + (10)*( (p/60) +1 ) + ( (p/10) +1 )
-			// se simplifie en (on ne simplifie pas plus pour préserver les divisions entières) :
 			
-			return origine + 23 + 10*(p/60) + (p/10);
+			int position;
+			
+			if (p<=10) //premier bloc
+			{
+				position= (origine + 22 + p);
+			}
+			else if (p<=60) //première ligne
+			{
+				position= (origine + 22 + p) + ((p-1)/10);
+			}
+			else
+			{
+				position= (origine + 22 + p) + ((p-1)/10) + 10*((p-1)/60);
+			}
+			
+			return position;
 		}
 		
 		
@@ -480,6 +567,42 @@ public class Parser
 		{
 			phase = (phase+1)%3;
 		}
+		
+		//cet fonction vérifie que le triplet de nucleotides en mémoire est un codon start
+		void test_codon_start() throws CDSInvalideException
+		{
+			if (nucleotide2 != 3) //il faut un 't' au milieu du codon
+			{
+				throw new CDSInvalideException("codon start invalide (pas de t au centre)");
+			}
+			else if ( nucleotide3 == 2 ) //finit par un 'g'
+			{
+				if ((nucleotide1!=0)&&(nucleotide1!=1)&&(nucleotide1!=2)&&(nucleotide1!=3)) //ne commence pas par une lettre
+				{
+					throw new CDSInvalideException("codon start invalide (ne commence pas par un char valide ?tg)");
+				}
+			}
+			else //ne finit pas par un 'g'
+			{
+				if (nucleotide3 == 0) //finit par un 'a'
+				{
+					if ((nucleotide1!=0)&&(nucleotide1!=3))
+					{
+						throw new CDSInvalideException("codon start invalide (ne commence ni par un a, ni par un t ?ta)");
+					}
+				} else if ((nucleotide3 == 1)||(nucleotide3 == 3)) //finit par 'c' ou 't' 
+				{
+					if (nucleotide1!=0) //ne commence pas par un 'a'
+					{
+						throw new CDSInvalideException("codon start invalide (ne comence pas par un a ?t(c|t)) ");
+					}
+				} else //ne finit pas par un char
+				{
+					throw new CDSInvalideException("codon start invalide (ne finit pas par un char)");
+				}
+			}
+		}
+
 	}	
 	
 }
