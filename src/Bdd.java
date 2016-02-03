@@ -2,10 +2,20 @@ import exceptions.CharInvalideException;
 
 public class Bdd 
 {
-//on incremente des valeurs tampon
-//en cas d'erreur (CDS_invalide) il faut faire un clear de la base
-//en cas de succès il faut faire un push de la base
-//fait remonter une exception char_invalide qu'il faut matcher
+/*
+ * on incremente des valeurs tampon
+ * en cas d'erreur (CDS_invalide) il faut faire un clear de la base
+ * en cas de succès il faut faire un push de la base
+ * fait remonter une exception char_invalide qu'il faut matcher
+ */
+
+/*
+ * correspondance nucleotide/entier :
+ * a = 0
+ * c = 1
+ * g = 2
+ * t = 3
+ */
 	
 //-----------------------------------------------------------------------------
 //variable d'instance
@@ -53,36 +63,10 @@ public class Bdd
 	}
 	
 	//tampon
-	void incr_nb_trinucleotides ()
-	{
-		tampon_nb_trinucleotides++;
-	}
-	
-	//tampon
-	void incr_tableautrinucleotides (int phase, char nucleotide1, char nucleotide2, char nucleotide3) throws CharInvalideException
+	void ajoutertrinucleotides (int phase, int nucleotide1, int nucleotide2, int nucleotide3) throws CharInvalideException
 	{
 		tampon_tableautrinucleotides[phase][position_of_trinucleotide(nucleotide1,nucleotide2,nucleotide3)]++;
-	}
-	
-//setters (resultat final)
-	void set_nb_CDS (int val)
-	{
-		nb_CDS=val;
-	}
-	
-	void set_nb_trinucleotides (int val)
-	{
-		nb_trinucleotides=val;
-	}
-	
-	void set_nb_CDS_non_traites (int val)
-	{
-		nb_CDS_non_traites=val;
-	}
-	
-	void set_tableautrinucleotides (int phase, char nucleotide1, char nucleotide2, char nucleotide3, int val) throws CharInvalideException
-	{
-		tableautrinucleotides[phase][position_of_trinucleotide(nucleotide1,nucleotide2,nucleotide3)]=val;
+		tampon_nb_trinucleotides++;
 	}
 	
 //getters (resultat final)
@@ -101,7 +85,7 @@ public class Bdd
 		return nb_CDS_non_traites;
 	}
 	
-	int get_tableautrinucleotides (int phase, char nucleotide1, char nucleotide2, char nucleotide3) throws CharInvalideException
+	int get_tableautrinucleotides (int phase, int nucleotide1, int nucleotide2, int nucleotide3) throws CharInvalideException
 	{
 		return tableautrinucleotides[phase][position_of_trinucleotide(nucleotide1,nucleotide2,nucleotide3)];
 	}
@@ -143,67 +127,15 @@ public class Bdd
 	
 //acces tableau
 	
-	//renvois la position du tableau associee a un triplet de caractere
-	//retourne une exception et vide le tampon si un des caracteres est invalise
-	int position_of_trinucleotide (char nucleotide1, char nucleotide2, char nucleotide3) throws CharInvalideException
+	//renvois la position du tableau associee a un triplet de caractere (sous forme d'entier)
+	int position_of_trinucleotide (int nucleotide1, int nucleotide2, int nucleotide3)
 	{
-		int res= 0;
-		
-		switch(nucleotide1)
-		{
-			case 'a' :
-				break;
-			case 'c' :
-				res=res+16;
-				break;
-			case 'g' :
-				res=res+32;
-				break;
-			case 't' :
-				res=res+48;
-				break;
-			default:
-				throw new CharInvalideException();
-		}
-		
-		switch(nucleotide2)
-		{
-			case 'a' :
-				break;
-			case 'c' :
-				res=res+4;
-				break;
-			case 'g' :
-				res=res+8;
-				break;
-			case 't' :
-				res=res+12;
-				break;
-			default:
-				throw new CharInvalideException();
-		}
-		
-		switch(nucleotide3)
-		{
-			case 'a' :
-				break;
-			case 'c' :
-				res=res+1;
-				break;
-			case 'g' :
-				res=res+2;
-				break;
-			case 't' :
-				res=res+3;
-				break;
-			default:
-				throw new CharInvalideException();
-		}
-		
-		return res;
+		return nucleotide1*16 + nucleotide2*4 + nucleotide3;
 	}
 	
 	//renvois une chaine de caracteres (trinucleotide en majuscule) correspondant a une position dans le tableau
+	//TODO fonction à vérifier
+	//il est beaucoup plus efficasse de mettre les case du tableau à coté de valeur notées en dur à l'avance étant donné qu'on sais d'offfice à quoi correspond chaque case
 	String int_to_trinucleotide (int num) throws CharInvalideException
 	{
 		if ((num<0)||(num>63)) { throw new CharInvalideException(); }

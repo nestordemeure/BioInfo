@@ -205,7 +205,7 @@ public class Parser
 		{
 			//char_erreur si il croise un caractère qui n'est pas un AGCT
 			//CDS_erreur si int1>int2
-			auto.lire(int1, int2);
+			auto.lire_sequence(int1, int2);
 			
 			return new_position; 
 		}
@@ -235,11 +235,15 @@ public class Parser
 		int phase;
 		boolean already_started;
 		
+		//exprimé en position dans la chaine de caracteres
+		int debut_sequence;
+		int fin_sequence;
+		
 		//nucleotides en mémoire
 		//si l'automate a été amorcé, il ne faut pas réinitialiser ces valeurs
-		char nucleotide1;
-		char nucleotide2;
-		char nucleotide3;
+		int nucleotide1;
+		int nucleotide2;
+		int nucleotide3;
 		
 		//-----
 		
@@ -257,169 +261,214 @@ public class Parser
 			sens_de_lecture = !sens_de_lecture;
 		}
 		
-		void incrementer_phase()
-		{
-			phase = (phase+1)%3;
-		}
-		
-		//-----
-		
-		void lire(int debut, int fin) throws CharInvalideException, CDSInvalideException
+		void lire_sequence(int debut, int fin) throws CharInvalideException, CDSInvalideException
 		{
 			if (debut>fin) { throw new CDSInvalideException(); }
 			
-			int deb = position_string_of_numeros_nucleotide(debut);
-			int fi = position_string_of_numeros_nucleotide(fin);
+			debut_sequence = position_string_of_numeros_nucleotide(debut);
+			fin_sequence = position_string_of_numeros_nucleotide(fin);
 			
 			try { 	//vérifier que les entiers ne sortes pas du texte
 			if (sens_de_lecture)
 			{
 				if (!already_started) //première fois que l'automate tourne
 				{
+					//on amorce le triplet
 					already_started=true;
-					nucleotide1 = texte.charAt(deb);
-					nucleotide2 = texte.charAt(deb+1);
-					lire_sens_directe(deb+2, fi);
+					lire_nucleotide_sens_directe();
+					nucleotide1=nucleotide3;
+					lire_nucleotide_sens_directe();
+					nucleotide2=nucleotide3;
+					
+					lire_sequence_sens_directe();
 				}
 				else //on reprend après un join
 				{
 					//on sauve le triplet qui finissait la section précédente du join
-					base_de_donnees.incr_tableautrinucleotides(phase, nucleotide1, nucleotide2, nucleotide3);
+					base_de_donnees.ajoutertrinucleotides(phase, nucleotide1, nucleotide2, nucleotide3);
 					incrementer_phase(); 
 					nucleotide1=nucleotide2;
 					nucleotide2=nucleotide3;
 					
-					lire_sens_directe(deb, fi);
+					lire_sequence_sens_directe();
 				}
 			}
 			else
 			{
 				if (!already_started) //première fois que l'automate tourne
 				{
+					//on amorce le triplet
 					already_started=true;
-					nucleotide1 = texte.charAt(fi);
-					nucleotide2 = texte.charAt(fi-1);
-					lire_sens_complement(deb, fi-2);
+					lire_nucleotide_sens_complement();
+					nucleotide1=nucleotide3;
+					lire_nucleotide_sens_complement();
+					nucleotide2=nucleotide3;
+					
+					lire_sequence_sens_complement();
 				}
 				else  //on reprend après un join
 				{
 					//on sauve le triplet qui finissait la section précédente du join
-					base_de_donnees.incr_tableautrinucleotides(phase, nucleotide1, nucleotide2, nucleotide3);
+					base_de_donnees.ajoutertrinucleotides(phase, nucleotide1, nucleotide2, nucleotide3);
 					incrementer_phase(); 
 					nucleotide1=nucleotide2;
 					nucleotide2=nucleotide3;
 					
-					lire_sens_complement(deb, fi);
+					lire_sequence_sens_complement();
 				}
 			}
 			}
 			catch (StringIndexOutOfBoundsException e) { throw new CDSInvalideException(); }
 		}
 		
+		//-----
+		
 		//on lit du début à la fin
-		//TODO on pourrait facilement dérécurciver cette fonction avec un while ou un for (plus efficasse?)
-		void lire_sens_directe(int deb, int fi) throws CharInvalideException
+		void lire_sequence_sens_directe() throws CharInvalideException
 		{
-			nucleotide3 = texte.charAt(deb);
-
-			switch(nucleotide3)
+			//importe le nucléotide situé en debut de séqence dans nucleotide3 et décalle l'indice de début de séquence
+			lire_nucleotide_sens_directe();
+			
+			//si on a finit de lire la séquence, on arrete
+			//on ne lit pas le dernier triplet (il sera réinjecté plus tard si nécéssaire)
+			if (debut_sequence <= fin_sequence)
 			{
-				case ' ' :
-					lire_sens_directe(deb+1, fi); //on reprend la lecture après l'espace
-					break;
-				case '\n' : //si on croise un passage à la ligne, on doit encore lire tout un entete de ligne soit en tout 11 char
-					lire_sens_directe(deb+11, fi); //on reprend la lecture après le passage à la ligne et le bloc de chiffres/espaces qui suit
-					break;
-				default:
-					if (deb < fi) //si on a finit de lire la séquence, on arrete
-					{//on fait ce test maintenant pour éviter de garder un caractère problèmatique en mémoire dans la variable nucleotide3
-						//on inscrit le triplet dans le tableau
-						base_de_donnees.incr_tableautrinucleotides(phase, nucleotide1, nucleotide2, nucleotide3);
-						//on décale la fenetre de lecture
-						incrementer_phase(); 
-						nucleotide1=nucleotide2;
-						nucleotide2=nucleotide3;
-						lire_sens_directe(deb+1, fi);
-					}
+				//on inscrit le triplet dans le tableau
+				base_de_donnees.ajoutertrinucleotides(phase, nucleotide1, nucleotide2, nucleotide3);
+				//on décale la fenetre de lecture
+				incrementer_phase(); 
+				nucleotide1=nucleotide2;
+				nucleotide2=nucleotide3;
+				lire_sequence_sens_directe();
 			}
 		}
 		
 		//on lit de la fin au début
-		//TODO on pourrait facilement dérécurciver cette fonction avec un while ou un for (plus efficasse?)
-		void lire_sens_complement(int deb, int fi) throws CharInvalideException
+		void lire_sequence_sens_complement() throws CharInvalideException
 		{
-			//convertir un caractere ou renvoyer une exception
-			nucleotide3 = fonction_complement(texte.charAt(fi));
-
-			switch(nucleotide3)
+			//importe le nucléotide situé en fin de séqence dans nucleotide3 et décalle l'indice de début de séquence
+			lire_nucleotide_sens_complement();
+			
+			//si on a finit de lire la séquence, on arrete
+			//on ne lit pas le dernier triplet (il sera réinjecté plus tard si nécéssaire)
+			if (debut_sequence <= fin_sequence)
 			{
-				case ' ' :
-					lire_sens_directe(deb, fi-1); //on reprend la lecture après l'espace
-					break;
-				case '0' : //si on croise un chiffre, c'est le premier d'un entete, on est donc à 10char, '\n' inclus, du reste du genome
-					lire_sens_directe(deb, fi-10); //on reprend la lecture après un chiffres et le bloc de chiffres/espace/passage à la ligne qui suit
-					break;
-				case '1' :
-					lire_sens_directe(deb, fi-10); //on reprend la lecture après un chiffres et le bloc de chiffres/espace/passage à la ligne qui suit
-					break;
-				case '2' :
-					lire_sens_directe(deb, fi-10); //on reprend la lecture après un chiffres et le bloc de chiffres/espace/passage à la ligne qui suit
-					break;
-				case '3' :
-					lire_sens_directe(deb, fi-10); //on reprend la lecture après un chiffres et le bloc de chiffres/espace/passage à la ligne qui suit
-					break;
-				case '4' :
-					lire_sens_directe(deb, fi-10); //on reprend la lecture après un chiffres et le bloc de chiffres/espace/passage à la ligne qui suit
-					break;
-				case '5' :
-					lire_sens_directe(deb, fi-10); //on reprend la lecture après un chiffres et le bloc de chiffres/espace/passage à la ligne qui suit
-					break;
-				case '6' :
-					lire_sens_directe(deb, fi-10); //on reprend la lecture après un chiffres et le bloc de chiffres/espace/passage à la ligne qui suit
-					break;
-				case '7' :
-					lire_sens_directe(deb, fi-10); //on reprend la lecture après un chiffres et le bloc de chiffres/espace/passage à la ligne qui suit
-					break;
-				case '8' :
-					lire_sens_directe(deb, fi-10); //on reprend la lecture après un chiffres et le bloc de chiffres/espace/passage à la ligne qui suit
-					break;
-				case '9' :
-					lire_sens_directe(deb, fi-10); //on reprend la lecture après un chiffres et le bloc de chiffres/espace/passage à la ligne qui suit
-					break;
-				default:
-					if (deb < fi) //si on a finit de lire la séquence, on arrete
-					{//on fait ce test maintenant pour éviter de garder un caractère problèmatique en mémoire dans la variable nucleotide3
-						//on inscrit le triplet dans le tableau
-						base_de_donnees.incr_tableautrinucleotides(phase, nucleotide1, nucleotide2, nucleotide3);
-						//on décale la fenetre de lecture
-						incrementer_phase(); 
-						nucleotide1=nucleotide2;
-						nucleotide2=nucleotide3;
-						lire_sens_directe(deb, fi-1);
-					}
+				//on inscrit le triplet dans le tableau
+				base_de_donnees.ajoutertrinucleotides(phase, nucleotide1, nucleotide2, nucleotide3);
+				//on décale la fenetre de lecture
+				incrementer_phase(); 
+				nucleotide1=nucleotide2;
+				nucleotide2=nucleotide3;
+				lire_sequence_sens_complement();
 			}
 		}
 		
 		//-----
 		
-		//rend le complementaire d'un nucleotide donné ou le laisse intacte
-		char fonction_complement(char nucleotide)
+		//importe le nucléotide situé en debut de séqence dans nucleotide3 et décalle l'indice de début de séquence
+		void lire_nucleotide_sens_directe() throws CharInvalideException
 		{
-			switch(nucleotide)
+			switch(texte.charAt(debut_sequence))
 			{
 				case 'a' :
-					return 't';
+					nucleotide3=0; 
+					debut_sequence++;
+					break;
 				case 'c' :
-					return 'g';
+					nucleotide3=1; 
+					debut_sequence++;
+					break;
 				case 'g' :
-					return 'c';
+					nucleotide3=2; 
+					debut_sequence++;
+					break;
 				case 't' :
-					return 'a';
+					nucleotide3=3; 
+					debut_sequence++;
+					break;
+				case ' ' :
+					debut_sequence++; //on reprend la lecture après l'espace
+					lire_nucleotide_sens_directe();
+					break;
+				case '\n' : //si on croise un passage à la ligne, on doit encore lire tout un entete de ligne soit en tout 11 char
+					debut_sequence=debut_sequence+11; //on reprend la lecture après le passage à la ligne et le bloc de chiffres/espaces qui suit
+					lire_nucleotide_sens_directe();
+					break;
 				default:
-					return nucleotide;
+					throw new CharInvalideException();
 			}
 		}
 		
+		//importe le nucléotide situé en fin de séqence dans nucleotide3 et décalle l'indice de début de séquence
+		void lire_nucleotide_sens_complement() throws CharInvalideException
+		{
+			switch(texte.charAt(fin_sequence))
+			{
+				case 'a' :
+					nucleotide3=3; //code pour 't' 
+					fin_sequence--;
+					break;
+				case 'c' :
+					nucleotide3=2; //code pour 'g' 
+					fin_sequence--;
+					break;
+				case 'g' :
+					nucleotide3=1; //code pour 'c' 
+					fin_sequence--;
+					break;
+				case 't' :
+					nucleotide3=0; //code pour 'a' 
+					fin_sequence--;
+					break;
+				case ' ' :
+					fin_sequence--; //on reprend la lecture après l'espace
+					lire_nucleotide_sens_complement();
+					break;
+				case '0' : //si on croise un chiffre, c'est le premier d'un entete, on est donc à 10char, '\n' inclus, du reste du genome
+					fin_sequence = fin_sequence-10;//on reprend la lecture après un chiffres et le bloc de chiffres/espace/passage à la ligne qui suit
+					lire_nucleotide_sens_complement();
+					break;
+				case '1' :
+					fin_sequence = fin_sequence-10;//on reprend la lecture après un chiffres et le bloc de chiffres/espace/passage à la ligne qui suit
+					lire_nucleotide_sens_complement();
+					break;
+				case '2' :
+					fin_sequence = fin_sequence-10;//on reprend la lecture après un chiffres et le bloc de chiffres/espace/passage à la ligne qui suit
+					lire_nucleotide_sens_complement();
+					break;
+				case '3' :
+					fin_sequence = fin_sequence-10;//on reprend la lecture après un chiffres et le bloc de chiffres/espace/passage à la ligne qui suit
+					lire_nucleotide_sens_complement();
+					break;
+				case '4' :
+					fin_sequence = fin_sequence-10;//on reprend la lecture après un chiffres et le bloc de chiffres/espace/passage à la ligne qui suit
+					lire_nucleotide_sens_complement();
+					break;
+				case '5' :
+					fin_sequence = fin_sequence-10;//on reprend la lecture après un chiffres et le bloc de chiffres/espace/passage à la ligne qui suit
+					lire_nucleotide_sens_complement();
+					break;
+				case '6' :
+					fin_sequence = fin_sequence-10;//on reprend la lecture après un chiffres et le bloc de chiffres/espace/passage à la ligne qui suit
+					lire_nucleotide_sens_complement();
+					break;
+				case '7' :
+					fin_sequence = fin_sequence-10;//on reprend la lecture après un chiffres et le bloc de chiffres/espace/passage à la ligne qui suit
+					lire_nucleotide_sens_complement();
+					break;
+				case '8' :
+					fin_sequence = fin_sequence-10;//on reprend la lecture après un chiffres et le bloc de chiffres/espace/passage à la ligne qui suit
+					lire_nucleotide_sens_complement();
+					break;
+				case '9' :
+					fin_sequence = fin_sequence-10;//on reprend la lecture après un chiffres et le bloc de chiffres/espace/passage à la ligne qui suit
+					lire_nucleotide_sens_complement();
+					break;
+				default:
+					throw new CharInvalideException();
+			}
+		}
+				
 		//prend une position dans le génome et rend une position dans la chaine de caractères
 		int position_string_of_numeros_nucleotide(int p)
 		{
@@ -430,6 +479,12 @@ public class Parser
 			// se simplifie en (on ne simplifie pas plus pour préserver les divisions entières) :
 			
 			return origine + 23 + 10*(p/60) + (p/10);
+		}
+		
+		
+		void incrementer_phase()
+		{
+			phase = (phase+1)%3;
 		}
 	}	
 	
