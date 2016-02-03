@@ -1,3 +1,6 @@
+import java.util.Scanner;
+
+import io.Net;
 import ui.UIManager;
 
 
@@ -8,6 +11,10 @@ public class Main {
 		UIManager.setProgress(50.2);
 		UIManager.setProgress(100);
 		UIManager.log("DONE !");
+		Scanner sc = Net.getUrl("http://www.google.com");
+		while(sc.hasNext()){
+			UIManager.log(sc.next());
+		}
 	}
 
 }
