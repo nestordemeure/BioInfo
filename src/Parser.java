@@ -232,8 +232,8 @@ public class Parser
 	public class Automate_lecteur_de_genes
 	{
 		boolean sens_de_lecture;
-		int phase;
-		boolean already_started;
+		int phase; //0,1 ou 2
+		boolean already_started; //indique si cet automate à déjà tourné (join)
 		
 		//exprimé en position dans la chaine de caracteres
 		int debut_sequence;
@@ -285,10 +285,7 @@ public class Parser
 				else //on reprend après un join
 				{
 					//on sauve le triplet qui finissait la section précédente du join
-					base_de_donnees.ajoutertrinucleotides(phase, nucleotide1, nucleotide2, nucleotide3);
-					incrementer_phase(); 
-					nucleotide1=nucleotide2;
-					nucleotide2=nucleotide3;
+					ajoute_trinucleotide();
 					
 					lire_sequence_sens_directe();
 				}
@@ -309,10 +306,7 @@ public class Parser
 				else  //on reprend après un join
 				{
 					//on sauve le triplet qui finissait la section précédente du join
-					base_de_donnees.ajoutertrinucleotides(phase, nucleotide1, nucleotide2, nucleotide3);
-					incrementer_phase(); 
-					nucleotide1=nucleotide2;
-					nucleotide2=nucleotide3;
+					ajoute_trinucleotide();
 					
 					lire_sequence_sens_complement();
 				}
@@ -333,12 +327,7 @@ public class Parser
 			//on ne lit pas le dernier triplet (il sera réinjecté plus tard si nécéssaire)
 			if (debut_sequence <= fin_sequence)
 			{
-				//on inscrit le triplet dans le tableau
-				base_de_donnees.ajoutertrinucleotides(phase, nucleotide1, nucleotide2, nucleotide3);
-				//on décale la fenetre de lecture
-				incrementer_phase(); 
-				nucleotide1=nucleotide2;
-				nucleotide2=nucleotide3;
+				ajoute_trinucleotide();
 				lire_sequence_sens_directe();
 			}
 		}
@@ -353,12 +342,7 @@ public class Parser
 			//on ne lit pas le dernier triplet (il sera réinjecté plus tard si nécéssaire)
 			if (debut_sequence <= fin_sequence)
 			{
-				//on inscrit le triplet dans le tableau
-				base_de_donnees.ajoutertrinucleotides(phase, nucleotide1, nucleotide2, nucleotide3);
-				//on décale la fenetre de lecture
-				incrementer_phase(); 
-				nucleotide1=nucleotide2;
-				nucleotide2=nucleotide3;
+				ajoute_trinucleotide();
 				lire_sequence_sens_complement();
 			}
 		}
@@ -469,6 +453,16 @@ public class Parser
 			}
 		}
 				
+		//ajoute un trinucléotide à la bdd
+		//change de phase et décale chaque nucléotide
+		void ajoute_trinucleotide()
+		{
+			base_de_donnees.ajoute_trinucleotide(phase, nucleotide1, nucleotide2, nucleotide3);
+			incrementer_phase(); 
+			nucleotide1=nucleotide2;
+			nucleotide2=nucleotide3;
+		}
+		
 		//prend une position dans le génome et rend une position dans la chaine de caractères
 		int position_string_of_numeros_nucleotide(int p)
 		{

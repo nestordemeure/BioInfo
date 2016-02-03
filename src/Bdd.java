@@ -34,8 +34,7 @@ public class Bdd
 	//TODO : initialise par defaud a 0 ?
 	private int tableautrinucleotides[][] = new int[3][64]; //tableautrinucleotides[phase][trinucleotide]
 	
-//tampon
-		
+	//tampon
 	private int tampon_nb_trinucleotides = 0;
 		
 	//TODO : initialise par defaud a 0 ?
@@ -63,7 +62,7 @@ public class Bdd
 	}
 	
 	//tampon
-	void ajoutertrinucleotides (int phase, int nucleotide1, int nucleotide2, int nucleotide3) throws CharInvalideException
+	void ajoute_trinucleotide (int phase, int nucleotide1, int nucleotide2, int nucleotide3)
 	{
 		tampon_tableautrinucleotides[phase][position_of_trinucleotide(nucleotide1,nucleotide2,nucleotide3)]++;
 		tampon_nb_trinucleotides++;
@@ -85,16 +84,12 @@ public class Bdd
 		return nb_CDS_non_traites;
 	}
 	
-	int get_tableautrinucleotides (int phase, int nucleotide1, int nucleotide2, int nucleotide3) throws CharInvalideException
+	int get_tableautrinucleotides (int phase, int nucleotide1, int nucleotide2, int nucleotide3)
 	{
 		return tableautrinucleotides[phase][position_of_trinucleotide(nucleotide1,nucleotide2,nucleotide3)];
 	}
-
-//-----------------------------------------------------------------------------	
-//fonctions privees
 	
 //tampon
-	
 	//déplace le contenus du tampon dans la mémoire
 		void push_tampon()
 		{
@@ -126,7 +121,6 @@ public class Bdd
 	}
 	
 //acces tableau
-	
 	//renvois la position du tableau associee a un triplet de caractere (sous forme d'entier)
 	int position_of_trinucleotide (int nucleotide1, int nucleotide2, int nucleotide3)
 	{
