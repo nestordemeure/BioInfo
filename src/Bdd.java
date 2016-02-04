@@ -103,6 +103,11 @@ public class Bdd
 		return tableautrinucleotides[phase][position_of_trinucleotide(nucleotide1,nucleotide2,nucleotide3)];
 	}
 	
+	int[][] get_tableautrinucleotides ()
+	{
+		return tableautrinucleotides;
+	}
+	
 //tampon
 	
 	int get_nb_trinucleotides_tampon ()
@@ -223,6 +228,24 @@ public class Bdd
 		}
 
 		return res;
+	}
+	
+	String string_of_tableautrinucleotides ()
+	{
+		String str = "";
+		
+		str=str+"trinucleotide	phase1	phase2	phase3\n";
+		
+		try 
+		{
+			for (int i=0 ; i<64 ; i++)
+			{
+				str=str+"	"+int_to_trinucleotide(i)+" :	"+tableautrinucleotides[0][i]+"	"+tableautrinucleotides[1][i]+"	"+tableautrinucleotides[2][i]+"\n";
+			}
+		} 
+		catch (CharInvalideException e) {/*cette exception ne peux pas se produire, on ne rentre que des entiers valides*/}
+		
+		return str;
 	}
 
 }
