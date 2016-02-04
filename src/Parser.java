@@ -541,8 +541,8 @@ public class Parser
 		int position_string_of_numeros_nucleotide(int p)
 		{
 			//position d'origine plus taille de la première ligne +
-			//10 car en tete de chaque ligne de 60 nucléotides +
-			//1 char en tete de chaque bloc de 10 nucleotides
+			//1 char en tete de chaque bloc de 10 nucleotides +
+			//10 char en tete de chaque ligne de 60 nucléotides
 			
 			int position;
 			
@@ -554,7 +554,7 @@ public class Parser
 			{
 				position= (origine + 22 + p) + ((p-1)/10);
 			}
-			else
+			else //cas général
 			{
 				position= (origine + 22 + p) + ((p-1)/10) + 10*((p-1)/60);
 			}
