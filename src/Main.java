@@ -6,10 +6,15 @@ import java.util.Scanner;
 
 import manager.AccessManager;
 import tree.Tree;
+import java.util.Scanner;
+
+import io.Net;
+
 import ui.UIManager;
 
 
 public class Main {
+
 	public static void main(String[] args) throws Exception {
 		
 //		Scanner sc = new Scanner(new URL("http://www.ncbi.nlm.nih.gov/genome/browse/").openStream(), "UTF-8").useDelimiter("\n");
@@ -73,6 +78,7 @@ public class Main {
 
 			}
 		}).start();
+
 	}
 
 }
