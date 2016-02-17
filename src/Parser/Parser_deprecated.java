@@ -1,14 +1,16 @@
+package Parser;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import Bdd.Bdd;
 import exceptions.CDSInvalideException;
 import exceptions.CharInvalideException;
 import exceptions.NoOriginException;
 
 //on crée un parser et lance la fonction parse
 
-public class Parser 
+public class Parser_deprecated 
 {
 	//Variables d'instance
 	private Bdd base_de_donnees;
@@ -17,7 +19,7 @@ public class Parser
 	private ArrayList<Integer> position_CDS;
 	
 	//Fonctions
-	Parser (Bdd base, String txt)
+	public Parser_deprecated (Bdd base, String txt)
 	{
 		base_de_donnees = base;
 		texte = txt;
@@ -86,7 +88,7 @@ public class Parser
 	}
 	
 	//fonction qui fait tourner le parseur
-	void parse()
+	public void parse()
 	{
 		try 
 		{ 

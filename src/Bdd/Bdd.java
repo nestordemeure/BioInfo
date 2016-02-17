@@ -1,3 +1,4 @@
+package Bdd;
 import exceptions.CharInvalideException;
 
 public class Bdd 
@@ -43,7 +44,7 @@ public class Bdd
 //fonctions publiques
 	
 //constructeur
-	Bdd (String chem)
+	public Bdd (String chem)
 	{
 		chemin = chem;
 		
@@ -57,18 +58,18 @@ public class Bdd
 	}
 	
 //incrementeurs
-	void incr_nb_CDS ()
+	public void incr_nb_CDS ()
 	{
 		nb_CDS++;
 	}
 	
-	void incr_nb_CDS_non_traites ()
+	public void incr_nb_CDS_non_traites ()
 	{
 		nb_CDS_non_traites++;
 	}
 	
 	//tampon
-	void ajoute_trinucleotide (int phase, int nucleotide1, int nucleotide2, int nucleotide3) throws CharInvalideException
+	public void ajoute_trinucleotide (int phase, int nucleotide1, int nucleotide2, int nucleotide3) throws CharInvalideException
 	{
 		tampon_tableautrinucleotides[phase][position_of_trinucleotide(nucleotide1,nucleotide2,nucleotide3)]++;
 		tampon_nb_trinucleotides++;
@@ -83,40 +84,40 @@ public class Bdd
 	}
 	
 //getters (resultat final)
-	int get_nb_CDS ()
+	public int get_nb_CDS ()
 	{
 		return nb_CDS;
 	}
 	
-	int get_nb_trinucleotides ()
+	public int get_nb_trinucleotides ()
 	{
 		return nb_trinucleotides;
 	}
 	
-	int get_nb_CDS_non_traites ()
+	public int get_nb_CDS_non_traites ()
 	{
 		return nb_CDS_non_traites;
 	}
 	
-	int get_tableautrinucleotides (int phase, int nucleotide1, int nucleotide2, int nucleotide3) throws CharInvalideException
+	public int get_tableautrinucleotides (int phase, int nucleotide1, int nucleotide2, int nucleotide3) throws CharInvalideException
 	{
 		return tableautrinucleotides[phase][position_of_trinucleotide(nucleotide1,nucleotide2,nucleotide3)];
 	}
 	
-	int[][] get_tableautrinucleotides ()
+	public int[][] get_tableautrinucleotides ()
 	{
 		return tableautrinucleotides;
 	}
 	
 //tampon
 	
-	int get_nb_trinucleotides_tampon ()
+	public int get_nb_trinucleotides_tampon ()
 	{
 		return tampon_nb_trinucleotides;
 	}
 	
 	//déplace le contenus du tampon dans la mémoire
-		void push_tampon()
+		public void push_tampon()
 		{
 			nb_trinucleotides += tampon_nb_trinucleotides;
 			
@@ -132,7 +133,7 @@ public class Bdd
 		}
 	
 	//remet un tampon à 0
-	void clear_tampon()
+	public void clear_tampon()
 	{
 		tampon_nb_trinucleotides = 0;
 		
@@ -230,12 +231,11 @@ public class Bdd
 		return res;
 	}
 	
-	String string_of_tableautrinucleotides ()
+	//sort un string qui représente le profil du tableau de trinucleotides
+	public String get_tableautrinucleotides_string ()
 	{
-		String str = "";
-		
-		str=str+"trinucleotide	phase1	phase2	phase3\n";
-		
+		String str = "trinucleotide	phase1	phase2	phase3\n";
+				
 		try 
 		{
 			for (int i=0 ; i<64 ; i++)
