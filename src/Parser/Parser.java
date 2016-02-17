@@ -17,7 +17,7 @@ public class Parser
 	private Scanner scanner;
 	private ArrayList<CDS> CDS_list;
 	
-	Parser (Bdd base, Scanner scan)
+	public Parser (Bdd base, Scanner scan)
 	{
 		base_de_donnees = base;
 		scanner = scan;
@@ -272,11 +272,21 @@ public class Parser
 	//match un chiffre et rend le chiffre (et pas une position comme le fond les automates)
 	int chiffre_of_int(String ligne, int position) throws NumberFormatException
 	{
-		char c = ligne.charAt(position);
-		int res = (int)c - (int)'0';
+		try
+		{
+			char c = ligne.charAt(position);
+			int res = (int)c - (int)'0';
 		
-		if ((res<0)||(res>9)) { throw new NumberFormatException(); }
+			if ((res<0)||(res>9)) 
+			{
+				throw new NumberFormatException();
+			}
 		
-		return res ;
+			return res ;
+		}
+		catch( IndexOutOfBoundsException e ) //possible si le chiffre est au bord de la fin de la ligne
+		{
+			throw new NumberFormatException();
+		}
 	}	
 }
