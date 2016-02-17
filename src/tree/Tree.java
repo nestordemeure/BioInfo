@@ -27,8 +27,30 @@ public class Tree<T> {
 		return this.nodes.get(node);
 	}
 	
-	public String[] nodes(){
-		return (String[])this.nodes.keySet().toArray();
+	public Object[] nodes(){
+		return this.nodes.keySet().toArray();
 	}
+	
+	public void printTree_aux(int level){
+		if (this != null){
+			Object[] nodess=this.nodes();
+			for (Object node : nodess){
+				for (int i=0; i < level; i++){
+					System.out.print("-");
+				}
+				System.out.println(node);
+					
+				if (this.get((String)node) !=null){
+					((Tree<?>) this.get((String)node)).printTree_aux(level+1);
+				}
+			}
+		}
+	}
+	
+	public void printTree(){
+		printTree_aux(0);
+	}
+	
+	
 
 }
