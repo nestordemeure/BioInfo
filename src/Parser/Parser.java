@@ -1,19 +1,12 @@
 package Parser;
 import java.util.ArrayList;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
-import java.util.TreeMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import Bdd.Bdd;
-import Parser.Parser_deprecated.Automate_lecteur_de_genes;
 import Parser.ReservationTable.Reservation;
 import Parser.ReservationTable.Reservation.IndexesSequence;
 import exceptions.CDSInvalideException;
-import exceptions.CharInvalideException;
 import exceptions.NoOriginException;
 
 public class Parser 
@@ -104,24 +97,21 @@ public class Parser
 //--------------------------------------------------------------------------
 //lire le code génétique
 	
-	//TODO la table de réservation est elle sorted ? garantie elle que les ligne sortirons dans l'ordre croissant
-	//TODO un cds doit pouvoir se rendre compte que toute ses séquences ont recues leur lignes et commencer à travailler
+	//TODO un cds doit pouvoir se rendre compte que toute ses séquences ont reçues leur lignes et commencer à travailler
 	void parser_genome()
 	{
 		int ligne_cible;
 		int ligne_actuelle = -1;//numeros de la dernière ligne consommée par le scanner
-		Reservation reservation;
 		ArrayList<IndexesSequence> indexesSequenceList = new ArrayList<IndexesSequence>();
-		
-		//on parcours la liste des numéros de début et de fin de séquence
-		for (Entry<Integer, Reservation> entry : table_des_reservations.entrySet()) 
+				
+		//on parcours la liste des numéros de début et de fin de séquence par numéros de ligne croissant
+		for (Reservation reservation : table_des_reservations.getTable()) 
 		{
 			//on doit ateindre la ligne indiquée avec la liste de sequences actuelles
-			ligne_cible = entry.getKey();
+			ligne_cible = reservation.getLigne();
 			ligne_actuelle=distribuer_lignes(ligne_actuelle,ligne_cible,indexesSequenceList);
 
 			//on modifie la liste de séquences
-			reservation = entry.getValue();
 			if (reservation.getAjout()) //on doit ajouter la sequence à la liste de sequence en cours
 			{
 				indexesSequenceList.add(reservation.getIndexesSequence());
@@ -150,7 +140,7 @@ public class Parser
 	}
 	
 	//lit des lignes et les distribues au séquences listées
-	//retourne le nouveau numéros de ligne actuelle
+	//retourne le nouveau numéros de ligne actuelle (dernière ligne consommée en date)
 	int distribuer_lignes(int ligne_actuelle, int ligne_cible, ArrayList<IndexesSequence> indexesSequenceList)
 	{
 		String ligne;
@@ -167,8 +157,6 @@ public class Parser
 			
 			ligne_actuelle++;
 		}
-		
-		//TODO debugage, s'assurer qu'on a bien ligne actuelle==ligne_cible
 		
 		return ligne_actuelle;
 	}
@@ -310,6 +298,7 @@ public class Parser
 				index_sequence=cds.ajouter_sequence(debut,fin,sens_de_lecture);
 				//on passe une réservation qui commence juste avant le début de la séquence et juste avant qu'elle ai disparue
 				table_des_reservations.reserver_interval(positionToLigne(debut)-1, positionToLigne(fin), index_cds, index_sequence);
+				
 				return new_position; 
 			}
 		}
