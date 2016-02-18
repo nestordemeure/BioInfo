@@ -1,17 +1,21 @@
 package Parser;
 
 import java.util.ArrayList;
+import Bdd.Bdd;
+import exceptions.CDSInvalideException;
 
 //un CDS est une liste de séquences
 public class CDS 
 {
 	private ArrayList<sequence> sequence_list;
+	private Bdd base_de_donnees;
 	int expected_ligne_number;
 	
-	CDS()
+	CDS(Bdd base)
 	{
 		sequence_list = new ArrayList<sequence>();
 		expected_ligne_number=0;
+		base_de_donnees=base;
 	}
 
 	//permet d'ajouter une séquence à la liste
@@ -35,7 +39,33 @@ public class CDS
 		//on regarde si on a lut toute les lignes indiquées
 		if (expected_ligne_number==0)
 		{
-			//TODO
+			try
+			{
+				//l'automate qui va parcourir cette séquence, dans le sens directe par défaut
+				automateLecteurDeGenes auto = new automateLecteurDeGenes(base_de_donnees);
+			
+				//lecture des sequences
+				//TODO lit on les séquences dans l'ordre ?
+				for (sequence seq : sequence_list)
+				{
+					//char_erreur si il croise un caractère qui n'est pas un AGCT
+					//CDS_erreur si int1>int2
+					auto.lire_sequence(seq);
+				}
+			
+				//on test le codon stop et la taille du CDS
+				auto.test_CDS();
+				
+				base_de_donnees.push_tampon();
+				base_de_donnees.incr_nb_CDS();
+			}
+			catch (CDSInvalideException e)
+			{
+				base_de_donnees.clear_tampon();
+				base_de_donnees.incr_nb_CDS_non_traites();
+			}
+			
+			//TODO 
 			sequence_list = null;
 		}
 	}
@@ -56,17 +86,32 @@ public class CDS
 			code_genetique = new StringBuilder();
 		}
 		
-		public void setDebut (int deb)
+		//-----
+		
+		public int getDebut ()
 		{
-			debut = deb;
+			return debut;
 		}
 		
-		public void setFin (int fi)
+		public int getFin ()
 		{
-			debut = fi;
+			return fin;
 		}
+		
+		public boolean getSens ()
+		{
+			return sens_de_lecture;
+		}
+		
+		public char charAt (int i)
+		{
+			return code_genetique.charAt(i);
+		}
+		
+		//-----
 		
 		//ajoute une ligne au code genetique
+		//TODO on peux peut-etre faire plus efficasse en gardant les lignes dans un arraylist
 		public void appendLigne(String ligne)
 		{
 			code_genetique.append('\n'); //on conserve un caracter séparateur de lignes

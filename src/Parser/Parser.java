@@ -82,7 +82,7 @@ public class Parser
 	//prend une ligne contenant un CDS en entrée et l'ajoute à la liste de CDS en le parsant
 	void parser_descripteur_CDS(String ligne)
 	{
-		CDS cds = new CDS();
+		CDS cds = new CDS(base_de_donnees);
 		try 
 		{
 			automate_sequence(ligne, 21, true, cds); //la description du CDS commence 21char après le début de la ligne
@@ -97,7 +97,6 @@ public class Parser
 //--------------------------------------------------------------------------
 //lire le code génétique
 	
-	//TODO un cds doit pouvoir se rendre compte que toute ses séquences ont reçues leur lignes et commencer à travailler
 	void parser_genome()
 	{
 		int ligne_cible;
