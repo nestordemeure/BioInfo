@@ -1,12 +1,17 @@
 package Parser;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import Bdd.Bdd;
 import Parser.Parser_deprecated.Automate_lecteur_de_genes;
+import Parser.ReservationTable.Reservation;
+import Parser.ReservationTable.Reservation.IndexesSequence;
 import exceptions.CDSInvalideException;
 import exceptions.CharInvalideException;
 import exceptions.NoOriginException;
@@ -16,12 +21,14 @@ public class Parser
 	private Bdd base_de_donnees;
 	private Scanner scanner;
 	private ArrayList<CDS> CDS_list;
+	private ReservationTable table_des_reservations;
 	
 	public Parser (Bdd base, Scanner scan)
 	{
 		base_de_donnees = base;
 		scanner = scan;
 		CDS_list = new ArrayList<CDS>();
+		table_des_reservations = new ReservationTable();
 	}
 	
 	//fonction qui fait tourner le parseur
@@ -29,9 +36,8 @@ public class Parser
 	{
 		try 
 		{ 
-		parser_entete();
-		
-		parser_gene();
+			parser_entete();
+			parser_genome();
 		} 
 		catch (NoOriginException eorig) 
 		{ 
@@ -67,10 +73,9 @@ public class Parser
 				}
 				else
 				{
-					//TODO : vérifier que l'offset est bien de 5
 					if (ligne_actuelle.startsWith("CDS",5)) //on a un CDS (5 espaces après le début de la ligne)
 					{
-						parser_CDS(ligne_actuelle);
+						parser_descripteur_CDS(ligne_actuelle);
 					}
 				}
 			}
@@ -82,12 +87,11 @@ public class Parser
 	}
 		
 	//prend une ligne contenant un CDS en entrée et l'ajoute à la liste de CDS en le parsant
-	void parser_CDS(String ligne)
+	void parser_descripteur_CDS(String ligne)
 	{
 		CDS cds = new CDS();
 		try 
 		{
-			//TODO verifier que l'offset est bien de 21
 			automate_sequence(ligne, 21, true, cds); //la description du CDS commence 21char après le début de la ligne
 			CDS_list.add(cds);
 		} 
@@ -100,24 +104,32 @@ public class Parser
 //--------------------------------------------------------------------------
 //lire le code génétique
 	
-	//TODO
-	void parser_gene()
+	//TODO la table de réservation est elle sorted ? garantie elle que les ligne sortirons dans l'ordre croissant
+	//TODO un cds doit pouvoir se rendre compte que toute ses séquences ont recues leur lignes et commencer à travailler
+	void parser_genome()
 	{
-		//on parcours la liste des CDS
-		for (CDS cds : CDS_list) 
-		{   
-			//try
+		int ligne_cible;
+		int ligne_actuelle = -1;//numeros de la dernière ligne consommée par le scanner
+		Reservation reservation;
+		ArrayList<IndexesSequence> indexesSequenceList = new ArrayList<IndexesSequence>();
+		
+		//on parcours la liste des numéros de début et de fin de séquence
+		for (Entry<Integer, Reservation> entry : table_des_reservations.entrySet()) 
+		{
+			//on doit ateindre la ligne indiquée avec la liste de sequences actuelles
+			ligne_cible = entry.getKey();
+			ligne_actuelle=distribuer_lignes(ligne_actuelle,ligne_cible,indexesSequenceList);
+
+			//on modifie la liste de séquences
+			reservation = entry.getValue();
+			if (reservation.getAjout()) //on doit ajouter la sequence à la liste de sequence en cours
 			{
-				//TODO
-				
-				base_de_donnees.push_tampon();
-				base_de_donnees.incr_nb_CDS();
+				indexesSequenceList.add(reservation.getIndexesSequence());
 			}
-			/*catch (CDSInvalideException ecds)
+			else //on doit retirer la sequence de la liste en cours
 			{
-				base_de_donnees.clear_tampon();
-				base_de_donnees.incr_nb_CDS_non_traites();
-			}*/
+				indexesSequenceList.remove(reservation.getIndexesSequence());
+			}
 		}
 	}
 	
@@ -135,6 +147,36 @@ public class Parser
 		{
 			trouver_prefix(prefix);
 		}
+	}
+	
+	//lit des lignes et les distribues au séquences listées
+	//retourne le nouveau numéros de ligne actuelle
+	int distribuer_lignes(int ligne_actuelle, int ligne_cible, ArrayList<IndexesSequence> indexesSequenceList)
+	{
+		String ligne;
+		
+		while (ligne_actuelle<ligne_cible) //on n'a pas encore consommé la ligne cible
+		{
+			ligne = scanner.next();
+			
+			//on ajoute la ligne lue à toute les séquences qu'elle interesse
+			for(IndexesSequence i : indexesSequenceList)
+			{
+				CDS_list.get(i.getIndexCds()).appendLigne(i.getIndexSequence(),ligne);
+			}
+			
+			ligne_actuelle++;
+		}
+		
+		//TODO debugage, s'assurer qu'on a bien ligne actuelle==ligne_cible
+		
+		return ligne_actuelle;
+	}
+	
+	//convertit une position dans le génome en son numéros de ligne
+	int positionToLigne(int position)
+	{
+		return (position-1)/60;
 	}
 	
 //--------------------------------------------------------------------------
@@ -234,6 +276,8 @@ public class Parser
 		int debut=0;
 		int fin=0;
 		int new_position = position;
+		int index_cds=CDS_list.size(); //l'index du cds auquel appartiendra cette séquence
+		int index_sequence; //l'index de la séquence dans la liste de séquences du cds
 			
 		//on lit le premier entier
 		try { 
@@ -263,7 +307,9 @@ public class Parser
 			} 
 			catch (NumberFormatException eint2) 
 			{
-				cds.ajouter_sequence(debut,fin,sens_de_lecture);
+				index_sequence=cds.ajouter_sequence(debut,fin,sens_de_lecture);
+				//on passe une réservation qui commence juste avant le début de la séquence et juste avant qu'elle ai disparue
+				table_des_reservations.reserver_interval(positionToLigne(debut)-1, positionToLigne(fin), index_cds, index_sequence);
 				return new_position; 
 			}
 		}
