@@ -57,7 +57,6 @@ public class ReservationTable
 			return ajout;
 		}
 		
-		@Override
 		public int compareTo(Object o) 
 		{
 		    if (o instanceof Reservation)
@@ -122,7 +121,6 @@ public class ReservationTable
 			    }
 			}
 
-			@Override
 			public int compareTo(Object o) 
 			{
 			    if (o instanceof IndexesSequence)

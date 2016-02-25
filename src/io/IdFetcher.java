@@ -20,7 +20,7 @@ import ui.UIManager;
 public class IdFetcher {
 	private static int PER_PAGE = 100;
 	private static int MAX_TRY = 10;
-	private static String SEARCH_URL = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=gene&retmax=<PER_PAGE>&term=<TERM>[Organism]&retstart=<START>";
+	private static String SEARCH_URL = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=nuccore&retmax=<PER_PAGE>&term=<TERM>[Organism]&retstart=<START>";
 	public static ArrayList<Integer> getIds(String specie){
 		ArrayList<Integer> list = new ArrayList<Integer>();
 		int retstart = 0;
