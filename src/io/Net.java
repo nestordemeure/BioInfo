@@ -1,6 +1,7 @@
 package io;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Scanner;
@@ -9,10 +10,19 @@ import ui.UIManager;
 
 public class Net {
 	public static Scanner getUrl(String url){
+		InputStream is = Net.getUrlIS(url);
+		if(is == null){
+			return null;
+		} else {
+			return new Scanner(is, "UTF-8").useDelimiter("\n");
+		}
+	}
+	
+	public static InputStream getUrlIS(String url){
 		int nb_try = 0;
 		while(nb_try < 10){
 			try {
-				return new Scanner(new URL(url).openStream(), "UTF-8").useDelimiter("\n");
+				return new URL(url).openStream();
 			} catch (MalformedURLException e) {
 				return null;
 			} catch (IOException e) {
