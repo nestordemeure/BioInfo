@@ -75,11 +75,11 @@ public class Bdd
 		tampon_nb_trinucleotides++;
 		
 		//TODO affichage pour le debugage
-		try 
-		{
-			System.out.println(int_to_trinucleotide(position_of_trinucleotide(nucleotide1,nucleotide2,nucleotide3)));
-		} 
-		catch (CharInvalideException e) {}
+//		try 
+//		{
+//			System.out.println(int_to_trinucleotide(position_of_trinucleotide(nucleotide1,nucleotide2,nucleotide3)));
+//		} 
+//		catch (CharInvalideException e) {}
 		
 	}
 	
