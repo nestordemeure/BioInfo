@@ -2,9 +2,11 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import manager.AccessManager;
+import manager.ThreadManager;
 import tree.*;
 import Bdd.Bdd;
 import Parser.Parser;
@@ -21,13 +23,15 @@ public class Main {
 		Tree plop = new Tree();
 		plop=TreeManager.constree();
 		
-		Tree<Tree> tree = new Tree<Tree>();
+		ThreadManager.start(plop, new ArrayList<String>());
 		
-		if(! tree.contains("eukaryota")){
-			tree.add("eukaryota", new Tree<Tree>());
-		}
-		
-		Tree cur = tree.get("eukaryota");
+//		Tree<Tree> tree = new Tree<Tree>();
+//		
+//		if(! tree.contains("eukaryota")){
+//			tree.add("eukaryota", new Tree<Tree>());
+//		}
+//		
+//		Tree cur = tree.get("eukaryota");
 		
 	}
 	

@@ -3,6 +3,8 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import ui.UIManager;
+
 import io.*;;
 
 public class TreeManager {
@@ -16,6 +18,7 @@ public class TreeManager {
 		Scanner buffer = new Scanner("");
 		Boolean flag = true;
 		while (flag){
+			UIManager.log("Page : "+page);
 			buffer = Net.getUrl(baseurl+page+"&pageSize="+pageSize);
 			int debut=0;
 			while(buffer.hasNext()){

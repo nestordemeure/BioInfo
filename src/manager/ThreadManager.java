@@ -7,6 +7,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import tree.Tree;
+import ui.UIManager;
 
 public class ThreadManager {
 	
@@ -14,9 +15,10 @@ public class ThreadManager {
 	private static Lock mainLock = new ReentrantLock();
 	
 	public static void start(Tree t, ArrayList<String> path) {
-		String[] nodes = (String[]) t.nodes();
+		Object[] nodes = t.nodes();
 		
-		for (String node : nodes) {
+		for (Object o : nodes) {
+			String node = (String) o;
 			// Path du nouveau noeud
 			ArrayList<String> new_path = new ArrayList<String>(path);
 			new_path.add(node);
@@ -25,6 +27,7 @@ public class ThreadManager {
 			if (t.isLeaf(node)) {
 				// Si il est possible de lancer un thread on le fait
 				if (ThreadManager.threadAvailable()) {
+					UIManager.log("Launching new thread ("+new_path.get(new_path.size() - 1)+")");
 					new Thread(new ParserManager(new_path)).start();
 					ThreadManager.minusThread();
 				}
@@ -33,13 +36,16 @@ public class ThreadManager {
 					boolean done = false;
 					while (!done) {
 						if (!ThreadManager.threadAvailable()) {
-							TimeUnit.SECONDS.sleep(1);
+							try {
+								TimeUnit.SECONDS.sleep(1);
+							} catch (InterruptedException e) {
+							}
 						}
 						else {
 							done = true;
 						}		
 					}
-					
+					UIManager.log("Launching new thread ("+new_path.get(new_path.size() - 1)+")");
 					new Thread(new ParserManager(new_path)).start();
 					ThreadManager.minusThread();;
 				}		
