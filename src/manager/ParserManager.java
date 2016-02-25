@@ -11,15 +11,14 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import configuration.Configuration;
+
 import Bdd.Bdd;
 import Parser.Parser;
 
 import ui.UIManager;
 
 public class ParserManager implements Runnable{
-	private static String FOLDER_SEPARATOR = "/";
-	private static String BASE_FOLDER = "/tmp/results";
-	private static String CORE_URL = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=<ID>&rettype=gb";
 	
 	private ArrayList<Integer> ids;
 	private ArrayList<String> path;
@@ -32,9 +31,9 @@ public class ParserManager implements Runnable{
 	}
 	
 	public boolean createPath(){
-		String cur = BASE_FOLDER;
+		String cur = Configuration.BASE_FOLDER;
 		for(String s : path){
-			cur += ParserManager.FOLDER_SEPARATOR + s;
+			cur += Configuration.FOLDER_SEPARATOR + s;
 		}
 	
 		this.data_path = cur;
@@ -51,7 +50,7 @@ public class ParserManager implements Runnable{
 	}
 	
 	private void createOrResetFile(){
-		String file = this.data_path+FOLDER_SEPARATOR+"ids.txt";
+		String file = this.data_path+Configuration.FOLDER_SEPARATOR+"ids.txt";
 		AccessManager.accessFile(file);
 		File f = new File(file);
 		if(f.exists() && f.isFile()){
@@ -71,7 +70,7 @@ public class ParserManager implements Runnable{
 	// Verifie si le fichier ids.txt correspond a ce qu'on a en mémoire
 	public boolean isDone(){
 		ArrayList<Integer> list = new ArrayList<Integer>();
-		String file = this.data_path+FOLDER_SEPARATOR+"ids.txt";
+		String file = this.data_path+Configuration.FOLDER_SEPARATOR+"ids.txt";
 		// On liste les Ids présents dans le fichier.
 		AccessManager.accessFile(file);
 		try{
@@ -100,7 +99,7 @@ public class ParserManager implements Runnable{
 	}
 
 	public void writeFile(){
-		String file = this.data_path+FOLDER_SEPARATOR+"ids.txt";
+		String file = this.data_path+Configuration.FOLDER_SEPARATOR+"ids.txt";
 		this.createOrResetFile();
 		AccessManager.accessFile(file);
 		try{
@@ -130,7 +129,7 @@ public class ParserManager implements Runnable{
 				for(int id : ids){
 					try{
 						UIManager.log("[ParserManager : "+this.specy_name+"] Analysing "+id+"...");
-						String url = ParserManager.CORE_URL.replaceAll("<ID>", Integer.toString(id));
+						String url = Configuration.GEN_DOWNLOAD_URL.replaceAll("<ID>", Integer.toString(id));
 						Parser p = new Parser(db, Net.getUrl(url));
 						p.parse();
 					}catch(Exception e){
