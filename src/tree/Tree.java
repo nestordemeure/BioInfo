@@ -52,7 +52,7 @@ public class Tree<T> {
 	}
 	
 	public boolean isLeaf(String node) {
-		return this.nodes.get(node) instanceof Tree;
+		return ! (this.nodes.get(node) instanceof Tree);
 	}
 
 }
