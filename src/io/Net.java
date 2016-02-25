@@ -6,9 +6,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Scanner;
 
+import configuration.Configuration;
+
 import ui.UIManager;
 
 public class Net {
+	
+	
 	public static Scanner getUrl(String url){
 		InputStream is = Net.getUrlIS(url);
 		if(is == null){
@@ -20,7 +24,7 @@ public class Net {
 	
 	public static InputStream getUrlIS(String url){
 		int nb_try = 0;
-		while(nb_try < 10){
+		while(nb_try < Configuration.NET_MAX_DOWNLOAD_TRIES){
 			try {
 				return new URL(url).openStream();
 			} catch (MalformedURLException e) {
@@ -29,7 +33,7 @@ public class Net {
 				UIManager.log("Error while downloading : "+url+" (Try "+(nb_try + 1)+"/10)");
 				nb_try ++;
 				try {
-					Thread.sleep(1000);
+					Thread.sleep(Configuration.NET_TIME_BETWEEN_TRIES);
 				} catch (InterruptedException e1) {
 				}
 			}

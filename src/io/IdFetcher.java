@@ -14,23 +14,24 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import configuration.Configuration;
+
 import ui.UIManager;
 
 
 public class IdFetcher {
-	private static int PER_PAGE = 100;
-	private static int MAX_TRY = 10;
-	private static String SEARCH_URL = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=nuccore&retmax=<PER_PAGE>&term=<TERM>[Organism]&retstart=<START>";
 	public static ArrayList<Integer> getIds(String specie){
 		ArrayList<Integer> list = new ArrayList<Integer>();
 		int retstart = 0;
 		int tries = 0;
 		boolean done = false;
 		
-		while(tries < MAX_TRY  && !done){
+		while(tries < Configuration.IDS_MAX_TRIES  && !done){
 			
 			try{
-				String url = IdFetcher.SEARCH_URL.replaceAll("<TERM>", URLEncoder.encode(specie,"UTF-8")).replaceAll("<PER_PAGE>", String.valueOf(PER_PAGE)).replaceAll("<START>", String.valueOf(retstart));
+				String url = Configuration.IDS_SEARCH_URL.replaceAll("<TERM>", URLEncoder.encode(specie,"UTF-8"))
+						.replaceAll("<PER_PAGE>", String.valueOf(Configuration.IDS_PER_PAGE))
+						.replaceAll("<START>", String.valueOf(retstart));
 				InputStream is = Net.getUrlIS(url);
 				DocumentBuilder builder;
 				
@@ -47,8 +48,8 @@ public class IdFetcher {
 						list.add(value);
 					}
 				}
-				if(retstart + IdFetcher.PER_PAGE < count){
-					retstart += IdFetcher.PER_PAGE;
+				if(retstart + Configuration.IDS_PER_PAGE < count){
+					retstart += Configuration.IDS_PER_PAGE;
 				} else {
 					done = true;
 				}

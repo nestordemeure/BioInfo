@@ -6,15 +6,18 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import configuration.Configuration;
+
 import tree.Tree;
 import ui.UIManager;
 
 public class ThreadManager {
 	
-	protected static int NB_THREADS = 10;
+	protected static int NB_THREADS;
 	private static Lock mainLock = new ReentrantLock();
 	
 	public static void start(Tree t, ArrayList<String> path) {
+		NB_THREADS = Configuration.THREADS_NUMBER;
 		Object[] nodes = t.nodes();
 		
 		for (Object o : nodes) {
