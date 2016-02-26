@@ -127,13 +127,13 @@ public class ParserManager implements Runnable{
 				
 				
 				for(int id : ids){
+					String url = Configuration.GEN_DOWNLOAD_URL.replaceAll("<ID>", Integer.toString(id));
 					try{
 						UIManager.log("[ParserManager : "+this.specy_name+"] Analysing "+id+"...");
-						String url = Configuration.GEN_DOWNLOAD_URL.replaceAll("<ID>", Integer.toString(id));
 						Parser p = new Parser(db, Net.getUrl(url));
 						p.parse();
 					}catch(Exception e){
-						UIManager.log("Error while parsing file...");
+						UIManager.log("Error while parsing file "+url);
 						e.printStackTrace();
 					}
 				}
