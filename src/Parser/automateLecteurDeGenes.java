@@ -61,7 +61,8 @@ public class automateLecteurDeGenes
 		debut_sequence = position_string_of_numeros_nucleotide(sequence.getDebut());
 		fin_sequence = position_string_of_numeros_nucleotide(sequence.getFin());
 		
-		if (debut_sequence>fin_sequence) { throw new CDSInvalideException("debut superieur à fin"); }
+		//TODO inutile depuis qu'on a déplacé le test avant?
+		//if (debut_sequence>fin_sequence) { throw new CDSInvalideException("debut superieur à fin"); }
 		
 		//permet de tester le codon start sans perdre le point de depart
 		int position_sequence_tampon;
@@ -128,7 +129,7 @@ public class automateLecteurDeGenes
 	}
 	
 	//-----
-	
+	/*
 	//on lit du début à la fin
 	void lire_sequence_sens_directe() throws CDSInvalideException
 	{
@@ -144,7 +145,24 @@ public class automateLecteurDeGenes
 			lire_sequence_sens_directe();
 		}
 	}
-	
+	*/
+	//TODO redaction avec une while pour voir ce que sa donne
+	//on lit du début à la fin
+	void lire_sequence_sens_directe() throws CDSInvalideException
+	{
+		//importe le nucléotide situé en debut de séqence dans nucleotide3
+		//et décalle l'indice de début de séquence
+		lire_nucleotide_sens_directe();
+		
+		//si on a finit de lire la séquence, on arrete
+		//on ne lit pas le dernier triplet (il sera réinjecté plus tard si nécéssaire)
+		while (debut_sequence <= fin_sequence)
+		{
+			ajoute_trinucleotide();
+			lire_nucleotide_sens_directe();
+		}
+	}
+	/*
 	//on lit de la fin au début
 	void lire_sequence_sens_complement() throws CDSInvalideException
 	{
@@ -158,6 +176,22 @@ public class automateLecteurDeGenes
 		{
 			ajoute_trinucleotide();
 			lire_sequence_sens_complement();
+		}
+	}
+	*/
+	//TODO redaction avec une while pour voir ce que sa donne
+	void lire_sequence_sens_complement() throws CDSInvalideException
+	{
+		//importe le nucléotide situé en fin de séqence dans nucleotide3 
+		//et décalle l'indice de début de séquence
+		lire_nucleotide_sens_complement();
+		
+		//si on a finit de lire la séquence, on arrete
+		//on ne lit pas le dernier triplet (il sera réinjecté plus tard si nécéssaire)
+		while (debut_sequence <= fin_sequence)
+		{
+			ajoute_trinucleotide();
+			lire_nucleotide_sens_complement();
 		}
 	}
 	
