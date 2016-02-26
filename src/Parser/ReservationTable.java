@@ -3,16 +3,22 @@ package Parser;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+//on ouvre la table avec open, l'utilise puis close si tout c'est bien passé (rien sinon)
+
 public class ReservationTable 
 {
 	//table qui a un numéros de ligne associe un triplé (index de cds, index de sequence, ajout/retrait)
 	SortedSet<Reservation> table = new TreeSet<Reservation>();
+	SortedSet<Reservation> table_tamp = new TreeSet<Reservation>();
+	Boolean empty_tamp = true;
+	
+	//-----------------------------------------------------------------------------------
 	
 	//ajoute une réservation à la table
 	void reserver(int ligne, int index_cds, int index_sequence, boolean ajout)
 	{
 		Reservation reserv = new Reservation(ligne,index_cds,index_sequence,ajout);
-		table.add(reserv); 
+		table_tamp.add(reserv); 
 	}
 	
 	//prend un interval et ajoute un couple de réservations à la table
@@ -28,6 +34,38 @@ public class ReservationTable
 	{
 		return table;
 	}
+	
+	//-----------------------------------------------------------------------------------
+	
+	//vide le tampon si nécéssaire et indique qu'on va commencer à le remplir
+	void open()
+	{
+		if (empty_tamp) //le tampon est vide, on dit qu'il ne le sera plus
+		{
+			empty_tamp=false;
+		}
+		else //le tampon n'est pas vide, on le vide
+		{
+			clearTamp();
+		}
+	}
+	
+	//ajoute le contenus de la table tampon à la table officielle
+	//vide la tampon
+	void close()
+	{
+		//TODO transfer
+		table.addAll(table_tamp);
+		clearTamp();
+		empty_tamp=true;
+	}
+	
+	void clearTamp()
+	{
+		table_tamp = new TreeSet<Reservation>();
+	}
+	
+	//-----------------------------------------------------------------------------------
 	
 	public class Reservation implements Comparable<Object>
 	{

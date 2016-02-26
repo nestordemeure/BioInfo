@@ -3,6 +3,7 @@ package Parser;
 import java.util.ArrayList;
 import Bdd.Bdd;
 import exceptions.CDSInvalideException;
+import exceptions.DeadCDSException;
 
 //un CDS est une liste de séquences
 public class CDS 
@@ -18,6 +19,15 @@ public class CDS
 		base_de_donnees=base;
 	}
 
+	//on coupe les ponts vers les séquences et on envois une execption pour signaler que ce cds ne sert plus
+	void suicide() throws DeadCDSException
+	{
+		sequence_list = null;
+		base_de_donnees = null;
+		expected_ligne_number=-1;
+		throw new DeadCDSException();
+	}
+	
 	//permet d'ajouter une séquence à la liste
 	//sort l'index de la séquence dans la liste
 	int ajouter_sequence(int deb, int fi, boolean sens_de_lect)
@@ -30,17 +40,20 @@ public class CDS
 	
 	//ajoute la ligne à la sequence indiquée
 	//déclenche la lecture de la séquence si on a toute les lignes nécéssaires
-	void appendLigne(int index_sequence, String ligne)
+	void appendLigne(int index_sequence, String ligne) throws DeadCDSException
 	{
 		//on ajoute une ligne
 		sequence_list.get(index_sequence).appendLigne(ligne);
 		expected_ligne_number--;
 		
 		//on regarde si on a lut toute les lignes indiquées
-		if (expected_ligne_number==0)
+		if (expected_ligne_number<=0)
 		{
 			try
 			{
+				//on s'assure que le tampon est vide avant d'attaquer
+				base_de_donnees.open_tampon();
+				
 				//l'automate qui va parcourir cette séquence, dans le sens directe par défaut
 				automateLecteurDeGenes auto = new automateLecteurDeGenes(base_de_donnees);
 			
@@ -56,17 +69,16 @@ public class CDS
 				//on test le codon stop et la taille du CDS
 				auto.test_CDS();
 				
-				base_de_donnees.push_tampon();
+				base_de_donnees.close_tampon();
 				base_de_donnees.incr_nb_CDS();
 			}
 			catch (CDSInvalideException e)
 			{
-				base_de_donnees.clear_tampon();
 				base_de_donnees.incr_nb_CDS_non_traites();
 			}
 			
-			//TODO 
-			sequence_list = null;
+			//ce CDS ne sert plus
+			suicide();
 		}
 	}
 	

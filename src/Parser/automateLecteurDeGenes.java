@@ -58,8 +58,8 @@ public class automateLecteurDeGenes
 	{
 		sequence=seq;
 		
-		debut_sequence = position_string_of_numeros_nucleotide(sequence.getDebut()); //TODO
-		fin_sequence = position_string_of_numeros_nucleotide(sequence.getFin()); //TODO
+		debut_sequence = position_string_of_numeros_nucleotide(sequence.getDebut());
+		fin_sequence = position_string_of_numeros_nucleotide(sequence.getFin());
 		
 		if (debut_sequence>fin_sequence) { throw new CDSInvalideException("debut superieur à fin"); }
 		
@@ -293,7 +293,6 @@ public class automateLecteurDeGenes
 	}
 	
 	//prend une position dans le génome et rend une position dans la chaine de caractères
-	//TODO a tester
 	int position_string_of_numeros_nucleotide(int position)
 	{
 		//position d'origine plus taille de la première ligne +

@@ -103,7 +103,7 @@ public class Parser_deprecated
 			{
 				lecture_de_CDS(p);
 				
-				base_de_donnees.push_tampon();
+				base_de_donnees.close_tampon();
 				base_de_donnees.incr_nb_CDS();
 			}
 			catch (CDSInvalideException ecds)
