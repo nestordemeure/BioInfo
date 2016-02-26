@@ -86,8 +86,10 @@ public class Parser
 		CDS cds = new CDS(base_de_donnees);
 		try 
 		{
+			table_des_reservations.open(); //on indique qu'on va passer de nouvelles réservations
 			automate_sequence(ligne, 21, true, cds); //la description du CDS commence 21char après le début de la ligne
-			CDS_list.add(cds); //TODO c'est ici qu'on remplis CDS_list
+			CDS_list.add(cds);
+			table_des_reservations.close(); //on officialise les réservations passées
 		} 
 		catch (CDSInvalideException e) 
 		{
@@ -154,7 +156,6 @@ public class Parser
 			{
 				try
 				{
-					//TODO array out of bound
 					CDS_list.get(i.getIndexCds()).appendLigne(i.getIndexSequence(),ligne);
 				}
 				catch (DeadCDSException e) //le cds ne sert plus
@@ -272,7 +273,6 @@ public class Parser
 		int debut=0;
 		int fin=0;
 		int new_position = position;
-		//TODO c'est ici qu'est calculé l'index_cds
 		int index_cds=CDS_list.size(); //l'index du cds auquel appartiendra cette séquence (si elle est validée, cds_list sera nicrémenté)
 		int index_sequence; //l'index de la séquence dans la liste de séquences du cds
 			
@@ -306,7 +306,6 @@ public class Parser
 			{
 				index_sequence=cds.ajouter_sequence(debut,fin,sens_de_lecture);
 				//on passe une réservation qui commence juste avant le début de la séquence et juste avant qu'elle ai disparue
-				//TODO c'est ici qu'on passe les réservations
 				table_des_reservations.reserver_interval(positionToLigne(debut)-1, positionToLigne(fin), index_cds, index_sequence);
 				
 				return new_position; 
