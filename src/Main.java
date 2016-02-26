@@ -1,6 +1,8 @@
 import Bdd.Bdd;
 import Parser.Parser;
 import exceptions.CharInvalideException;
+
+import java.util.ArrayList;
 import java.util.Scanner;
 import io.Net;
 import ui.UIManager;
@@ -25,10 +27,11 @@ public class Main {
 			UIManager.log(sc.next());
 		}
 		*/
-		
+
 		//parsing
 		Bdd base = new Bdd("path");
-		Scanner scanneur = Net.getUrl("http://jonathancrabtree.github.io/Circleator/tutorials/gb_annotation/L42023.1.gb");
+		//Scanner scanneur = Net.getUrl("http://jonathancrabtree.github.io/Circleator/tutorials/gb_annotation/L42023.1.gb");
+		Scanner scanneur = Net.getUrl("file:///home/nestor/Cours/2A/bioinformatique/sequence.gb");
 		Parser parseur = new Parser(base,scanneur);
 		parseur.parse();
 		
@@ -37,6 +40,8 @@ public class Main {
 		System.out.println("nbr_cds "+base.get_nb_CDS());
 		System.out.println("nbr_cds_nt "+base.get_nb_CDS_non_traites());
 		System.out.println(base.get_tableautrinucleotides_string());
+
+		
 	}
 
 }
