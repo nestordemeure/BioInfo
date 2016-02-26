@@ -304,11 +304,18 @@ public class Parser
 			} 
 			catch (NumberFormatException eint2) 
 			{
-				index_sequence=cds.ajouter_sequence(debut,fin,sens_de_lecture);
-				//on passe une réservation qui commence juste avant le début de la séquence et juste avant qu'elle ai disparue
-				table_des_reservations.reserver_interval(positionToLigne(debut)-1, positionToLigne(fin), index_cds, index_sequence);
-				
-				return new_position; 
+				if (debut>fin) 
+				{ 
+					throw new CDSInvalideException("debut superieur à fin");
+				}
+				else
+				{
+					index_sequence=cds.ajouter_sequence(debut,fin,sens_de_lecture);
+					//on passe une réservation qui commence juste avant le début de la séquence et juste avant qu'elle ai disparue
+					table_des_reservations.reserver_interval(positionToLigne(debut)-1, positionToLigne(fin), index_cds, index_sequence);
+					
+					return new_position; 
+				}
 			}
 		}
 	}
