@@ -8,6 +8,8 @@ public class Bdd
  * en cas d'erreur (CDS_invalide) il faut faire un clear de la base
  * en cas de succès il faut faire un push de la base
  * fait remonter une exception char_invalide qu'il faut matcher
+ * 
+ * s'utilise en faisant open_tampon, remplissant la base puis close_tampon si tout c'est bien passé
  */
 
 /*
@@ -39,6 +41,7 @@ public class Bdd
 		
 	private int tampon_tableautrinucleotides[][]; //tableautrinucleotides[phase][trinucleotide]
 
+	boolean empty_tamp;
 	
 //-----------------------------------------------------------------------------	
 //fonctions publiques
@@ -55,6 +58,8 @@ public class Bdd
 		tampon_nb_trinucleotides = 0;
 		tableautrinucleotides = new int[3][64];
 		tampon_tableautrinucleotides = new int[3][64];
+		
+		empty_tamp=true;
 	}
 	
 //incrementeurs
@@ -118,7 +123,7 @@ public class Bdd
 	}
 	
 	//déplace le contenus du tampon dans la mémoire
-		public void push_tampon()
+		public void close_tampon()
 		{
 			nb_trinucleotides += tampon_nb_trinucleotides;
 			
@@ -131,6 +136,20 @@ public class Bdd
 			}
 			
 			clear_tampon();
+			empty_tamp=true;
+		}
+		
+		//s'assure que le tampon est vide pour avancer
+		public void open_tampon()
+		{
+			if (empty_tamp)
+			{
+				empty_tamp=false;
+			}
+			else
+			{
+				clear_tampon();
+			}
 		}
 	
 	//remet un tampon à 0

@@ -51,6 +51,9 @@ public class CDS
 		{
 			try
 			{
+				//on s'assure que le tampon est vide avant d'attaquer
+				base_de_donnees.open_tampon();
+				
 				//l'automate qui va parcourir cette séquence, dans le sens directe par défaut
 				automateLecteurDeGenes auto = new automateLecteurDeGenes(base_de_donnees);
 			
@@ -66,12 +69,11 @@ public class CDS
 				//on test le codon stop et la taille du CDS
 				auto.test_CDS();
 				
-				base_de_donnees.push_tampon();
+				base_de_donnees.close_tampon();
 				base_de_donnees.incr_nb_CDS();
 			}
 			catch (CDSInvalideException e)
 			{
-				base_de_donnees.clear_tampon();
 				base_de_donnees.incr_nb_CDS_non_traites();
 			}
 			
