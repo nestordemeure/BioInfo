@@ -32,15 +32,23 @@ public class Bdd
 	
 	private int nb_trinucleotides;
 	
+	private int nb_dinucleotides;
+	
 	private int nb_CDS_non_traites;
 	
 	private int tableautrinucleotides[][]; //tableautrinucleotides[phase][trinucleotide]
 	
+	private int tableaudinucleotides[][]; //tableautrinucleotides[phase][dinucleotide]
+	
 	//tampon
 	private int tampon_nb_trinucleotides;
+	
+	private int tampon_nb_dinucleotides;
 		
 	private int tampon_tableautrinucleotides[][]; //tableautrinucleotides[phase][trinucleotide]
 
+	private int tampon_tableaudinucleotides[][]; //tableautrinucleotides[phase][trinucleotide]
+	
 	boolean empty_tamp;
 	
 //-----------------------------------------------------------------------------	
@@ -53,11 +61,15 @@ public class Bdd
 		
 		nb_CDS = 0;
 		nb_trinucleotides = 0;
+		nb_dinucleotides = 0;
 		nb_CDS_non_traites = 0;
 		
 		tampon_nb_trinucleotides = 0;
+		tampon_nb_dinucleotides = 0;
 		tableautrinucleotides = new int[3][64];
 		tampon_tableautrinucleotides = new int[3][64];
+		tableaudinucleotides = new int[2][16];
+		tampon_tableaudinucleotides = new int[2][16];
 		
 		empty_tamp=true;
 	}
@@ -74,19 +86,16 @@ public class Bdd
 	}
 	
 	//tampon
-	public void ajoute_trinucleotide (int phase, int nucleotide1, int nucleotide2, int nucleotide3) throws CharInvalideException
+	public void ajoute_nucleotides (int phase, int nucleotide1, int nucleotide2, int nucleotide3) throws CharInvalideException
 	{
-		tampon_tableautrinucleotides[phase][position_of_trinucleotide(nucleotide1,nucleotide2,nucleotide3)]++;
+		tampon_tableautrinucleotides[phase][position_of_nucleotides(nucleotide1,nucleotide2,nucleotide3)]++;
 		tampon_nb_trinucleotides++;
-		
-		/* //TODO affichage pour le debugage
-		try 
-		{
-			System.out.println(int_to_trinucleotide(position_of_trinucleotide(nucleotide1,nucleotide2,nucleotide3)));
-		} 
-		catch (CharInvalideException e) {}
-		*/
-		
+	}
+	
+	public void ajoute_nucleotides (int phase, int nucleotide1, int nucleotide2) throws CharInvalideException
+	{
+		tampon_tableaudinucleotides[phase][position_of_nucleotides(nucleotide1,nucleotide2)]++;
+		tampon_nb_dinucleotides++;
 	}
 	
 //getters (resultat final)
@@ -100,6 +109,11 @@ public class Bdd
 		return nb_trinucleotides;
 	}
 	
+	public int get_nb_dinucleotides ()
+	{
+		return nb_dinucleotides;
+	}
+	
 	public int get_nb_CDS_non_traites ()
 	{
 		return nb_CDS_non_traites;
@@ -107,7 +121,12 @@ public class Bdd
 	
 	public int get_tableautrinucleotides (int phase, int nucleotide1, int nucleotide2, int nucleotide3) throws CharInvalideException
 	{
-		return tableautrinucleotides[phase][position_of_trinucleotide(nucleotide1,nucleotide2,nucleotide3)];
+		return tableautrinucleotides[phase][position_of_nucleotides(nucleotide1,nucleotide2,nucleotide3)];
+	}
+	
+	public int get_tableaudinucleotides (int phase, int nucleotide1, int nucleotide2) throws CharInvalideException
+	{
+		return tableaudinucleotides[phase][position_of_nucleotides(nucleotide1,nucleotide2)];
 	}
 	
 	public int[][] get_tableautrinucleotides ()
@@ -115,11 +134,21 @@ public class Bdd
 		return tableautrinucleotides;
 	}
 	
+	public int[][] get_tableaudinucleotides ()
+	{
+		return tableaudinucleotides;
+	}
+	
 //tampon
 	
 	public int get_nb_trinucleotides_tampon ()
 	{
 		return tampon_nb_trinucleotides;
+	}
+	
+	public int get_nb_dinucleotides_tampon ()
+	{
+		return tampon_nb_dinucleotides;
 	}
 	
 	//déplace le contenus du tampon dans la mémoire
@@ -132,6 +161,16 @@ public class Bdd
 				for(int j = 0 ; j<64 ; j++)
 				{
 					tableautrinucleotides[i][j]+=tampon_tableautrinucleotides[i][j];
+				}
+			}
+			
+			nb_dinucleotides += tampon_nb_dinucleotides;
+
+			for(int i = 0 ; i<2 ; i++)
+			{
+				for(int j = 0 ; j<16 ; j++)
+				{
+					tableaudinucleotides[i][j]+=tampon_tableaudinucleotides[i][j];
 				}
 			}
 			
@@ -164,12 +203,22 @@ public class Bdd
 				tampon_tableautrinucleotides[i][j]=0;
 			}
 		}
+		
+		tampon_nb_dinucleotides = 0;
+		
+		for(int i = 0 ; i<2 ; i++)
+		{
+			for(int j = 0 ; j<16 ; j++)
+			{
+				tampon_tableaudinucleotides[i][j]=0;
+			}
+		}
 	}
 	
 //acces tableau
 	//renvois la position du tableau associee a un triplet de caractere (sous forme d'entier)
 	//renvois une erreur si un des caracteres est invalide (codé par un -1)
-	int position_of_trinucleotide (int nucleotide1, int nucleotide2, int nucleotide3) throws CharInvalideException
+	int position_of_nucleotides (int nucleotide1, int nucleotide2, int nucleotide3) throws CharInvalideException
 	{
 		if ( (nucleotide1<0) || (nucleotide2<0) || (nucleotide3<0) )
 		{	
@@ -177,6 +226,16 @@ public class Bdd
 		}
 		
 		return nucleotide1*16 + nucleotide2*4 + nucleotide3;
+	}
+	
+	int position_of_nucleotides (int nucleotide1, int nucleotide2) throws CharInvalideException
+	{
+		if ( (nucleotide1<0) || (nucleotide2<0) )
+		{	
+			throw new CharInvalideException();
+		}
+		
+		return nucleotide1*4 + nucleotide2;
 	}
 	
 	//renvois une chaine de caracteres (trinucleotide en majuscule) correspondant a une position dans le tableau
@@ -251,16 +310,72 @@ public class Bdd
 		return res;
 	}
 	
-	//sort un string qui représente le profil du tableau de trinucleotides
-	public String get_tableautrinucleotides_string ()
+	String int_to_dinucleotide (int num) throws CharInvalideException
 	{
-		String str = "trinucleotide	phase1	phase2	phase3\n";
+		if ((num<0)||(num>15)) { throw new CharInvalideException(); }
+		
+		String res = "";
+		int val = num;
+
+		//Test 1
+		if (val >= 12) 
+		{
+			res = res + "T";
+			val = val - 12;
+		}
+		else if (val >= 8) 
+		{
+			res = res + "G";
+			val = val - 8;
+		}
+		else if (val >= 4) 
+		{
+			res = res + "C";
+			val = val - 4;
+		}
+		else 
+		{
+			res = res + "A";
+		}
+
+		// Test 2
+		if (val == 3) 
+		{
+			res = res + "T";
+		}
+		else if (val == 2) 
+		{
+			res = res + "G";
+		}
+		else if (val == 1)
+		{
+			res = res + "C";
+		}
+		else 
+		{
+			res = res + "A";
+		}
+
+		return res;
+	}
+	
+	//sort un string qui représente le profil du tableau de trinucleotides
+	public String get_tableauxnucleotides_string ()
+	{
+		String str = "";
 				
 		try 
 		{
+			str += "trinucleotide	phase1	phase2	phase3\n";
 			for (int i=0 ; i<64 ; i++)
 			{
 				str=str+"	"+int_to_trinucleotide(i)+" :	"+tableautrinucleotides[0][i]+"	"+tableautrinucleotides[1][i]+"	"+tableautrinucleotides[2][i]+"\n";
+			}
+			
+			str += "dinucleotide	phase1	phase2\n";
+			for (int i=0 ; i<16 ; i++)
+			{
+				str=str+"	"+int_to_dinucleotide(i)+" :	"+tableaudinucleotides[0][i]+"	"+tableaudinucleotides[1][i]+"\n";
 			}
 		} 
 		catch (CharInvalideException e) {/*cette exception ne peux pas se produire, on ne rentre que des entiers valides*/}

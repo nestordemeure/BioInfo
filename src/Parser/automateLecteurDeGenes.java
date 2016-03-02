@@ -312,7 +312,7 @@ public class automateLecteurDeGenes
 	{
 		try
 		{
-			base_de_donnees.ajoute_trinucleotide(phase, nucleotide1, nucleotide2, nucleotide3);
+			base_de_donnees.ajoute_nucleotides(phase, nucleotide1, nucleotide2, nucleotide3);
 			incrementer_phase(); 
 			nucleotide1=nucleotide2;
 			nucleotide2=nucleotide3;
