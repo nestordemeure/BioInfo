@@ -1,6 +1,7 @@
 import Bdd.Bdd;
 import Parser.Parser;
 import exceptions.CharInvalideException;
+import exceptions.ScannerNullException;
 
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -8,7 +9,7 @@ import io.Net;
 import ui.UIManager;
 
 public class Main {
-	public static void main(String[] args) throws CharInvalideException {
+	public static void main(String[] args) throws CharInvalideException, ScannerNullException {
 		
 		/*
 		//hello world

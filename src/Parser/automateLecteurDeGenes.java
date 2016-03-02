@@ -61,9 +61,6 @@ public class automateLecteurDeGenes
 		debut_sequence = position_string_of_numeros_nucleotide(sequence.getDebut());
 		fin_sequence = position_string_of_numeros_nucleotide(sequence.getFin());
 		
-		//TODO inutile depuis qu'on a déplacé le test avant?
-		//if (debut_sequence>fin_sequence) { throw new CDSInvalideException("debut superieur à fin"); }
-		
 		//permet de tester le codon start sans perdre le point de depart
 		int position_sequence_tampon;
 		

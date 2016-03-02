@@ -9,6 +9,9 @@ import Parser.ReservationTable.Reservation.IndexesSequence;
 import exceptions.CDSInvalideException;
 import exceptions.DeadCDSException;
 import exceptions.NoOriginException;
+import exceptions.ScannerNullException;
+
+//TODO next() peut sortit un null
 
 public class Parser 
 {
@@ -26,7 +29,7 @@ public class Parser
 	}
 	
 	//fonction qui fait tourner le parseur
-	public void parse()
+	public void parse() throws ScannerNullException
 	{
 		try 
 		{ 
@@ -42,7 +45,7 @@ public class Parser
 //--------------------------------------------------------------------------
 //lire l'entete
 	
-	void parser_entete() throws NoOriginException
+	void parser_entete() throws NoOriginException, ScannerNullException
 	{
 		try
 		{
@@ -59,7 +62,7 @@ public class Parser
 			 */
 			while (recherche_en_cour)
 			{
-				ligne_actuelle=scanner.next(); //succeptible de renvoyer une exception qu'on va catcher
+				ligne_actuelle = checkNull(scanner.next()); //succeptible de renvoyer une exception qu'on va catcher
 				
 				if (ligne_actuelle.startsWith("ORIGIN")) //on a finit
 				{
@@ -100,7 +103,7 @@ public class Parser
 //--------------------------------------------------------------------------
 //lire le code génétique
 	
-	void parser_genome()
+	void parser_genome() throws ScannerNullException
 	{
 		int ligne_cible;
 		int ligne_actuelle = -1;//numeros de la dernière ligne consommée par le scanner
@@ -131,9 +134,9 @@ public class Parser
 	//fait avancer un scanner jusqu'a atteindre le préfixe donné
 	//consomme la ligne qui contient le préfixe
 	//renvois une exception si on ne peux pas lire l'élément suivant
-	void trouver_prefix(String prefix) throws NoSuchElementException
+	void trouver_prefix(String prefix) throws NoSuchElementException, ScannerNullException
 	{
-		String ligne_actuelle = scanner.next();
+		String ligne_actuelle = checkNull(scanner.next());
 		
 		if (!ligne_actuelle.startsWith(prefix))
 		{
@@ -141,15 +144,28 @@ public class Parser
 		}
 	}
 	
+	//renvois une exception si le scanneur a retourner un null au lieu d'un string
+	String checkNull(String str) throws ScannerNullException
+	{
+		if (str == null)
+		{
+			throw new ScannerNullException();
+		}
+		else
+		{
+			return str;
+		}
+	}
+	
 	//lit des lignes et les distribues au séquences listées
 	//retourne le nouveau numéros de ligne actuelle (dernière ligne consommée en date)
-	int distribuer_lignes(int ligne_actuelle, int ligne_cible, ArrayList<IndexesSequence> indexesSequenceList)
+	int distribuer_lignes(int ligne_actuelle, int ligne_cible, ArrayList<IndexesSequence> indexesSequenceList) throws ScannerNullException
 	{
 		String ligne;
 		
 		while (ligne_actuelle<ligne_cible) //on n'a pas encore consommé la ligne cible
 		{
-			ligne = scanner.next();
+			ligne = checkNull(scanner.next());
 			
 			//on ajoute la ligne lue à toute les séquences qu'elle interesse
 			for(IndexesSequence i : indexesSequenceList)
