@@ -9,7 +9,8 @@ import exceptions.CharInvalideException;
 public class automateLecteurDeGenes 
 {
 	Bdd base_de_donnees;
-	int phase; //0,1 ou 2
+	int phase2; //0,1
+	int phase3; //0,1 ou 2
 	boolean already_started; //indique si cet automate à déjà tourné (join)
 	
 	//exprimé en position dans la chaine de caracteres
@@ -27,19 +28,21 @@ public class automateLecteurDeGenes
 	
 	automateLecteurDeGenes (Bdd base)
 	{
-		phase=0;
+		phase2=0;
+		phase3=0;
 		already_started=false;
 		base_de_donnees=base;
 	}
 
 	//-----
 	
+	//TODO il faut ajouter une gestion de la regle finale des dinucleotides
 	//test le codon stop et vérifie que la taille du cds est un multiple de trois
 	void test_CDS() throws CDSInvalideException
 	{
 		//taille
 		//on vérifie que la taille de la sequence est bien un multiple de trois
-		if (phase != 0)
+		if (phase3 != 0)
 		{
 			throw new CDSInvalideException("taille invalide");
 		}
@@ -88,7 +91,7 @@ public class automateLecteurDeGenes
 			else //on reprend après un join
 			{
 				//on sauve le triplet qui finissait la section précédente du join
-				ajoute_trinucleotide();
+				ajoute_nucleotides();
 				
 				lire_sequence_sens_directe();
 			}
@@ -116,7 +119,7 @@ public class automateLecteurDeGenes
 			else  //on reprend après un join
 			{
 				//on sauve le triplet qui finissait la section précédente du join
-				ajoute_trinucleotide();
+				ajoute_nucleotides();
 				
 				lire_sequence_sens_complement();
 			}
@@ -126,24 +129,7 @@ public class automateLecteurDeGenes
 	}
 	
 	//-----
-	/*
-	//on lit du début à la fin
-	void lire_sequence_sens_directe() throws CDSInvalideException
-	{
-		//importe le nucléotide situé en debut de séqence dans nucleotide3
-		//et décalle l'indice de début de séquence
-		lire_nucleotide_sens_directe();
-		
-		//si on a finit de lire la séquence, on arrete
-		//on ne lit pas le dernier triplet (il sera réinjecté plus tard si nécéssaire)
-		if (debut_sequence <= fin_sequence)
-		{
-			ajoute_trinucleotide();
-			lire_sequence_sens_directe();
-		}
-	}
-	*/
-	//TODO redaction avec une while pour voir ce que sa donne
+
 	//on lit du début à la fin
 	void lire_sequence_sens_directe() throws CDSInvalideException
 	{
@@ -155,11 +141,11 @@ public class automateLecteurDeGenes
 		//on ne lit pas le dernier triplet (il sera réinjecté plus tard si nécéssaire)
 		while (debut_sequence <= fin_sequence)
 		{
-			ajoute_trinucleotide();
+			ajoute_nucleotides();
 			lire_nucleotide_sens_directe();
 		}
 	}
-	/*
+
 	//on lit de la fin au début
 	void lire_sequence_sens_complement() throws CDSInvalideException
 	{
@@ -169,25 +155,9 @@ public class automateLecteurDeGenes
 		
 		//si on a finit de lire la séquence, on arrete
 		//on ne lit pas le dernier triplet (il sera réinjecté plus tard si nécéssaire)
-		if (debut_sequence <= fin_sequence)
-		{
-			ajoute_trinucleotide();
-			lire_sequence_sens_complement();
-		}
-	}
-	*/
-	//TODO redaction avec une while pour voir ce que sa donne
-	void lire_sequence_sens_complement() throws CDSInvalideException
-	{
-		//importe le nucléotide situé en fin de séqence dans nucleotide3 
-		//et décalle l'indice de début de séquence
-		lire_nucleotide_sens_complement();
-		
-		//si on a finit de lire la séquence, on arrete
-		//on ne lit pas le dernier triplet (il sera réinjecté plus tard si nécéssaire)
 		while (debut_sequence <= fin_sequence)
 		{
-			ajoute_trinucleotide();
+			ajoute_nucleotides();
 			lire_nucleotide_sens_complement();
 		}
 	}
@@ -308,12 +278,12 @@ public class automateLecteurDeGenes
 			
 	//ajoute un trinucléotide à la bdd
 	//change de phase et décale chaque nucléotide
-	void ajoute_trinucleotide() throws CDSInvalideException
+	void ajoute_nucleotides() throws CDSInvalideException
 	{
 		try
 		{
-			base_de_donnees.ajoute_nucleotides(phase, nucleotide1, nucleotide2, nucleotide3);
-			incrementer_phase(); 
+			base_de_donnees.ajoute_nucleotides(phase2,phase3, nucleotide1, nucleotide2, nucleotide3);
+			incrementer_phases(); 
 			nucleotide1=nucleotide2;
 			nucleotide2=nucleotide3;
 		}
@@ -329,16 +299,16 @@ public class automateLecteurDeGenes
 		//position d'origine plus taille de la première ligne +
 		//1 char en tete de chaque bloc de 10 nucleotides +
 		//10 char en tete de chaque ligne de 60 nucléotides
-		
 		int position_relative= position - ((sequence.getDebut()-1)/60)*60;
 		
 		return (position_relative+10) + ((position_relative-1)/10) + 10*((position_relative-1)/60);
 	}
 	
 	
-	void incrementer_phase()
+	void incrementer_phases()
 	{
-		phase = (phase+1)%3;
+		phase2 = (phase2+1)%2;
+		phase3 = (phase3+1)%3;
 	}
 	
 	//cet fonction vérifie que le triplet de nucleotides en mémoire est un codon start
