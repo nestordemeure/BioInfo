@@ -42,7 +42,6 @@ public class Main {
 		System.out.println("nbr_cds "+base.get_nb_CDS());
 		System.out.println("nbr_cds_nt "+base.get_nb_CDS_non_traites());
 		System.out.println(base.get_tableauxnucleotides_string());
-
 		
 	}
 

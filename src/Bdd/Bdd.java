@@ -110,6 +110,13 @@ public class Bdd
 		tampon_nb_dinucleotides++;
 	}
 	
+	//retire un dinucleotide à la phase indiquée
+	public void retire_nucleotides (int phase, int nucleotide1, int nucleotide2) throws CharInvalideException
+	{
+		tampon_tableaudinucleotides[phase][position_of_nucleotides(nucleotide1,nucleotide2)]--;
+		tampon_nb_dinucleotides--;
+	}
+	
 //getters (resultat final)
 	public int get_nb_CDS ()
 	{

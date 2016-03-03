@@ -11,8 +11,6 @@ import exceptions.DeadCDSException;
 import exceptions.NoOriginException;
 import exceptions.ScannerNullException;
 
-//TODO next() peut sortit un null
-
 public class Parser 
 {
 	private Bdd base_de_donnees;
