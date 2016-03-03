@@ -31,8 +31,10 @@ public class Bdd
 	private int nb_CDS;
 	
 	private int nb_trinucleotides;
+	private int nbTrinucleotidesParPhase[]; //nb_trinucleotides_par_phase[phase]
 	
 	private int nb_dinucleotides;
+	private int nbDinucleotidesParPhase[]; //nb_dinucleotides_par_phase[phase]
 	
 	private int nb_CDS_non_traites;
 	
@@ -42,11 +44,12 @@ public class Bdd
 	
 	//tampon
 	private int tampon_nb_trinucleotides;
+	private int tamponNbTrinucleotidesParPhase[]; //nb_trinucleotides_par_phase[phase]
 	
 	private int tampon_nb_dinucleotides;
-		
+	private int tamponNbDinucleotidesParPhase[]; //nb_dinucleotides_par_phase[phase]
+	
 	private int tampon_tableautrinucleotides[][]; //tableautrinucleotides[phase][trinucleotide]
-
 	private int tampon_tableaudinucleotides[][]; //tableautrinucleotides[phase][trinucleotide]
 	
 	boolean empty_tamp;
@@ -61,11 +64,15 @@ public class Bdd
 		
 		nb_CDS = 0;
 		nb_trinucleotides = 0;
+		nbTrinucleotidesParPhase = new int[3];
 		nb_dinucleotides = 0;
+		nbDinucleotidesParPhase = new int[2];
 		nb_CDS_non_traites = 0;
 		
 		tampon_nb_trinucleotides = 0;
+		tamponNbTrinucleotidesParPhase = new int[3];
 		tampon_nb_dinucleotides = 0;
+		tamponNbDinucleotidesParPhase = new int[2];
 		tableautrinucleotides = new int[3][64];
 		tampon_tableautrinucleotides = new int[3][64];
 		tableaudinucleotides = new int[2][16];
@@ -90,9 +97,11 @@ public class Bdd
 	public void ajoute_nucleotides (int phase2, int phase3, int nucleotide1, int nucleotide2, int nucleotide3) throws CharInvalideException
 	{
 		tampon_tableautrinucleotides[phase3][position_of_nucleotides(nucleotide1,nucleotide2,nucleotide3)]++;
+		tamponNbTrinucleotidesParPhase[phase3]++;
 		tampon_nb_trinucleotides++;
 		
 		tampon_tableaudinucleotides[phase2][position_of_nucleotides(nucleotide1,nucleotide2)]++;
+		tamponNbDinucleotidesParPhase[phase2]++;
 		tampon_nb_dinucleotides++;
 	}
 	
@@ -100,6 +109,7 @@ public class Bdd
 	public void ajoute_nucleotides (int phase, int nucleotide1, int nucleotide2, int nucleotide3) throws CharInvalideException
 	{
 		tampon_tableautrinucleotides[phase][position_of_nucleotides(nucleotide1,nucleotide2,nucleotide3)]++;
+		tamponNbTrinucleotidesParPhase[phase]++;
 		tampon_nb_trinucleotides++;
 	}
 	
@@ -107,6 +117,7 @@ public class Bdd
 	public void ajoute_nucleotides (int phase, int nucleotide1, int nucleotide2) throws CharInvalideException
 	{
 		tampon_tableaudinucleotides[phase][position_of_nucleotides(nucleotide1,nucleotide2)]++;
+		tamponNbDinucleotidesParPhase[phase]++;
 		tampon_nb_dinucleotides++;
 	}
 	
@@ -114,6 +125,7 @@ public class Bdd
 	public void retire_nucleotides (int phase, int nucleotide1, int nucleotide2) throws CharInvalideException
 	{
 		tampon_tableaudinucleotides[phase][position_of_nucleotides(nucleotide1,nucleotide2)]--;
+		tamponNbDinucleotidesParPhase[phase]--;
 		tampon_nb_dinucleotides--;
 	}
 	
@@ -177,6 +189,8 @@ public class Bdd
 			
 			for(int i = 0 ; i<3 ; i++)
 			{
+				nbTrinucleotidesParPhase[i]+=tamponNbTrinucleotidesParPhase[i];
+				
 				for(int j = 0 ; j<64 ; j++)
 				{
 					tableautrinucleotides[i][j]+=tampon_tableautrinucleotides[i][j];
@@ -187,6 +201,8 @@ public class Bdd
 
 			for(int i = 0 ; i<2 ; i++)
 			{
+				nbDinucleotidesParPhase[i]+=tamponNbDinucleotidesParPhase[i];
+				
 				for(int j = 0 ; j<16 ; j++)
 				{
 					tableaudinucleotides[i][j]+=tampon_tableaudinucleotides[i][j];
@@ -217,6 +233,8 @@ public class Bdd
 		
 		for(int i = 0 ; i<3 ; i++)
 		{
+			nbTrinucleotidesParPhase[i]=0;
+			
 			for(int j = 0 ; j<64 ; j++)
 			{
 				tampon_tableautrinucleotides[i][j]=0;
@@ -227,6 +245,8 @@ public class Bdd
 		
 		for(int i = 0 ; i<2 ; i++)
 		{
+			nbDinucleotidesParPhase[i]=0;
+
 			for(int j = 0 ; j<16 ; j++)
 			{
 				tampon_tableaudinucleotides[i][j]=0;

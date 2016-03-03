@@ -37,7 +37,9 @@ public class automateLecteurDeGenes
 
 	//-----
 	
-	//test le codon stop et vérifie que la taille du cds est un multiple de trois
+	//test le codon stop
+	//vérifie que la taille du cds est un multiple de trois
+	//retire le dernier dinucleotide de la base si on l'a ajouté abusivement
 	void test_CDS() throws CDSInvalideException
 	{
 		if (phase3 != 0)
@@ -146,6 +148,7 @@ public class automateLecteurDeGenes
 	{
 		//importe le nucléotide situé en debut de séqence dans nucleotide3
 		//et décalle l'indice de début de séquence
+		nucleotide0=nucleotide1;
 		lire_nucleotide_sens_directe();
 		
 		//si on a finit de lire la séquence, on arrete
@@ -157,9 +160,12 @@ public class automateLecteurDeGenes
 		}
 		
 		//TODO on gére le cas égal séparément pour les dinucléotides
-		nucleotide0=nucleotide1;
-		ajoute_nucleotides();
-		lire_nucleotide_sens_directe();
+		if (debut_sequence == fin_sequence)
+		{
+			nucleotide0=nucleotide1;
+			ajoute_nucleotides();
+			lire_nucleotide_sens_directe();
+		}
 	}
 
 	//on lit de la fin au début
@@ -167,6 +173,7 @@ public class automateLecteurDeGenes
 	{
 		//importe le nucléotide situé en fin de séqence dans nucleotide3 
 		//et décalle l'indice de début de séquence
+		nucleotide0=nucleotide1;
 		lire_nucleotide_sens_complement();
 		
 		//si on a finit de lire la séquence, on arrete
@@ -178,9 +185,13 @@ public class automateLecteurDeGenes
 		}
 		
 		//TODO on gére le cas égal séparément pour les dinucléotides
-		nucleotide0=nucleotide1;
-		ajoute_nucleotides();
-		lire_nucleotide_sens_complement();
+		if (debut_sequence == fin_sequence)
+		{
+			nucleotide0=nucleotide1;
+			ajoute_nucleotides();
+			lire_nucleotide_sens_complement();
+		}
+
 	}
 	
 	//-----
