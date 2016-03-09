@@ -1,11 +1,14 @@
 package excel;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -26,6 +29,14 @@ public class ExcelWriter {
 	
 	public static void writer(String filepath, String[] chemin, Bdd base) {
 		try {
+			Pattern regex1 = Pattern.compile(".*/");
+			Matcher m = regex1.matcher(filepath);
+			if (m.find()){
+				String folderpath = m.group(0);
+				File folders = new File(folderpath);
+				folders.mkdirs();
+			}
+			
 			FileOutputStream fileOut = new FileOutputStream(filepath);
 			HSSFWorkbook workbook = new HSSFWorkbook();
 			HSSFSheet worksheet = workbook.createSheet("POI Worksheet");

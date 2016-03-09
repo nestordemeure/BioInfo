@@ -93,7 +93,7 @@ public class Main {
 		plop [1] = "groupe";
 		plop [2] = "subgroup";
 		plop [3] = "organisme";
-		ExcelWriter.writer("plop.xls",plop, base);
+		ExcelWriter.writer("plop/plop.xls",plop, base);
 		
 		
 	}
