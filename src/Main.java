@@ -5,8 +5,9 @@ import java.nio.channels.ReadableByteChannel;
 import java.util.Scanner;
 
 import manager.AccessManager;
-import tree.*;
+import excel.*;
 import java.util.Scanner;
+import parser.*;
 
 import io.Net;
 import exceptions.CharInvalideException;
@@ -86,6 +87,14 @@ public class Main {
 		System.out.println("nbr_cds_nt "+nbr_cds_nt);
 		
 		System.out.println(base.string_of_tableautrinucleotides());
+		
+		String[] plop = new String[4];
+		plop [0] = "kingdom";
+		plop [1] = "groupe";
+		plop [2] = "subgroup";
+		plop [3] = "organisme";
+		ExcelWriter.writer("plop.xls",plop, base);
+		
 		
 	}
 

@@ -1,3 +1,4 @@
+package parser;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -17,7 +18,7 @@ public class Parser
 	private ArrayList<Integer> position_CDS;
 	
 	//Fonctions
-	Parser (Bdd base, String txt)
+	public Parser (Bdd base, String txt)
 	{
 		base_de_donnees = base;
 		texte = txt;
@@ -86,7 +87,7 @@ public class Parser
 	}
 	
 	//fonction qui fait tourner le parseur
-	void parse()
+	public void parse()
 	{
 		try 
 		{ 

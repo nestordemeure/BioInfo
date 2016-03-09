@@ -1,3 +1,5 @@
+package parser;
+
 import exceptions.CharInvalideException;
 
 public class Bdd 
@@ -43,7 +45,7 @@ public class Bdd
 //fonctions publiques
 	
 //constructeur
-	Bdd (String chem)
+	public Bdd (String chem)
 	{
 		chemin = chem;
 		
@@ -83,27 +85,27 @@ public class Bdd
 	}
 	
 //getters (resultat final)
-	int get_nb_CDS ()
+	public int get_nb_CDS ()
 	{
 		return nb_CDS;
 	}
 	
-	int get_nb_trinucleotides ()
+	public int get_nb_trinucleotides ()
 	{
 		return nb_trinucleotides;
 	}
 	
-	int get_nb_CDS_non_traites ()
+	public int get_nb_CDS_non_traites ()
 	{
 		return nb_CDS_non_traites;
 	}
 	
-	int get_tableautrinucleotides (int phase, int nucleotide1, int nucleotide2, int nucleotide3) throws CharInvalideException
+	public int get_tableautrinucleotides (int phase, int nucleotide1, int nucleotide2, int nucleotide3) throws CharInvalideException
 	{
 		return tableautrinucleotides[phase][position_of_trinucleotide(nucleotide1,nucleotide2,nucleotide3)];
 	}
 	
-	int[][] get_tableautrinucleotides ()
+	public int[][] get_tableautrinucleotides ()
 	{
 		return tableautrinucleotides;
 	}
@@ -160,7 +162,7 @@ public class Bdd
 	
 	//renvois une chaine de caracteres (trinucleotide en majuscule) correspondant a une position dans le tableau
 	//il est beaucoup plus efficasse de mettre les case du tableau à coté de valeur notées en dur à l'avance étant donné qu'on sais d'offfice à quoi correspond chaque case
-	String int_to_trinucleotide (int num) throws CharInvalideException
+	public String int_to_trinucleotide (int num) throws CharInvalideException
 	{
 		if ((num<0)||(num>63)) { throw new CharInvalideException(); }
 		
@@ -230,7 +232,7 @@ public class Bdd
 		return res;
 	}
 	
-	String string_of_tableautrinucleotides ()
+	public String string_of_tableautrinucleotides ()
 	{
 		String str = "";
 		
