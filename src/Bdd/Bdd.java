@@ -30,10 +30,10 @@ public class Bdd
 	
 	private int nb_CDS;
 	
-	private int nb_trinucleotides;
+	private int nb_trinucleotides; //nb trinucleotides toutes phases confondues (triple de la valeur de chaque phase)
 	private int nbTrinucleotidesParPhase[]; //nb_trinucleotides_par_phase[phase]
 	
-	private int nb_dinucleotides;
+	private int nb_dinucleotides; //nb dinucleotides toutes phases confondues (triple de la valeur de chaque phase)
 	private int nbDinucleotidesParPhase[]; //nb_dinucleotides_par_phase[phase]
 	
 	private int nb_CDS_non_traites;
@@ -257,7 +257,7 @@ public class Bdd
 //acces tableau
 	//renvois la position du tableau associee a un triplet de caractere (sous forme d'entier)
 	//renvois une erreur si un des caracteres est invalide (codé par un -1)
-	int position_of_nucleotides (int nucleotide1, int nucleotide2, int nucleotide3) throws CharInvalideException
+	private int position_of_nucleotides (int nucleotide1, int nucleotide2, int nucleotide3) throws CharInvalideException
 	{
 		if ( (nucleotide1<0) || (nucleotide2<0) || (nucleotide3<0) )
 		{	
@@ -267,7 +267,7 @@ public class Bdd
 		return nucleotide1*16 + nucleotide2*4 + nucleotide3;
 	}
 	
-	int position_of_nucleotides (int nucleotide1, int nucleotide2) throws CharInvalideException
+	private int position_of_nucleotides (int nucleotide1, int nucleotide2) throws CharInvalideException
 	{
 		if ( (nucleotide1<0) || (nucleotide2<0) )
 		{	
@@ -279,7 +279,7 @@ public class Bdd
 	
 	//renvois une chaine de caracteres (trinucleotide en majuscule) correspondant a une position dans le tableau
 	//il est beaucoup plus efficasse de mettre les case du tableau à coté de valeur notées en dur à l'avance étant donné qu'on sais d'offfice à quoi correspond chaque case
-	String int_to_trinucleotide (int num) throws CharInvalideException
+	private String int_to_trinucleotide (int num) throws CharInvalideException
 	{
 		if ((num<0)||(num>63)) { throw new CharInvalideException(); }
 		
@@ -349,7 +349,7 @@ public class Bdd
 		return res;
 	}
 	
-	String int_to_dinucleotide (int num) throws CharInvalideException
+	private String int_to_dinucleotide (int num) throws CharInvalideException
 	{
 		if ((num<0)||(num>15)) { throw new CharInvalideException(); }
 		
