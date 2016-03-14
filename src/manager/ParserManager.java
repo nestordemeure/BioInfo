@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import configuration.Configuration;
+import excel.ExcelWriter;
 
 import Bdd.Bdd;
 import Parser.Parser;
@@ -24,6 +25,7 @@ public class ParserManager implements Runnable{
 	private ArrayList<String> path;
 	private String data_path = "";
 	private String specy_name;
+	private Bdd db;
 	
 	public ParserManager(ArrayList<String> path){
 		this.path = path;
@@ -98,8 +100,9 @@ public class ParserManager implements Runnable{
 		}
 	}
 
-	public void writeFile(){
+	public void writeFiles(){
 		String file = this.data_path+Configuration.FOLDER_SEPARATOR+"ids.txt";
+		String excelFile = this.data_path+Configuration.FOLDER_SEPARATOR+"results.xls";
 		this.createOrResetFile();
 		AccessManager.accessFile(file);
 		try{
@@ -112,6 +115,16 @@ public class ParserManager implements Runnable{
 			UIManager.log("[ParserManager : "+this.specy_name+"] Cannot write to file : "+file);
 		}
 		AccessManager.doneWithFile(file);
+		
+		AccessManager.accessFile(excelFile);
+		try{
+			String[] str = new String[this.path.size()];
+			ExcelWriter.writer(excelFile, this.path.toArray(str), this.db);
+		}catch(Exception e){
+			UIManager.log("[ParserManager : "+this.specy_name+"] Cannot write to excel file ...");
+		}
+		
+		AccessManager.doneWithFile(excelFile);
 	}
 
 	public void run() {
@@ -123,14 +136,14 @@ public class ParserManager implements Runnable{
 			if(this.isDone()){
 				UIManager.log("[ParserManager : "+this.specy_name+"] Already done ... Skipping ...");
 			} else {
-				Bdd db = new Bdd(this.data_path);
+				this.db = new Bdd(this.data_path);
 				
 				
 				for(int id : ids){
 					String url = Configuration.GEN_DOWNLOAD_URL.replaceAll("<ID>", Integer.toString(id));
 					try{
 						UIManager.log("[ParserManager : "+this.specy_name+"] Analysing "+id+"...");
-						Parser p = new Parser(db, Net.getUrl(url));
+						Parser p = new Parser(this.db, Net.getUrl(url));
 						p.parse();
 					}catch(Exception e){
 						UIManager.log("Error while parsing file "+url);
@@ -138,7 +151,7 @@ public class ParserManager implements Runnable{
 					}
 				}
 				
-				this.writeFile();
+				this.writeFiles();
 				
 				ThreadManager.threadFinished();
 				UIManager.log("[ParserManager : "+this.specy_name+"] finished ...");
