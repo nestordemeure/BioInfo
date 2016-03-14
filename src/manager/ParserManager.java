@@ -122,6 +122,7 @@ public class ParserManager implements Runnable{
 			ExcelWriter.writer(excelFile, this.path.toArray(str), this.db);
 		}catch(Exception e){
 			UIManager.log("[ParserManager : "+this.specy_name+"] Cannot write to excel file ...");
+			e.printStackTrace();
 		}
 		
 		AccessManager.doneWithFile(excelFile);
