@@ -533,7 +533,7 @@ public class Parser_deprecated
 		//change de phase et décale chaque nucléotide
 		void ajoute_trinucleotide() throws CharInvalideException
 		{
-			base_de_donnees.ajoute_trinucleotide(phase, nucleotide1, nucleotide2, nucleotide3);
+			base_de_donnees.ajoute_nucleotides(phase, nucleotide1, nucleotide2, nucleotide3);
 			incrementer_phase(); 
 			nucleotide1=nucleotide2;
 			nucleotide2=nucleotide3;

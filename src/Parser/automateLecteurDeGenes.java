@@ -9,7 +9,8 @@ import exceptions.CharInvalideException;
 public class automateLecteurDeGenes 
 {
 	Bdd base_de_donnees;
-	int phase; //0,1 ou 2
+	int phase2; //0,1
+	int phase3; //0,1 ou 2
 	boolean already_started; //indique si cet automate à déjà tourné (join)
 	
 	//exprimé en position dans la chaine de caracteres
@@ -19,6 +20,7 @@ public class automateLecteurDeGenes
 		
 	//nucleotides en mémoire
 	//si l'automate a été amorcé, il ne faut pas réinitialiser ces valeurs
+	int nucleotide0;//TODO ce nucléotide n'est mit en mémoire que lors du dernier enregistrement, il permet d'éliminer le dernir dinucléotide si besoin est
 	int nucleotide1;
 	int nucleotide2;
 	int nucleotide3;
@@ -27,31 +29,45 @@ public class automateLecteurDeGenes
 	
 	automateLecteurDeGenes (Bdd base)
 	{
-		phase=0;
+		phase2=0;
+		phase3=0;
 		already_started=false;
 		base_de_donnees=base;
 	}
 
 	//-----
 	
-	//test le codon stop et vérifie que la taille du cds est un multiple de trois
+	//test le codon stop
+	//vérifie que la taille du cds est un multiple de trois
+	//retire le dernier dinucleotide de la base si on l'a ajouté abusivement
 	void test_CDS() throws CDSInvalideException
 	{
-		//taille
-		//on vérifie que la taille de la sequence est bien un multiple de trois
-		if (phase != 0)
+		if (phase3 != 0)
 		{
+			//taille
+			//on vérifie que la taille de la sequence est bien un multiple de trois
 			throw new CDSInvalideException("taille invalide");
 		}
-		else
-		{				
+		else if ( ! ((nucleotide1 == 3) && ((nucleotide2==0)&&((nucleotide3==2)||(nucleotide3==0))) || ((nucleotide2==2)&&(nucleotide3==0))) )
+		{
 			//codon stop
 			//on vérifie que le dernier triplet est bien un codon stop (TAA,TAG,TGA)
-			if ( ! ((nucleotide1 == 3) && ((nucleotide2==0)&&((nucleotide3==2)||(nucleotide3==0))) || ((nucleotide2==2)&&(nucleotide3==0))) )
+			throw new CDSInvalideException("codon stop invalide " +nucleotide1+nucleotide2+nucleotide3);
+		}
+		else if (phase2 != 0)
+		{
+			try
 			{
-				throw new CDSInvalideException("codon stop invalide " +nucleotide1+nucleotide2+nucleotide3);
+			//le dernier dinucléotide rentré doit etre un 1 -> la phase2 doit valoir 0
+			//TODO ne pas prendre le dernier dinucléotide en date
+			base_de_donnees.retire_nucleotides(0, nucleotide0, nucleotide1);
+			}
+			catch(CharInvalideException e)
+			{
+				throw new CDSInvalideException("char invalide");
 			}
 		}
+			
 	}
 	
 	void lire_sequence(sequence seq) throws CDSInvalideException
@@ -60,9 +76,6 @@ public class automateLecteurDeGenes
 		
 		debut_sequence = position_string_of_numeros_nucleotide(sequence.getDebut());
 		fin_sequence = position_string_of_numeros_nucleotide(sequence.getFin());
-		
-		//TODO inutile depuis qu'on a déplacé le test avant?
-		//if (debut_sequence>fin_sequence) { throw new CDSInvalideException("debut superieur à fin"); }
 		
 		//permet de tester le codon start sans perdre le point de depart
 		int position_sequence_tampon;
@@ -91,7 +104,7 @@ public class automateLecteurDeGenes
 			else //on reprend après un join
 			{
 				//on sauve le triplet qui finissait la section précédente du join
-				ajoute_trinucleotide();
+				ajoute_nucleotides();
 				
 				lire_sequence_sens_directe();
 			}
@@ -119,7 +132,7 @@ public class automateLecteurDeGenes
 			else  //on reprend après un join
 			{
 				//on sauve le triplet qui finissait la section précédente du join
-				ajoute_trinucleotide();
+				ajoute_nucleotides();
 				
 				lire_sequence_sens_complement();
 			}
@@ -129,70 +142,56 @@ public class automateLecteurDeGenes
 	}
 	
 	//-----
-	/*
+
 	//on lit du début à la fin
 	void lire_sequence_sens_directe() throws CDSInvalideException
 	{
 		//importe le nucléotide situé en debut de séqence dans nucleotide3
 		//et décalle l'indice de début de séquence
+		nucleotide0=nucleotide1;
 		lire_nucleotide_sens_directe();
 		
 		//si on a finit de lire la séquence, on arrete
 		//on ne lit pas le dernier triplet (il sera réinjecté plus tard si nécéssaire)
-		if (debut_sequence <= fin_sequence)
+		while (debut_sequence < fin_sequence)
 		{
-			ajoute_trinucleotide();
-			lire_sequence_sens_directe();
+			ajoute_nucleotides();
+			lire_nucleotide_sens_directe();
 		}
-	}
-	*/
-	//TODO redaction avec une while pour voir ce que sa donne
-	//on lit du début à la fin
-	void lire_sequence_sens_directe() throws CDSInvalideException
-	{
-		//importe le nucléotide situé en debut de séqence dans nucleotide3
-		//et décalle l'indice de début de séquence
-		lire_nucleotide_sens_directe();
 		
-		//si on a finit de lire la séquence, on arrete
-		//on ne lit pas le dernier triplet (il sera réinjecté plus tard si nécéssaire)
-		while (debut_sequence <= fin_sequence)
+		//TODO on gére le cas égal séparément pour les dinucléotides
+		if (debut_sequence == fin_sequence)
 		{
-			ajoute_trinucleotide();
+			nucleotide0=nucleotide1;
+			ajoute_nucleotides();
 			lire_nucleotide_sens_directe();
 		}
 	}
-	/*
+
 	//on lit de la fin au début
 	void lire_sequence_sens_complement() throws CDSInvalideException
 	{
 		//importe le nucléotide situé en fin de séqence dans nucleotide3 
 		//et décalle l'indice de début de séquence
+		nucleotide0=nucleotide1;
 		lire_nucleotide_sens_complement();
 		
 		//si on a finit de lire la séquence, on arrete
 		//on ne lit pas le dernier triplet (il sera réinjecté plus tard si nécéssaire)
-		if (debut_sequence <= fin_sequence)
+		while (debut_sequence < fin_sequence)
 		{
-			ajoute_trinucleotide();
-			lire_sequence_sens_complement();
-		}
-	}
-	*/
-	//TODO redaction avec une while pour voir ce que sa donne
-	void lire_sequence_sens_complement() throws CDSInvalideException
-	{
-		//importe le nucléotide situé en fin de séqence dans nucleotide3 
-		//et décalle l'indice de début de séquence
-		lire_nucleotide_sens_complement();
-		
-		//si on a finit de lire la séquence, on arrete
-		//on ne lit pas le dernier triplet (il sera réinjecté plus tard si nécéssaire)
-		while (debut_sequence <= fin_sequence)
-		{
-			ajoute_trinucleotide();
+			ajoute_nucleotides();
 			lire_nucleotide_sens_complement();
 		}
+		
+		//TODO on gére le cas égal séparément pour les dinucléotides
+		if (debut_sequence == fin_sequence)
+		{
+			nucleotide0=nucleotide1;
+			ajoute_nucleotides();
+			lire_nucleotide_sens_complement();
+		}
+
 	}
 	
 	//-----
@@ -311,12 +310,12 @@ public class automateLecteurDeGenes
 			
 	//ajoute un trinucléotide à la bdd
 	//change de phase et décale chaque nucléotide
-	void ajoute_trinucleotide() throws CDSInvalideException
+	void ajoute_nucleotides() throws CDSInvalideException
 	{
 		try
 		{
-			base_de_donnees.ajoute_trinucleotide(phase, nucleotide1, nucleotide2, nucleotide3);
-			incrementer_phase(); 
+			base_de_donnees.ajoute_nucleotides(phase2,phase3, nucleotide1, nucleotide2, nucleotide3);
+			incrementer_phases(); 
 			nucleotide1=nucleotide2;
 			nucleotide2=nucleotide3;
 		}
@@ -332,16 +331,16 @@ public class automateLecteurDeGenes
 		//position d'origine plus taille de la première ligne +
 		//1 char en tete de chaque bloc de 10 nucleotides +
 		//10 char en tete de chaque ligne de 60 nucléotides
-		
 		int position_relative= position - ((sequence.getDebut()-1)/60)*60;
 		
 		return (position_relative+10) + ((position_relative-1)/10) + 10*((position_relative-1)/60);
 	}
 	
 	
-	void incrementer_phase()
+	void incrementer_phases()
 	{
-		phase = (phase+1)%3;
+		phase2 = (phase2+1)%2;
+		phase3 = (phase3+1)%3;
 	}
 	
 	//cet fonction vérifie que le triplet de nucleotides en mémoire est un codon start

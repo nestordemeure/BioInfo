@@ -58,7 +58,6 @@ public class CDS
 				automateLecteurDeGenes auto = new automateLecteurDeGenes(base_de_donnees);
 			
 				//lecture des sequences
-				//TODO lit on les séquences dans l'ordre ?
 				for (sequence seq : sequence_list)
 				{
 					//char_erreur si il croise un caractère qui n'est pas un AGCT
