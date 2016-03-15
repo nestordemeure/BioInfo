@@ -144,10 +144,12 @@ public class ExcelWriter {
 			//on remplit les phases probabilités
 			for (int i =0; i<3; i++){
 				double total = rowlist.get(71).getCell(1+2*i).getNumericCellValue();
-				for (int j = 0; j<64; j++){
-					rowlist.get(j+7).getCell(2+2*i).setCellStyle(floatStyle);
-					double tmp = rowlist.get(j+7).getCell(1+2*i).getNumericCellValue();
-					rowlist.get(j+7).getCell(2+2*i).setCellValue(100*tmp/total);
+				if (total != 0){
+					for (int j = 0; j<64; j++){
+						rowlist.get(j+7).getCell(2+2*i).setCellStyle(floatStyle);
+						double tmp = rowlist.get(j+7).getCell(1+2*i).getNumericCellValue();
+						rowlist.get(j+7).getCell(2+2*i).setCellValue(100*tmp/total);
+					}
 				}
 			}
 			
