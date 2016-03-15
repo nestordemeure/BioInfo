@@ -349,7 +349,7 @@ public class Bdd
 		return res;
 	}
 	
-	private String int_to_dinucleotide (int num) throws CharInvalideException
+	public String int_to_dinucleotide (int num) throws CharInvalideException
 	{
 		if ((num<0)||(num>15)) { throw new CharInvalideException(); }
 		
