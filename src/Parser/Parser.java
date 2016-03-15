@@ -22,10 +22,12 @@ public class Parser
 	{
 		base_de_donnees = base;
 		scanner = scan;
-		CDS_list = new ArrayList<CDS>();
-		table_des_reservations = new ReservationTable();
+		
+		//TODO initialisées avant aprse uniquement?
+		//CDS_list = new ArrayList<CDS>();
+		//table_des_reservations = new ReservationTable();
 	}
-	
+/*
 	//fonction qui fait tourner le parseur
 	public void parse() throws ScannerNullException
 	{
@@ -36,10 +38,33 @@ public class Parser
 		} 
 		catch (NoOriginException eorig) 
 		{ 
-			/*en l'absence d'origine dans un fichier, on n'en fait rien*/
+			//en l'absence d'origine dans un fichier, on n'en fait rien
 		}
 	}
-	
+*/
+
+	//TODO protatype qui peut faire une liste de fichier mit bout à bout
+	//fonction qui fait tourner le parseur
+	public void parse() throws ScannerNullException
+	{
+		while ( scanner.hasNext() )
+		{
+			//on réinitialise le systhème de réservation
+			CDS_list = new ArrayList<CDS>();
+			table_des_reservations = new ReservationTable();
+			
+			try 
+			{ 
+				parser_entete();
+				parser_genome();
+			} 
+			catch (NoOriginException eorig) 
+			{ 
+				/*en l'absence d'origine dans un fichier, on n'en fait rien*/
+			}
+		}
+	}
+
 //--------------------------------------------------------------------------
 //lire l'entete
 	
@@ -233,9 +258,9 @@ public class Parser
 				return automate_interval(position, sens_de_lecture, cds); //interval simple
 			}
 		}
-		catch ( StringIndexOutOfBoundsException e)
+		catch ( StringIndexOutOfBoundsException e) //fin de la ligne
 		{
-			//TODO la CDS continue peut-etre à la ligne suivante, il faut l'importer et essayer de la traiter
+			//le CDS continue peut-etre à la ligne suivante, il faut l'importer et la traiter
 			importAndCheckNull(scanner.next());
 			int new_position =21;
 			
