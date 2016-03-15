@@ -13,11 +13,10 @@ import ui.UIManager;
 
 public class ThreadManager {
 	
-	protected static int NB_THREADS;
+	protected static int NB_THREADS = Configuration.THREADS_NUMBER;
 	private static Lock mainLock = new ReentrantLock();
 	
 	public static void start(Tree t, ArrayList<String> path) {
-		NB_THREADS = Configuration.THREADS_NUMBER;
 		Object[] nodes = t.nodes();
 		
 		for (Object o : nodes) {

@@ -130,20 +130,23 @@ public class ParserManager implements Runnable{
 
 	public void run() {
 		UIManager.log("[ParserManager : "+this.specy_name+"] starting ...");
+		// Création du repertoire
 		if( ! this.createPath()){
 			UIManager.log("[ParserManager : "+this.specy_name+"] Unable to create path : "+data_path+" stopping thread.");
 		} else {
+			// Recuperation des Ids
 			ids = IdFetcher.getIds(this.specy_name);
+			// S'il n'y a aucune différence (avec le fichier ids.txt).
 			if(this.isDone()){
+				// On skip.
 				UIManager.log("[ParserManager : "+this.specy_name+"] Already done ... Skipping ...");
 			} else {
+				// S'il y a des différences, on lance le calcul.
 				this.db = new Bdd(this.data_path);
-				
 				
 				for(int id : ids){
 					String url = Configuration.GEN_DOWNLOAD_URL.replaceAll("<ID>", Integer.toString(id));
 					try{
-						UIManager.log("[ParserManager : "+this.specy_name+"] Analysing "+id+"...");
 						Parser p = new Parser(this.db, Net.getUrl(url));
 						p.parse();
 					}catch(Exception e){
@@ -153,10 +156,10 @@ public class ParserManager implements Runnable{
 				}
 				
 				this.writeFiles();
-				
-				ThreadManager.threadFinished();
-				UIManager.log("[ParserManager : "+this.specy_name+"] finished ...");
 			}
 		}
+		// Arret de thread
+		ThreadManager.threadFinished(); // On previens le threadmanager.
+		UIManager.log("[ParserManager : "+this.specy_name+"] finished ...");
 	}
 }
