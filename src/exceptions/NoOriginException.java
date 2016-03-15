@@ -4,6 +4,10 @@ public class NoOriginException extends Exception
 {
 	public NoOriginException()
 	{
-		System.out.println();
+	}
+	
+	public NoOriginException(String str)
+	{
+		System.out.println(str);
 	}
 }

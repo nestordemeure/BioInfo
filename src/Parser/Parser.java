@@ -27,23 +27,9 @@ public class Parser
 		//CDS_list = new ArrayList<CDS>();
 		//table_des_reservations = new ReservationTable();
 	}
-/*
-	//fonction qui fait tourner le parseur
-	public void parse() throws ScannerNullException
-	{
-		try 
-		{ 
-			parser_entete();
-			parser_genome();
-		} 
-		catch (NoOriginException eorig) 
-		{ 
-			//en l'absence d'origine dans un fichier, on n'en fait rien
-		}
-	}
-*/
 
-	//TODO protatype qui peut faire une liste de fichier mit bout à bout
+	//TODO prototype qui peut faire une liste de fichier mit bout à bout
+	//rend une erreur origine systhématique à la fin du fichier
 	//pour plus d'efficassitée, il faut peut-etre ajouter un argument qui définie si les entrées seront multiples?
 	
 	//fonction qui fait tourner le parseur
@@ -84,13 +70,13 @@ public class Parser
 			 * si on croise un CDS, on l'ajoute et on repars
 			 * sinon, on continue
 			 */
-			while (recherche_en_cour)
+			while (recherche_en_cour) //TODO ce systhème peut poser des problèmes avec des CDS sans origines bout à bout
 			{
-				//TODO ce systhème peut poser des problèmes avec des CDS mal concus bout à bout
 				importAndCheckNull(); //succeptible de renvoyer une exception qu'on va catcher
+				
 				if (ligne_actuelle.startsWith("//")) //on est arrivé au bout du fichier sans succès
 				{
-					throw new NoOriginException();
+					throw new NoOriginException("no origin");
 				}
 				else if (ligne_actuelle.startsWith("ORIGIN")) //on a finit
 				{
@@ -162,13 +148,13 @@ public class Parser
 	//fait avancer un scanner jusqu'a atteindre le préfixe donné
 	//consomme la ligne qui contient le préfixe
 	//renvois une exception si on ne peux pas lire l'élément suivant
-	void trouver_prefix(String prefix) throws NoSuchElementException, ScannerNullException
+	void trouver_prefix(String prefix) throws NoSuchElementException, ScannerNullException, NoOriginException
 	{
 		importAndCheckNull();
 		
 		if (ligne_actuelle.startsWith("//"))
 		{
-			throw new NoSuchElementException();
+			throw new NoOriginException();
 		}
 		else if (!ligne_actuelle.startsWith(prefix))
 		{
