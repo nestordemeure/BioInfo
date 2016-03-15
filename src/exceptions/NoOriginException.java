@@ -4,6 +4,6 @@ public class NoOriginException extends Exception
 {
 	public NoOriginException()
 	{
-		System.out.println("Pas d'origine");
+		System.out.println();
 	}
 }

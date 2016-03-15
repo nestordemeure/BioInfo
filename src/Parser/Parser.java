@@ -44,6 +44,8 @@ public class Parser
 */
 
 	//TODO protatype qui peut faire une liste de fichier mit bout à bout
+	//pour plus d'efficassitée, il faut peut-etre ajouter un argument qui définie si les entrées seront multiples?
+	
 	//fonction qui fait tourner le parseur
 	public void parse() throws ScannerNullException
 	{
@@ -54,7 +56,7 @@ public class Parser
 			table_des_reservations = new ReservationTable();
 			
 			try 
-			{ 
+			{
 				parser_entete();
 				parser_genome();
 			} 
@@ -84,18 +86,19 @@ public class Parser
 			 */
 			while (recherche_en_cour)
 			{
-				importAndCheckNull(scanner.next()); //succeptible de renvoyer une exception qu'on va catcher
-				
-				if (ligne_actuelle.startsWith("ORIGIN")) //on a finit
+				//TODO ce systhème peut poser des problèmes avec des CDS mal concus bout à bout
+				importAndCheckNull(); //succeptible de renvoyer une exception qu'on va catcher
+				if (ligne_actuelle.startsWith("//")) //on est arrivé au bout du fichier sans succès
+				{
+					throw new NoOriginException();
+				}
+				else if (ligne_actuelle.startsWith("ORIGIN")) //on a finit
 				{
 					recherche_en_cour=false;
 				}
-				else
+				else if (ligne_actuelle.startsWith("CDS",5)) //on a un CDS (5 espaces après le début de la ligne)
 				{
-					if (ligne_actuelle.startsWith("CDS",5)) //on a un CDS (5 espaces après le début de la ligne)
-					{
-						parser_descripteur_CDS();
-					}
+					parser_descripteur_CDS();
 				}
 			}
 		}
@@ -161,17 +164,23 @@ public class Parser
 	//renvois une exception si on ne peux pas lire l'élément suivant
 	void trouver_prefix(String prefix) throws NoSuchElementException, ScannerNullException
 	{
-		importAndCheckNull(scanner.next());
+		importAndCheckNull();
 		
-		if (!ligne_actuelle.startsWith(prefix))
+		if (ligne_actuelle.startsWith("//"))
+		{
+			throw new NoSuchElementException();
+		}
+		else if (!ligne_actuelle.startsWith(prefix))
 		{
 			trouver_prefix(prefix);
 		}
 	}
 		
 	//renvois une exception si le scanneur a retourner un null au lieu d'un string
-	void importAndCheckNull(String str) throws ScannerNullException
+	void importAndCheckNull() throws ScannerNullException
 	{
+		String str = scanner.next();
+		
 		if (str == null)
 		{
 			throw new ScannerNullException();
@@ -188,7 +197,7 @@ public class Parser
 	{
 		while (num_ligne_actuelle<num_ligne_cible) //on n'a pas encore consommé la ligne cible
 		{
-			importAndCheckNull(scanner.next());
+			importAndCheckNull();
 			
 			//on ajoute la ligne lue à toute les séquences qu'elle interesse
 			for(IndexesSequence i : indexesSequenceList)
@@ -261,7 +270,7 @@ public class Parser
 		catch ( StringIndexOutOfBoundsException e) //fin de la ligne
 		{
 			//le CDS continue peut-etre à la ligne suivante, il faut l'importer et la traiter
-			importAndCheckNull(scanner.next());
+			importAndCheckNull();
 			int new_position =21;
 			
 			return automate_sequence(new_position, sens_de_lecture, cds);
