@@ -34,7 +34,7 @@ public class Main {
 		//Scanner scanneur = Net.getUrl("http://jonathancrabtree.github.io/Circleator/tutorials/gb_annotation/L42023.1.gb");
 		Scanner scanneur = Net.getUrl("file:///home/nestor/Cours/2A/bioinformatique/sequence.gb");
 		Parser parseur = new Parser(base,scanneur);
-		parseur.parse();
+		parseur.parse(2);
 		
 		//affichage du contenus de la bdd
 		System.out.println("nbr_tri "+base.get_nb_trinucleotides());

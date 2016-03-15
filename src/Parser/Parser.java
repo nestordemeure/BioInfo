@@ -22,16 +22,9 @@ public class Parser
 	{
 		base_de_donnees = base;
 		scanner = scan;
-		
-		//TODO initialisées avant aprse uniquement?
-		//CDS_list = new ArrayList<CDS>();
-		//table_des_reservations = new ReservationTable();
 	}
 
-	//TODO prototype qui peut faire une liste de fichier mit bout à bout
-	//rend une erreur origine systhématique à la fin du fichier
-	//pour plus d'efficassitée, il faut peut-etre ajouter un argument qui définie si les entrées seront multiples?
-	
+	//TODO pour plus d'efficassitée, il faut peut-etre ajouter un argument qui définie si les entrées seront multiples?
 	//fonction qui fait tourner le parseur
 	public void parse() throws ScannerNullException
 	{
@@ -49,6 +42,29 @@ public class Parser
 			catch (NoOriginException eorig) 
 			{ 
 				/*en l'absence d'origine dans un fichier, on n'en fait rien*/
+			}
+		}
+	}
+	
+	public void parse(int filenum /* nombre de fichiers aglomérées*/ ) throws ScannerNullException
+	{
+		for ( int i=1 ; i <= filenum ; i++ )
+		{
+			if (scanner.hasNext())
+			{
+				//on réinitialise le systhème de réservation
+				CDS_list = new ArrayList<CDS>();
+				table_des_reservations = new ReservationTable();
+				
+				try 
+				{
+					parser_entete();
+					parser_genome();
+				} 
+				catch (NoOriginException eorig) 
+				{ 
+					/*en l'absence d'origine dans un fichier, on n'en fait rien*/
+				}
 			}
 		}
 	}
@@ -70,7 +86,7 @@ public class Parser
 			 * si on croise un CDS, on l'ajoute et on repars
 			 * sinon, on continue
 			 */
-			while (recherche_en_cour) //TODO ce systhème peut poser des problèmes avec des CDS sans origines bout à bout
+			while (recherche_en_cour)
 			{
 				importAndCheckNull(); //succeptible de renvoyer une exception qu'on va catcher
 				
