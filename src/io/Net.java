@@ -33,7 +33,8 @@ public class Net {
 				UIManager.log("Error while downloading : "+url+" (Try "+(nb_try + 1)+"/10)");
 				nb_try ++;
 				try {
-					Thread.sleep(Configuration.NET_TIME_BETWEEN_TRIES);
+					long sleep_time = (long)Math.floor(Math.random() * Configuration.NET_TIME_BETWEEN_TRIES);
+					Thread.sleep(sleep_time);
 				} catch (InterruptedException e1) {
 				}
 			}

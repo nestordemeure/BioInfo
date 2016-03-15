@@ -9,7 +9,7 @@ public class Configuration {
 	
 	// --- Net configuration ---
 	public static int NET_MAX_DOWNLOAD_TRIES = 10; // Nombre d'essais pour télécharger un fichier.
-	public static int NET_TIME_BETWEEN_TRIES = 1000; // Temps entre deux essais (en ms).
+	public static int NET_TIME_BETWEEN_TRIES = 30000; // Temps entre deux essais (en ms).
 	
 	
 	// --- IdFetcher Configuration ---
