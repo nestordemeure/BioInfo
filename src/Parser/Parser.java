@@ -218,17 +218,24 @@ public class Parser
 	//match une séquence
 	int automate_sequence(String ligne, int position, boolean sens_de_lecture, CDS cds) throws CDSInvalideException
 	{
-		if (ligne.charAt(position) == 'c') //complement
+		try
 		{
-			return automate_complement(ligne, position, sens_de_lecture, cds);
+			if (ligne.charAt(position) == 'c') //complement
+			{
+				return automate_complement(ligne, position, sens_de_lecture, cds);
+			}
+			else if (ligne.charAt(position) == 'j') //joint
+			{
+				return automate_join(ligne, position, sens_de_lecture, cds);
+			}
+			else
+			{
+				return automate_interval(ligne, position, sens_de_lecture, cds); //interval simple
+			}
 		}
-		else if (ligne.charAt(position) == 'j') //joint
+		catch ( StringIndexOutOfBoundsException e)
 		{
-			return automate_join(ligne, position, sens_de_lecture, cds);
-		}
-		else
-		{
-			return automate_interval(ligne, position, sens_de_lecture, cds); //interval simple
+			throw new CDSInvalideException();
 		}
 	}
 		
