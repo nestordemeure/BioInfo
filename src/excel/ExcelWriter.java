@@ -20,7 +20,8 @@ import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.CellStyle;
 
 import exceptions.CharInvalideException;
-import parser.*;
+import Parser.*;
+import Bdd.*;
 
 
 
