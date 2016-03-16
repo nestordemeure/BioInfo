@@ -113,6 +113,14 @@ public class Bdd
 		tampon_nb_trinucleotides++;
 	}
 	
+	//ajoute plusieurs tri nucleotides a la phase indiquée
+		public void ajoute_nucleotides_mult (int phase, int nucleotide1, int nucleotide2, int nucleotide3, int nbnucleotides) throws CharInvalideException
+		{
+			tampon_tableautrinucleotides[phase][position_of_nucleotides(nucleotide1,nucleotide2,nucleotide3)]+= nbnucleotides;
+			tamponNbTrinucleotidesParPhase[phase]+= nbnucleotides;
+			tampon_nb_trinucleotides+= nbnucleotides;
+		}
+	
 	//ajoute un dinucleotide à la phase indiquée
 	public void ajoute_nucleotides (int phase, int nucleotide1, int nucleotide2) throws CharInvalideException
 	{
@@ -120,6 +128,14 @@ public class Bdd
 		tamponNbDinucleotidesParPhase[phase]++;
 		tampon_nb_dinucleotides++;
 	}
+	
+	//ajoute plusieurs dinucleotides à la phase indiquée
+		public void ajoute_nucleotides_mult (int phase, int nucleotide1, int nucleotide2, int nbnucleotides) throws CharInvalideException
+		{
+			tampon_tableaudinucleotides[phase][position_of_nucleotides(nucleotide1,nucleotide2)]+= nbnucleotides;
+			tamponNbDinucleotidesParPhase[phase]+= nbnucleotides;
+			tampon_nb_dinucleotides+= nbnucleotides;
+		}
 	
 	//retire un dinucleotide à la phase indiquée
 	public void retire_nucleotides (int phase, int nucleotide1, int nucleotide2) throws CharInvalideException
