@@ -77,7 +77,7 @@ public class Parser
 		try
 		{
 			//on se place dans la catégorie features
-			trouver_prefix("FEATURES");
+			trouverPrefix("FEATURES");
 			
 			boolean recherche_en_cour = true;
 
@@ -164,18 +164,18 @@ public class Parser
 	//fait avancer un scanner jusqu'a atteindre le préfixe donné
 	//consomme la ligne qui contient le préfixe
 	//renvois une exception si on ne peux pas lire l'élément suivant
-	void trouver_prefix(String prefix) throws NoSuchElementException, ScannerNullException, NoOriginException
+	void trouverPrefix(String prefix) throws NoSuchElementException, ScannerNullException, NoOriginException
 	{
-		importAndCheckNull();
-		
-		if (ligne_actuelle.startsWith("//"))
+		do
 		{
-			throw new NoOriginException();
+			importAndCheckNull();
+			
+			if (ligne_actuelle.startsWith("//"))
+			{
+				throw new NoOriginException();
+			}
 		}
-		else if (!ligne_actuelle.startsWith(prefix))
-		{
-			trouver_prefix(prefix);
-		}
+		while(!ligne_actuelle.startsWith(prefix));
 	}
 		
 	//renvois une exception si le scanneur a retourner un null au lieu d'un string
