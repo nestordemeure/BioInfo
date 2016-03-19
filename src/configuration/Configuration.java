@@ -18,6 +18,7 @@ public class Configuration {
 	public static String IDS_SEARCH_URL = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=nuccore&retmax=<PER_PAGE>&term=<TERM>[Organism]&retstart=<START>"; // URL de recherche pour les IDS
 
 	// --- ParserManager Configuration ---	
+	public static int GEN_PER_DOWNLOAD = 5;
 	public static String GEN_DOWNLOAD_URL = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=<ID>&rettype=gb"; // URL a utiliser pour télécharger les genes
 	
 	// --- ThreadManager Configuration ---
