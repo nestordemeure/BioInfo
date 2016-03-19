@@ -10,14 +10,6 @@ public class Main {
 		
 		ThreadManager.start(plop, new ArrayList<String>());
 		
-//		Tree<Tree> tree = new Tree<Tree>();
-//		
-//		if(! tree.contains("eukaryota")){
-//			tree.add("eukaryota", new Tree<Tree>());
-//		}
-//		
-//		Tree cur = tree.get("eukaryota");
-		
 	}
 
 }
