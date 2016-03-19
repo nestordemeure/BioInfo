@@ -2,7 +2,6 @@ package Parser;
 
 import Bdd.Bdd;
 import Parser.CDS.sequence;
-import Parser.Parser_deprecated.Automate_lecteur_de_genes;
 import exceptions.CDSInvalideException;
 import exceptions.CharInvalideException;
 
