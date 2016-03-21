@@ -22,24 +22,53 @@ public class Parser
 	{
 		base_de_donnees = base;
 		scanner = scan;
-		CDS_list = new ArrayList<CDS>();
-		table_des_reservations = new ReservationTable();
 	}
-	
+
+	//TODO pour plus d'efficassitée, il faut peut-etre ajouter un argument qui définie si les entrées seront multiples?
 	//fonction qui fait tourner le parseur
 	public void parse() throws ScannerNullException
 	{
-		try 
-		{ 
-			parser_entete();
-			parser_genome();
-		} 
-		catch (NoOriginException eorig) 
-		{ 
-			/*en l'absence d'origine dans un fichier, on n'en fait rien*/
+		while ( scanner.hasNext() )
+		{
+			//on réinitialise le systhème de réservation
+			CDS_list = new ArrayList<CDS>();
+			table_des_reservations = new ReservationTable();
+			
+			try 
+			{
+				parser_entete();
+				parser_genome();
+			} 
+			catch (NoOriginException eorig) 
+			{ 
+				/*en l'absence d'origine dans un fichier, on n'en fait rien*/
+			}
 		}
 	}
 	
+	public void parse(int filenum /* nombre de fichiers aglomérées*/ ) throws ScannerNullException
+	{
+		for ( int i=1 ; i <= filenum ; i++ )
+		{
+			if (scanner.hasNext())
+			{
+				//on réinitialise le systhème de réservation
+				CDS_list = new ArrayList<CDS>();
+				table_des_reservations = new ReservationTable();
+				
+				try 
+				{
+					parser_entete();
+					parser_genome();
+				} 
+				catch (NoOriginException eorig) 
+				{ 
+					/*en l'absence d'origine dans un fichier, on n'en fait rien*/
+				}
+			}
+		}
+	}
+
 //--------------------------------------------------------------------------
 //lire l'entete
 	
@@ -50,7 +79,6 @@ public class Parser
 			//on se place dans la catégorie features
 			trouver_prefix("FEATURES");
 			
-			String ligne_actuelle;
 			boolean recherche_en_cour = true;
 
 			/*on parcours l'entete
@@ -60,18 +88,19 @@ public class Parser
 			 */
 			while (recherche_en_cour)
 			{
-				ligne_actuelle = checkNull(scanner.next()); //succeptible de renvoyer une exception qu'on va catcher
+				importAndCheckNull(); //succeptible de renvoyer une exception qu'on va catcher
 				
-				if (ligne_actuelle.startsWith("ORIGIN")) //on a finit
+				if (ligne_actuelle.startsWith("//")) //on est arrivé au bout du fichier sans succès
+				{
+					throw new NoOriginException("no origin");
+				}
+				else if (ligne_actuelle.startsWith("ORIGIN")) //on a finit
 				{
 					recherche_en_cour=false;
 				}
-				else
+				else if (ligne_actuelle.startsWith("CDS",5)) //on a un CDS (5 espaces après le début de la ligne)
 				{
-					if (ligne_actuelle.startsWith("CDS",5)) //on a un CDS (5 espaces après le début de la ligne)
-					{
-						parser_descripteur_CDS(ligne_actuelle);
-					}
+					parser_descripteur_CDS();
 				}
 			}
 		}
@@ -82,13 +111,13 @@ public class Parser
 	}
 		
 	//prend une ligne contenant un CDS en entrée et l'ajoute à la liste de CDS en le parsant
-	void parser_descripteur_CDS(String ligne)
-	{
+	void parser_descripteur_CDS() throws ScannerNullException
+	{		
 		CDS cds = new CDS(base_de_donnees);
 		try 
 		{
 			table_des_reservations.open(); //on indique qu'on va passer de nouvelles réservations
-			automate_sequence(ligne, 21, true, cds); //la description du CDS commence 21char après le début de la ligne
+			automate_sequence(21, true, cds); //la description du CDS commence 21char après le début de la ligne
 			CDS_list.add(cds);
 			table_des_reservations.close(); //on officialise les réservations passées
 		} 
@@ -129,48 +158,55 @@ public class Parser
 //--------------------------------------------------------------------------
 //fonctions pour le scanner
 	
+	//la dernière ligne importée par le scanner
+	private String ligne_actuelle = new String();
+	
 	//fait avancer un scanner jusqu'a atteindre le préfixe donné
 	//consomme la ligne qui contient le préfixe
 	//renvois une exception si on ne peux pas lire l'élément suivant
-	void trouver_prefix(String prefix) throws NoSuchElementException, ScannerNullException
+	void trouver_prefix(String prefix) throws NoSuchElementException, ScannerNullException, NoOriginException
 	{
-		String ligne_actuelle = checkNull(scanner.next());
+		importAndCheckNull();
 		
-		if (!ligne_actuelle.startsWith(prefix))
+		if (ligne_actuelle.startsWith("//"))
+		{
+			throw new NoOriginException();
+		}
+		else if (!ligne_actuelle.startsWith(prefix))
 		{
 			trouver_prefix(prefix);
 		}
 	}
-	
+		
 	//renvois une exception si le scanneur a retourner un null au lieu d'un string
-	String checkNull(String str) throws ScannerNullException
+	void importAndCheckNull() throws ScannerNullException
 	{
+		String str = scanner.next();
+		
 		if (str == null)
 		{
 			throw new ScannerNullException();
 		}
 		else
 		{
-			return str;
+			ligne_actuelle = str;
 		}
 	}
 	
 	//lit des lignes et les distribues au séquences listées
 	//retourne le nouveau numéros de ligne actuelle (dernière ligne consommée en date)
-	int distribuer_lignes(int ligne_actuelle, int ligne_cible, ArrayList<IndexesSequence> indexesSequenceList) throws ScannerNullException
+	int distribuer_lignes(int num_ligne_actuelle, int num_ligne_cible, ArrayList<IndexesSequence> indexesSequenceList) throws ScannerNullException
 	{
-		String ligne;
-		
-		while (ligne_actuelle<ligne_cible) //on n'a pas encore consommé la ligne cible
+		while (num_ligne_actuelle<num_ligne_cible) //on n'a pas encore consommé la ligne cible
 		{
-			ligne = checkNull(scanner.next());
+			importAndCheckNull();
 			
 			//on ajoute la ligne lue à toute les séquences qu'elle interesse
 			for(IndexesSequence i : indexesSequenceList)
 			{
 				try
 				{
-					CDS_list.get(i.getIndexCds()).appendLigne(i.getIndexSequence(),ligne);
+					CDS_list.get(i.getIndexCds()).appendLigne(i.getIndexSequence(),ligne_actuelle);
 				}
 				catch (DeadCDSException e) //le cds ne sert plus
 				{
@@ -178,10 +214,10 @@ public class Parser
 				}
 			}
 			
-			ligne_actuelle++;
+			num_ligne_actuelle++;
 		}
 		
-		return ligne_actuelle;
+		return num_ligne_actuelle;
 	}
 	
 	//convertit une position dans le génome en son numéros de ligne
@@ -214,45 +250,49 @@ public class Parser
 	 * 
 	 * transporte avec elle sa position actuelle et le sens de lecture (true pour directe, false pour complement)
 	 */
-		
+	
 	//match une séquence
-	int automate_sequence(String ligne, int position, boolean sens_de_lecture, CDS cds) throws CDSInvalideException
+	int automate_sequence(int position, boolean sens_de_lecture, CDS cds) throws CDSInvalideException, ScannerNullException
 	{
 		try
 		{
-			if (ligne.charAt(position) == 'c') //complement
+			if (ligne_actuelle.charAt(position) == 'c') //complement
 			{
-				return automate_complement(ligne, position, sens_de_lecture, cds);
+				return automate_complement(position, sens_de_lecture, cds);
 			}
-			else if (ligne.charAt(position) == 'j') //joint
+			else if (ligne_actuelle.charAt(position) == 'j') //joint
 			{
-				return automate_join(ligne, position, sens_de_lecture, cds);
+				return automate_join(position, sens_de_lecture, cds);
 			}
 			else
 			{
-				return automate_interval(ligne, position, sens_de_lecture, cds); //interval simple
+				return automate_interval(position, sens_de_lecture, cds); //interval simple
 			}
 		}
-		catch ( StringIndexOutOfBoundsException e)
+		catch ( StringIndexOutOfBoundsException e) //fin de la ligne
 		{
-			throw new CDSInvalideException();
+			//le CDS continue peut-etre à la ligne suivante, il faut l'importer et la traiter
+			importAndCheckNull();
+			int new_position =21;
+			
+			return automate_sequence(new_position, sens_de_lecture, cds);
 		}
 	}
 		
 	//match un complement qui contient une sequence
-	int automate_complement(String ligne, int position, boolean sens_de_lecture, CDS cds) throws CDSInvalideException
+	int automate_complement(int position, boolean sens_de_lecture, CDS cds) throws CDSInvalideException, ScannerNullException
 	{
 		//on verifie qu'on est bien face au mot "complement("
-		if ( !ligne.startsWith("complement(",position) ) 
+		if ( !ligne_actuelle.startsWith("complement(",position) ) 
 		{
 			throw new CDSInvalideException("token complement mal redige");
 		}
 		
 		//on lit la sequence en changeant le sens de lecture
-		int new_position = automate_sequence(ligne, position+11 , !sens_de_lecture, cds);
+		int new_position = automate_sequence(position+11 , !sens_de_lecture, cds);
 			
 		//on vérifie qu'on a bien un ')'
-		if (ligne.charAt(new_position) != ')') 
+		if (ligne_actuelle.charAt(new_position) != ')') 
 		{
 			throw new CDSInvalideException("parenthese non fermee sur un complement");
 		}
@@ -261,25 +301,25 @@ public class Parser
 	}
 		
 	//match un join qui contient une liste de sequence
-	int automate_join(String ligne, int position, boolean sens_de_lecture, CDS cds) throws CDSInvalideException
+	int automate_join(int position, boolean sens_de_lecture, CDS cds) throws CDSInvalideException, ScannerNullException
 	{
 		//on verifie qu'on est bien face au mot "join("
-		if ( !ligne.startsWith("join(",position) ) 
+		if ( !ligne_actuelle.startsWith("join(",position) ) 
 		{
 			throw new CDSInvalideException("token join mal redige");
 		}
 		
 		//on lit une sequences
-		int new_position = automate_sequence(ligne, position+5, sens_de_lecture, cds);
+		int new_position = automate_sequence(position+5, sens_de_lecture, cds);
 		
 		//on lit des séquences introduites par des virgules tant qu'il y en a
-		while ( ligne.charAt(new_position) == ',' )
+		while ( ligne_actuelle.charAt(new_position) == ',' )
 		{
-			new_position = automate_sequence(ligne, new_position+1, sens_de_lecture, cds);
+			new_position = automate_sequence(new_position+1, sens_de_lecture, cds);
 		}
 		
 		//on vérifie qu'on a bien un ')'
-		if (ligne.charAt(new_position) != ')')
+		if (ligne_actuelle.charAt(new_position) != ')')
 		{
 			throw new CDSInvalideException("parenthese mal fermee sur un join");
 		}
@@ -289,7 +329,7 @@ public class Parser
 
 	//match un interval qui contient deux entier
 	//on identifie chacun des entiers dans l'automate (faute de pouvoir sortir des triplet entier*position depuis un automate)
-	int automate_interval(String ligne, int position, boolean sens_de_lecture, CDS cds) throws CDSInvalideException
+	int automate_interval(int position, boolean sens_de_lecture, CDS cds) throws CDSInvalideException
 	{
 		int debut=0;
 		int fin=0;
@@ -301,14 +341,14 @@ public class Parser
 		try { 
 			while ( true )
 			{
-				debut = debut*10 + chiffre_of_int(ligne, new_position);
+				debut = debut*10 + chiffre_of_int(ligne_actuelle, new_position);
 				new_position++; //il y avait un chiffre a la position, on avance à la position suivante
 			}
 		} 
 		catch (NumberFormatException eint1) 
 		{
 			//on vérifie qu'on a bien un ".."
-			if ( !ligne.startsWith("..",new_position) )
+			if ( !ligne_actuelle.startsWith("..",new_position) )
 			{
 				throw new CDSInvalideException("separateur different de ..");
 			}
@@ -319,7 +359,7 @@ public class Parser
 			{ 
 				while ( true )
 				{
-					fin = fin*10 + chiffre_of_int(ligne, new_position);
+					fin = fin*10 + chiffre_of_int(ligne_actuelle, new_position);
 					new_position++; //il y avait un chiffre a la position, on avance à la position suivante
 				}
 			} 

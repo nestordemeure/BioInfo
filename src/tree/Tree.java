@@ -51,6 +51,8 @@ public class Tree<T> {
 		printTree_aux(0);
 	}
 	
-	
+	public boolean isLeaf(String node) {
+		return ! (this.nodes.get(node) instanceof Tree);
+	}
 
 }

@@ -3,6 +3,10 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import configuration.Configuration;
+
+import ui.UIManager;
+
 import io.*;;
 
 public class TreeManager {
@@ -10,12 +14,13 @@ public class TreeManager {
 	public static Tree constree(){
 		System.out.println("Building Tree... (2-3min)");
 		Tree res = new Tree();
-		String baseurl = "http://www.ncbi.nlm.nih.gov/genomes/Genome2BE/genome2srv.cgi?action=GetGenomeList4Grid&filterText=%7CAll&page=";
+		String baseurl = Configuration.TREE_URL;
 		int page = 1;
 		int pageSize = 100;
 		Scanner buffer = new Scanner("");
 		Boolean flag = true;
 		while (flag){
+			UIManager.log("Page : "+page);
 			buffer = Net.getUrl(baseurl+page+"&pageSize="+pageSize);
 			int debut=0;
 			while(buffer.hasNext()){
