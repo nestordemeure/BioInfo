@@ -279,7 +279,7 @@ public class Bdd
 	
 	//renvois une chaine de caracteres (trinucleotide en majuscule) correspondant a une position dans le tableau
 	//il est beaucoup plus efficasse de mettre les case du tableau à coté de valeur notées en dur à l'avance étant donné qu'on sais d'offfice à quoi correspond chaque case
-	private String int_to_trinucleotide (int num) throws CharInvalideException
+	public String int_to_trinucleotide (int num) throws CharInvalideException
 	{
 		if ((num<0)||(num>63)) { throw new CharInvalideException(); }
 		
