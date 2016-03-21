@@ -233,7 +233,7 @@ public class BddDeprecated
 		
 		for(int i = 0 ; i<3 ; i++)
 		{
-			nbTrinucleotidesParPhase[i]=0;
+			tamponNbTrinucleotidesParPhase[i]=0;
 			
 			for(int j = 0 ; j<64 ; j++)
 			{
@@ -245,7 +245,7 @@ public class BddDeprecated
 		
 		for(int i = 0 ; i<2 ; i++)
 		{
-			nbDinucleotidesParPhase[i]=0;
+			tamponNbDinucleotidesParPhase[i]=0;
 
 			for(int j = 0 ; j<16 ; j++)
 			{

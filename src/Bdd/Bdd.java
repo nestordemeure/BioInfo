@@ -275,6 +275,7 @@ public class Bdd
 			
 			str += "dinucleotide	phase1	phase2\n";
 			
+			triplet.setCharAt(2, ' ');
 			for (int nucleotide1=0 ; nucleotide1<4 ; nucleotide1++)
 			{
 				triplet.setCharAt(0, charOfNucleotideInt(nucleotide1));
