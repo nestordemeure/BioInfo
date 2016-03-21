@@ -1,7 +1,5 @@
-import java.util.ArrayList;
 import java.util.Scanner;
 import io.Net;
-import ui.UIManager;
 import Parser.Parser;
 
 import Bdd.Bdd;
