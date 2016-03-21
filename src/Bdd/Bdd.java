@@ -97,6 +97,28 @@ public class Bdd
 		tampon_tableaudinucleotides[phase][nucleotide1][nucleotide2]--;
 	}
 	
+	//unsafe (cf Excel)
+	//ces fonctions s'utilises sans avoir besoin d'ouvrir ou fermer la base mais n'ont pas la sécuritée anti-exceptions du tampon
+	
+	//ajoute un dinucleotide et un tri nucleotides au phases indiquées
+	public void ajoute_nucleotides_unsafe (int phase2, int phase3, int nucleotide1, int nucleotide2, int nucleotide3, int nbrebucléotides) throws CharInvalideException
+	{
+		tableautrinucleotides[phase3][nucleotide1][nucleotide2][nucleotide3]+=nbrebucléotides;
+		tableaudinucleotides[phase2][nucleotide1][nucleotide2]+=nbrebucléotides;
+	}
+	
+	//ajoute un tri nucleotides a la phase indiquée
+	public void ajoute_nucleotides_unsafe (int phase, int nucleotide1, int nucleotide2, int nucleotide3, int nbrebucléotides) throws CharInvalideException
+	{
+		tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3]+=nbrebucléotides;
+	}
+	
+	//ajoute un dinucleotide à la phase indiquée
+	public void ajoute_nucleotides_unsafe (int phase, int nucleotide1, int nucleotide2, int nbrebucléotides) throws CharInvalideException
+	{
+		tableaudinucleotides[phase][nucleotide1][nucleotide2]+=nbrebucléotides;
+	}
+	
 //getters (resultat final)
 	public int get_nb_CDS ()
 	{
