@@ -118,15 +118,15 @@ public class ExcelWriter {
 			
 			//on remplit les phases nombres
 			StringBuilder triplet = new StringBuilder("---"); //TODO
-			for (int i = 0; i<3; i++){
-				for (int j=0; j< 4; j++){
-					triplet.setCharAt(0, Bdd.charOfNucleotideInt(j)); //TODO
-					for (int k=0; k< 4; k++){
-						triplet.setCharAt(1, Bdd.charOfNucleotideInt(k)); //TODO
-						for (int l=0; l< 4; l++){
-							triplet.setCharAt(2, Bdd.charOfNucleotideInt(l)); //TODO
-							int trinucleotide = l+4*k+16*j+7;
-							rowlist.get(trinucleotide).getCell(0).setCellValue(triplet.toString()); //TODO
+			for (int j=0; j< 4; j++){
+				triplet.setCharAt(0, Bdd.charOfNucleotideInt(j)); //TODO
+				for (int k=0; k< 4; k++){
+					triplet.setCharAt(1, Bdd.charOfNucleotideInt(k)); //TODO
+					for (int l=0; l< 4; l++){
+						int trinucleotide = l+4*k+16*j+7;
+						triplet.setCharAt(2, Bdd.charOfNucleotideInt(l)); //TODO
+						rowlist.get(trinucleotide).getCell(0).setCellValue(triplet.toString()); //TODO
+						for (int i = 0; i<3; i++){
 							rowlist.get(trinucleotide).getCell(1+2*i).setCellStyle(intStyle);
 							rowlist.get(trinucleotide).getCell(1+2*i).setCellValue((double)(base.get_tableautrinucleotides(i,j,k,l)));
 						}
