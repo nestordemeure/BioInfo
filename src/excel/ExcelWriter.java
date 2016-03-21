@@ -108,24 +108,18 @@ public class ExcelWriter {
 			rowlist.get(6).getCell(11).setCellValue("Nb Ph1");
 			rowlist.get(6).getCell(12).setCellValue("Pb Ph1");
 			
-			/*//TODO
-			// declaration trinucléotides
-			for (int i = 0; i< 64; i++){
-				rowlist.get(i+7).getCell(0).setCellValue(base.int_to_trinucleotide(i));
-			}
-			*/
 			rowlist.get(71).getCell(0).setCellValue("Total");
 			
 			//on remplit les phases nombres
-			StringBuilder triplet = new StringBuilder("---"); //TODO
+			StringBuilder triplet = new StringBuilder("---");
 			for (int j=0; j< 4; j++){
-				triplet.setCharAt(0, Bdd.charOfNucleotideInt(j)); //TODO
+				triplet.setCharAt(0, Bdd.charOfNucleotideInt(j));
 				for (int k=0; k< 4; k++){
-					triplet.setCharAt(1, Bdd.charOfNucleotideInt(k)); //TODO
+					triplet.setCharAt(1, Bdd.charOfNucleotideInt(k));
 					for (int l=0; l< 4; l++){
 						int trinucleotide = l+4*k+16*j+7;
-						triplet.setCharAt(2, Bdd.charOfNucleotideInt(l)); //TODO
-						rowlist.get(trinucleotide).getCell(0).setCellValue(triplet.toString()); //TODO
+						triplet.setCharAt(2, Bdd.charOfNucleotideInt(l));
+						rowlist.get(trinucleotide).getCell(0).setCellValue(triplet.toString());
 						for (int i = 0; i<3; i++){
 							rowlist.get(trinucleotide).getCell(1+2*i).setCellStyle(intStyle);
 							rowlist.get(trinucleotide).getCell(1+2*i).setCellValue((double)(base.get_tableautrinucleotides(i,j,k,l)));
