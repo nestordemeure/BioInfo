@@ -4,12 +4,8 @@ import exceptions.CharInvalideException;
 public class Bdd 
 {
 /*
- * on incremente des valeurs tampon
- * en cas d'erreur (CDS_invalide) il faut faire un clear de la base
- * en cas de succès il faut faire un push de la base
- * fait remonter une exception char_invalide qu'il faut matcher
- * 
  * s'utilise en faisant open_tampon, remplissant la base puis close_tampon si tout c'est bien passé
+ * (on ne fait rien de spécial sinon)
  */
 
 /*
@@ -19,24 +15,21 @@ public class Bdd
  * g = 2
  * t = 3
  */
-	
+		
 //-----------------------------------------------------------------------------
 //variable d'instance
 	
 //sortie
 	
-	//TODO : placeholder en attendant de connaitre le format d'un chemin
 	private String chemin;
 	
 	private int nb_CDS;
+	private int nb_CDS_non_traites;
 	
 	private int nbTrinucleotidesParPhase[]; //nb_trinucleotides_par_phase[phase]
 	private int nbDinucleotidesParPhase[]; //nb_dinucleotides_par_phase[phase]
 	
-	private int nb_CDS_non_traites;
-	
 	private int tableautrinucleotides[][][][]; //tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3]
-	
 	private int tableaudinucleotides[][][]; //tableaudinucleotides[phase][nucleotide1][nucleotide2]
 	
 	//tampon
@@ -110,14 +103,26 @@ public class Bdd
 		return nb_CDS;
 	}
 	
+	//toutes phases confondues
 	public int get_nb_trinucleotides ()
 	{
 		return (nbTrinucleotidesParPhase[0]+nbTrinucleotidesParPhase[1]+nbTrinucleotidesParPhase[2]);
 	}
 	
+	public int get_nb_trinucleotides (int phase)
+	{
+		return nbTrinucleotidesParPhase[phase];
+	}
+	
+	//toute phases confondues
 	public int get_nb_dinucleotides ()
 	{
 		return (nbDinucleotidesParPhase[0]+nbDinucleotidesParPhase[1]);
+	}
+	
+	public int get_nb_dinucleotides (int phase)
+	{
+		return nbDinucleotidesParPhase[phase];
 	}
 	
 	public int get_nb_CDS_non_traites ()
