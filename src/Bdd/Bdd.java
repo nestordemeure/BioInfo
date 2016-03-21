@@ -142,38 +142,37 @@ public class Bdd
 		{
 			int valeur_tampon;
 			
-			for(int phase = 0 ; phase<3 ; phase++)
+			for(int nucleotide1 = 0 ; nucleotide1<4 ; nucleotide1++)
 			{
-				for(int nucleotide1 = 0 ; nucleotide1<4 ; nucleotide1++)
+				for(int nucleotide2 = 0 ; nucleotide2<4 ; nucleotide2++)
 				{
-					for(int nucleotide2 = 0 ; nucleotide2<4 ; nucleotide2++)
-					{
-						for(int nucleotide3 = 0 ; nucleotide3<4 ; nucleotide3++)
-						{
-							valeur_tampon = tampon_tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3];
-							
-							nbTrinucleotidesParPhase[phase]+=valeur_tampon;
-							tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3]+=valeur_tampon;
-						}
-					}
-				}
-			}
-			
-			for(int phase = 0 ; phase<2 ; phase++)
-			{
-				for(int nucleotide1 = 0 ; nucleotide1<4 ; nucleotide1++)
-				{
-					for(int nucleotide2 = 0 ; nucleotide2<4 ; nucleotide2++)
+					//dinucleotide
+					for(int phase = 0 ; phase<2 ; phase++)
 					{
 						valeur_tampon = tampon_tableaudinucleotides[phase][nucleotide1][nucleotide2];
 						
 						nbDinucleotidesParPhase[phase]+=valeur_tampon;
 						tableaudinucleotides[phase][nucleotide1][nucleotide2]+=valeur_tampon;
+						
+						tampon_tableaudinucleotides[phase][nucleotide1][nucleotide2]=0; //clear
+					}
+					
+					//trinucleotide
+					for(int nucleotide3 = 0 ; nucleotide3<4 ; nucleotide3++)
+					{
+						for(int phase = 0 ; phase<3 ; phase++)
+						{
+							valeur_tampon = tampon_tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3];
+							
+							nbTrinucleotidesParPhase[phase]+=valeur_tampon;
+							tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3]+=valeur_tampon;
+							
+							tampon_tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3]=0; //clear
+						}
 					}
 				}
 			}
 			
-			clear_tampon();
 			empty_tamp=true;
 		}
 		
@@ -193,27 +192,18 @@ public class Bdd
 	//remet un tampon à 0
 	public void clear_tampon()
 	{
-		for(int phase = 0 ; phase<3 ; phase++)
+		for(int nucleotide1 = 0 ; nucleotide1<4 ; nucleotide1++)
 		{
-			for(int nucleotide1 = 0 ; nucleotide1<4 ; nucleotide1++)
+			for(int nucleotide2 = 0 ; nucleotide2<4 ; nucleotide2++)
 			{
-				for(int nucleotide2 = 0 ; nucleotide2<4 ; nucleotide2++)
-				{
-					for(int nucleotide3 = 0 ; nucleotide3<4 ; nucleotide3++)
-					{
-						tampon_tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3]=0;
-					}
-				}
-			}
-		}
+				tampon_tableaudinucleotides[0][nucleotide1][nucleotide2]=0;
+				tampon_tableaudinucleotides[1][nucleotide1][nucleotide2]=0;
 
-		for(int phase = 0 ; phase<2 ; phase++)
-		{
-			for(int nucleotide1 = 0 ; nucleotide1<4 ; nucleotide1++)
-			{
-				for(int nucleotide2 = 0 ; nucleotide2<4 ; nucleotide2++)
+				for(int nucleotide3 = 0 ; nucleotide3<4 ; nucleotide3++)
 				{
-					tampon_tableaudinucleotides[phase][nucleotide1][nucleotide2]=0;
+					tampon_tableautrinucleotides[0][nucleotide1][nucleotide2][nucleotide3]=0;
+					tampon_tableautrinucleotides[1][nucleotide1][nucleotide2][nucleotide3]=0;
+					tampon_tableautrinucleotides[2][nucleotide1][nucleotide2][nucleotide3]=0;
 				}
 			}
 		}
