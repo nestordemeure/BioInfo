@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Scanner;
 import io.Net;
 import Parser.Parser;
@@ -10,13 +11,13 @@ import tree.*;
 
 public class Main {
 	public static void main(String[] args) throws Exception {
-		/*
+		
 		Tree plop = new Tree();
 		plop=TreeManager.constree();
 		
 		ThreadManager.start(plop, new ArrayList<String>());
-		*/
 		
+		/*
 		//parsing
 		Bdd base = new Bdd("path");
 		//Scanner scanneur = Net.getUrl("http://jonathancrabtree.github.io/Circleator/tutorials/gb_annotation/L42023.1.gb");
@@ -30,6 +31,7 @@ public class Main {
 		System.out.println("nbr_cds "+base.get_nb_CDS());
 		System.out.println("nbr_cds_nt "+base.get_nb_CDS_non_traites());
 		System.out.println(base.get_tableauxnucleotides_string());
+		*/
 	}
 
 }
