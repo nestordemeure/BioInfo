@@ -105,18 +105,22 @@ public class Bdd
 	{
 		tableautrinucleotides[phase3][nucleotide1][nucleotide2][nucleotide3]+=nbrebucléotides;
 		tableaudinucleotides[phase2][nucleotide1][nucleotide2]+=nbrebucléotides;
+		nbTrinucleotidesParPhase[phase3]+=nbrebucléotides;
+		nbDinucleotidesParPhase[phase2]+=nbrebucléotides;
 	}
 	
 	//ajoute un tri nucleotides a la phase indiquée
 	public void ajoute_nucleotides_unsafe (int phase, int nucleotide1, int nucleotide2, int nucleotide3, int nbrebucléotides) throws CharInvalideException
 	{
 		tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3]+=nbrebucléotides;
+		nbTrinucleotidesParPhase[phase]+=nbrebucléotides;
 	}
 	
 	//ajoute un dinucleotide à la phase indiquée
 	public void ajoute_nucleotides_unsafe (int phase, int nucleotide1, int nucleotide2, int nbrebucléotides) throws CharInvalideException
 	{
 		tableaudinucleotides[phase][nucleotide1][nucleotide2]+=nbrebucléotides;
+		nbDinucleotidesParPhase[phase]+=nbrebucléotides;
 	}
 	
 //getters (resultat final)
