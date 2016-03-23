@@ -8,12 +8,18 @@ import manager.AccessManager;
 import excel.*;
 import java.util.Scanner;
 import Parser.*;
-import Bdd.*;
+import Bdd.Bdd;
 
 import io.Net;
 import exceptions.CharInvalideException;
 import exceptions.ScannerNullException;
 import ui.UIManager;
+import java.util.ArrayList;
+import manager.ThreadManager;
+import tree.*;
+
+
+//115.5 fich/heure
 
 public class Main {
 
@@ -51,6 +57,7 @@ public class Main {
 		plop [3] = "organisme";
 		ExcelWriter.writer("arbo/patate/souspatate/plop2/tortue/tortue.xls",plop, base);
 		
+
 		scanneur = Net.getUrl("file:///home/micka/Bureau/Cours/3/BioInfo/sequence/sequence3.gb");
 		parseur = new Parser(base,scanneur);
 		parseur.parse();
@@ -62,6 +69,7 @@ public class Main {
 		ExcelWriter.writer("arbo/patate/souspatate/plop2/tortue2/tortue2.xls",plop, base);
 		
 		ExcelManager.fusionExcels("arbo");
+
 
 	}
 

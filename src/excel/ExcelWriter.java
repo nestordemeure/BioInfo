@@ -112,48 +112,41 @@ public class ExcelWriter {
 			rowlist.get(6).getCell(11).setCellValue("Nb Ph1");
 			rowlist.get(6).getCell(12).setCellValue("Pb Ph1");
 			
-			
-			// declaration trinucléotides
-			for (int i = 0; i< 64; i++){
-				rowlist.get(i+7).getCell(0).setCellValue(base.int_to_trinucleotide(i));
-			}
-			
 			rowlist.get(71).getCell(0).setCellValue("Total");
 			
-			// declaration dinucléotides
-						for (int i = 0; i< 16; i++){
-							rowlist.get(i+7).getCell(8).setCellValue(base.int_to_dinucleotide(i));
-						}
-						
-						rowlist.get(23).getCell(8).setCellValue("Total");
 			
-			//on remplit les phases nombres
-						
-			//trinucleotides
-			for (int i = 0; i<3; i++){
-				for (int j=0; j< 4; j++){
-					for (int k=0; k< 4; k++){
-						for (int l=0; l< 4; l++){
-							int trinucleotide = l+4*k+16*j+7;
+			//on remplit les phases nombres des trinucléotides
+			StringBuilder triplet = new StringBuilder("---");
+			for (int j=0; j< 4; j++){
+				triplet.setCharAt(0, Bdd.charOfNucleotideInt(j));
+				for (int k=0; k< 4; k++){
+					triplet.setCharAt(1, Bdd.charOfNucleotideInt(k));
+					for (int l=0; l< 4; l++){
+						int trinucleotide = l+4*k+16*j+7;
+						triplet.setCharAt(2, Bdd.charOfNucleotideInt(l));
+						rowlist.get(trinucleotide).getCell(0).setCellValue(triplet.toString()); //on remplit le nom des trinucléotides
+						for (int i = 0; i<3; i++){
 							rowlist.get(trinucleotide).getCell(1+2*i).setCellStyle(intStyle);
 							rowlist.get(trinucleotide).getCell(1+2*i).setCellValue((double)(base.get_tableautrinucleotides(i,j,k,l)));
-							
 						}
 					}
 				}
 			}
-			//dinucleotides
-			for (int i = 0; i<2; i++){
-				for (int j=0; j< 4; j++){
-					for (int k=0; k< 4; k++){
-						int trinucleotide = k+4*j+7;
-						rowlist.get(trinucleotide).getCell(9+2*i).setCellStyle(intStyle);
-						rowlist.get(trinucleotide).getCell(9+2*i).setCellValue((double)(base.get_tableaudinucleotides(i,j,k)));
-							
+			
+			//on remplit les phases nombres  des dinucléotides
+			StringBuilder couple = new StringBuilder("--");
+			for (int j=0; j< 4; j++){
+				couple.setCharAt(0, Bdd.charOfNucleotideInt(j));
+				for (int k=0; k< 4; k++){
+					couple.setCharAt(1, Bdd.charOfNucleotideInt(k));
+					int dinucleotide = k+4*j+7;
+					rowlist.get(dinucleotide).getCell(8).setCellValue(couple.toString()); //on remplit le nom des dinucléotides
+					for (int i = 0; i<2; i++){
+						rowlist.get(dinucleotide).getCell(9+2*i).setCellStyle(intStyle);
+						rowlist.get(dinucleotide).getCell(9+2*i).setCellValue((double)(base.get_tableaudinucleotides(i,j,k)));
 					}
 				}
 			}
-			
 			
 			//on remplit les totaux entiers
 			//trinucleotides

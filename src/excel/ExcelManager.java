@@ -25,17 +25,22 @@ public class ExcelManager {
 					File lvl2 = new File(folder+"/"+listeFichiers[i]+"/"+listelvl1[j]);
 					if(lvl2.isDirectory()==true){
 						String[] listelvl2=lvl2.list();
-						for(int k = 0;k<listelvl2.length;k++){
 						
-							String[] chemin = new String[4];
-							chemin [0] = listeFichiers[i];
-							chemin [1] = listelvl1[j];
-							chemin [2] = listelvl2[k];
-							chemin [3] = "";
+						for(int k = 0;k<listelvl2.length;k++){
+							File lvl3 = new File(folder+"/"+listeFichiers[i]+"/"+listelvl1[j]+"/"+listelvl2[k]);
+							if(lvl3.isDirectory()==true){
+								String[] chemin = new String[4];
+								chemin [0] = listeFichiers[i];
+								chemin [1] = listelvl1[j];
+								chemin [2] = listelvl2[k];
+								chemin [3] = "";
+								
+								String filepath = folder+"/"+listeFichiers[i]+"/"+listelvl1[j]+"/"+listelvl2[k];
+								Bdd base = ExcelReader.reader(filepath);
+								ExcelWriter.writer(filepath+"/"+listelvl2[k]+".xls", chemin, base);
+							}
 							
-							String filepath = folder+"/"+listeFichiers[i]+"/"+listelvl1[j]+"/"+listelvl2[k];
-							Bdd base = ExcelReader.reader(filepath);
-							ExcelWriter.writer(filepath+"/"+listelvl2[k]+".xls", chemin, base);
+							
 						}
 						
 						String[] chemin = new String[4];

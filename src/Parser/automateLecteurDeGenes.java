@@ -19,7 +19,7 @@ public class automateLecteurDeGenes
 		
 	//nucleotides en mémoire
 	//si l'automate a été amorcé, il ne faut pas réinitialiser ces valeurs
-	int nucleotide0;//TODO ce nucléotide n'est mit en mémoire que lors du dernier enregistrement, il permet d'éliminer le dernir dinucléotide si besoin est
+	int nucleotide0;//ce nucléotide n'est mit en mémoire que lors du dernier enregistrement, il permet d'éliminer le dernir dinucléotide si besoin est
 	int nucleotide1;
 	int nucleotide2;
 	int nucleotide3;
@@ -58,7 +58,7 @@ public class automateLecteurDeGenes
 			try
 			{
 			//le dernier dinucléotide rentré doit etre un 1 -> la phase2 doit valoir 0
-			//TODO ne pas prendre le dernier dinucléotide en date
+			//ne pas prendre le dernier dinucléotide en date
 			base_de_donnees.retire_nucleotides(0, nucleotide0, nucleotide1);
 			}
 			catch(CharInvalideException e)
@@ -158,7 +158,7 @@ public class automateLecteurDeGenes
 			lire_nucleotide_sens_directe();
 		}
 		
-		//TODO on gére le cas égal séparément pour les dinucléotides
+		//on gére le cas égal séparément pour les dinucléotides
 		if (debut_sequence == fin_sequence)
 		{
 			nucleotide0=nucleotide1;
@@ -183,7 +183,7 @@ public class automateLecteurDeGenes
 			lire_nucleotide_sens_complement();
 		}
 		
-		//TODO on gére le cas égal séparément pour les dinucléotides
+		//on gére le cas égal séparément pour les dinucléotides
 		if (debut_sequence == fin_sequence)
 		{
 			nucleotide0=nucleotide1;
@@ -198,7 +198,7 @@ public class automateLecteurDeGenes
 	//importe le nucléotide situé en debut de séqence dans nucleotide3 et décalle l'indice de début de séquence
 	//cette fonction ne devrait jamais rencontrer de chiffre
 	//retourne un -1 si le caractere est invalide
-	void lire_nucleotide_sens_directe()
+	void lire_nucleotide_sens_directe() throws CDSInvalideException
 	{
 		switch(sequence.charAt(debut_sequence))
 		{
@@ -227,16 +227,17 @@ public class automateLecteurDeGenes
 				lire_nucleotide_sens_directe();
 				break;
 			default:
-				nucleotide3=-1; 
-				debut_sequence++;
-				break;
+				throw new CDSInvalideException("char invalide");
+				//nucleotide3=-1; 
+				//debut_sequence++;
+				//break;
 		}
 	}
 	
 	//importe le nucléotide situé en fin de séqence dans nucleotide3 et décalle l'indice de début de séquence
 	//cette fonction ne devrait jamais rencontree de '\n'
 	//retourne un -1 si le caractere est invalide
-	void lire_nucleotide_sens_complement()
+	void lire_nucleotide_sens_complement() throws CDSInvalideException
 	{
 		switch(sequence.charAt(fin_sequence))
 		{
@@ -301,9 +302,10 @@ public class automateLecteurDeGenes
 				lire_nucleotide_sens_complement();
 				break;
 			default:
-				nucleotide3=-1; 
-				fin_sequence--;
-				break;
+				throw new CDSInvalideException("char invalide");
+				//nucleotide3=-1; 
+				//fin_sequence--;
+				//break;
 		}
 	}
 			

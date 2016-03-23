@@ -24,7 +24,6 @@ import exceptions.CharInvalideException;
 public class ExcelReader {
 	public static Bdd reader(String folder){
 		Bdd base = new Bdd("");
-		base.open_tampon();
 		File currentFolder = new File(folder);
 		String[] listeFichiers=currentFolder.list();
 		List<String> listeExcels = new ArrayList<String>();
@@ -61,7 +60,8 @@ public class ExcelReader {
 							for (int l=0; l< 4; l++){
 								int trinucleotide = l+4*k+16*j+7;
 								int nuclcourant = (int) rowlist.get(trinucleotide).getCell(1+2*i).getNumericCellValue();
-								base.ajoute_nucleotides_mult(i, j, k, l,nuclcourant);
+								//System.out.println(nuclcourant);
+								base.ajoute_nucleotides_unsafe(i, j, k, l,nuclcourant);
 							}
 						}
 					}
@@ -73,7 +73,7 @@ public class ExcelReader {
 						for (int k=0; k< 4; k++){
 							int trinucleotide = k+4*j+7;
 							int nuclcourant = (int) rowlist.get(trinucleotide).getCell(9+2*i).getNumericCellValue();
-							base.ajoute_nucleotides_mult(i, j, k,nuclcourant);	
+							base.ajoute_nucleotides_unsafe(i, j, k,nuclcourant);	
 						}
 					}
 				}		
@@ -85,7 +85,6 @@ public class ExcelReader {
 				e.printStackTrace();
 			}
 		}	
-		base.close_tampon();
 		return base;
 	}
 }
