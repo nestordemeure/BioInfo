@@ -38,11 +38,11 @@ public class Main {
 		Bdd base = new Bdd("path");
 		
 		//Scanner scanneur = Net.getUrl("http://jonathancrabtree.github.io/Circleator/tutorials/gb_annotation/L42023.1.gb");
-		//Scanner scanneur = Net.getUrl("file:///home/nestor/Cours/2A/bioinformatique/sequence.gb");
+		//Scanner scanneur = Net.getUrl("file:///home/nestor/Cours/2A/bioinformatique/sequence2.gb");
 		Scanner scanneur = Net.getUrl("file:///home/micka/Bureau/Cours/3/BioInfo/sequence/sequence2.gb");
 		Parser parseur = new Parser(base,scanneur);
 		parseur.parse();
-		
+				
 		//affichage du contenus de la bdd
 		//System.out.println("nbr_tri "+base.get_nb_trinucleotides());
 		//System.out.println("nbr_di "+base.get_nb_dinucleotides());
@@ -59,6 +59,8 @@ public class Main {
 		
 
 		scanneur = Net.getUrl("file:///home/micka/Bureau/Cours/3/BioInfo/sequence/sequence3.gb");
+		//scanneur = Net.getUrl("file:///home/nestor/Cours/2A/bioinformatique/sequence3.gb");
+
 		parseur = new Parser(base,scanneur);
 		parseur.parse();
 		plop = new String[4];

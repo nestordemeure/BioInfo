@@ -158,7 +158,7 @@ public class Bdd
 	
 	public int get_tableautrinucleotides (int phase, int nucleotide1, int nucleotide2, int nucleotide3) throws CharInvalideException
 	{
-		return 	tampon_tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3];
+		return 	tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3];
 	}
 	
 	public int get_tableaudinucleotides (int phase, int nucleotide1, int nucleotide2) throws CharInvalideException
