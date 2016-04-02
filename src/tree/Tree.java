@@ -1,10 +1,12 @@
 package tree;
 
 import java.util.HashMap;
+import java.util.List;
 
 public class Tree<T> {
 	
 	private HashMap<String, T> nodes;
+	int size = -1;
 	
 	public Tree(){
 		this.nodes = new HashMap<String, T>();
@@ -49,6 +51,29 @@ public class Tree<T> {
 	
 	public void printTree(){
 		printTree_aux(0);
+	}
+	
+	public int computeSize(){
+		int size = 0;
+		for(Object a : this.nodes()){
+			String node = (String)a;
+			if(this.isLeaf(node)){
+				size ++;
+			} else {
+				Tree t = (Tree)this.get(node);
+				size += t.size();
+			}
+		}
+		this.size = size;
+		return size;
+	}
+	
+	public int size(){
+		if(this.size == -1){
+			this.computeSize();
+		}
+		
+		return this.size;
 	}
 	
 	public boolean isLeaf(String node) {
