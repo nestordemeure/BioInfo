@@ -8,6 +8,6 @@ public class NoOriginException extends Exception
 	
 	public NoOriginException(String str)
 	{
-		System.out.println(str);
+		//System.out.println(str);
 	}
 }

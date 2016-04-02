@@ -1,19 +1,13 @@
 package io;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Scanner;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
 import configuration.Configuration;
 
 import ui.UIManager;
@@ -55,8 +49,10 @@ public class IdFetcher {
 				}
 			}catch(Exception e){
 				tries ++;
-				UIManager.log("[IdFetcher] ERREUR : "+e.getMessage());
-				e.printStackTrace();
+				UIManager.log("[IdFetcher] ERREUR : "+e.getMessage()+" ("+tries+"/"+Configuration.IDS_MAX_TRIES+")");
+				if(tries == Configuration.IDS_MAX_TRIES){
+					e.printStackTrace();
+				}
 			}
 		}
 		
