@@ -12,7 +12,6 @@ import tree.Tree;
 import ui.UIManager;
 
 public class ThreadManager {
-	
 	protected static int NB_THREADS = Configuration.THREADS_NUMBER;
 	private static Lock mainLock = new ReentrantLock();
 	
@@ -29,6 +28,7 @@ public class ThreadManager {
 			if (t.isLeaf(node)) {
 				// Si il est possible de lancer un thread on le fait
 				if (ThreadManager.threadAvailable()) {
+					UIManager.addProgress(1);
 					UIManager.log("Launching new thread ("+new_path.get(new_path.size() - 1)+")");
 					new Thread(new ParserManager(new_path)).start();
 					ThreadManager.minusThread();
@@ -47,6 +47,7 @@ public class ThreadManager {
 							done = true;
 						}		
 					}
+					UIManager.addProgress(1);
 					UIManager.log("Launching new thread ("+new_path.get(new_path.size() - 1)+")");
 					new Thread(new ParserManager(new_path)).start();
 					ThreadManager.minusThread();;

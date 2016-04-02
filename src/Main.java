@@ -12,7 +12,7 @@ public class Main {
 	public static void main(String[] args){
 		Tree plop = new Tree();
 		plop=TreeManager.constree();
-		
+		UIManager.setMaxProgress(plop.size());
 		ThreadManager.start(plop, new ArrayList<String>());
 		
 		UIManager.log("Creating excel files...");
