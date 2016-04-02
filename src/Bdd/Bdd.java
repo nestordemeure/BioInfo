@@ -4,12 +4,8 @@ import exceptions.CharInvalideException;
 public class Bdd 
 {
 /*
- * on incremente des valeurs tampon
- * en cas d'erreur (CDS_invalide) il faut faire un clear de la base
- * en cas de succès il faut faire un push de la base
- * fait remonter une exception char_invalide qu'il faut matcher
- * 
  * s'utilise en faisant open_tampon, remplissant la base puis close_tampon si tout c'est bien passé
+ * (on ne fait rien de spécial sinon)
  */
 
 /*
@@ -19,38 +15,26 @@ public class Bdd
  * g = 2
  * t = 3
  */
-	
+		
 //-----------------------------------------------------------------------------
 //variable d'instance
 	
 //sortie
 	
-	//TODO : placeholder en attendant de connaitre le format d'un chemin
 	private String chemin;
 	
 	private int nb_CDS;
-	
-	private int nb_trinucleotides; //nb trinucleotides toutes phases confondues (triple de la valeur de chaque phase)
-	private int nbTrinucleotidesParPhase[]; //nb_trinucleotides_par_phase[phase]
-	
-	private int nb_dinucleotides; //nb dinucleotides toutes phases confondues (triple de la valeur de chaque phase)
-	private int nbDinucleotidesParPhase[]; //nb_dinucleotides_par_phase[phase]
-	
 	private int nb_CDS_non_traites;
 	
-	private int tableautrinucleotides[][]; //tableautrinucleotides[phase][trinucleotide]
+	private int nbTrinucleotidesParPhase[]; //nb_trinucleotides_par_phase[phase]
+	private int nbDinucleotidesParPhase[]; //nb_dinucleotides_par_phase[phase]
 	
-	private int tableaudinucleotides[][]; //tableautrinucleotides[phase][dinucleotide]
+	private int tableautrinucleotides[][][][]; //tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3]
+	private int tableaudinucleotides[][][]; //tableaudinucleotides[phase][nucleotide1][nucleotide2]
 	
 	//tampon
-	private int tampon_nb_trinucleotides;
-	private int tamponNbTrinucleotidesParPhase[]; //nb_trinucleotides_par_phase[phase]
-	
-	private int tampon_nb_dinucleotides;
-	private int tamponNbDinucleotidesParPhase[]; //nb_dinucleotides_par_phase[phase]
-	
-	private int tampon_tableautrinucleotides[][]; //tableautrinucleotides[phase][trinucleotide]
-	private int tampon_tableaudinucleotides[][]; //tableautrinucleotides[phase][trinucleotide]
+	private int tampon_tableautrinucleotides[][][][]; //tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3]
+	private int tampon_tableaudinucleotides[][][]; //tableaudinucleotides[phase][nucleotide1][nucleotide2]
 	
 	boolean empty_tamp;
 	
@@ -63,20 +47,15 @@ public class Bdd
 		chemin = chem;
 		
 		nb_CDS = 0;
-		nb_trinucleotides = 0;
-		nbTrinucleotidesParPhase = new int[3];
-		nb_dinucleotides = 0;
-		nbDinucleotidesParPhase = new int[2];
 		nb_CDS_non_traites = 0;
+
+		nbTrinucleotidesParPhase = new int[3];
+		nbDinucleotidesParPhase = new int[2];
 		
-		tampon_nb_trinucleotides = 0;
-		tamponNbTrinucleotidesParPhase = new int[3];
-		tampon_nb_dinucleotides = 0;
-		tamponNbDinucleotidesParPhase = new int[2];
-		tableautrinucleotides = new int[3][64];
-		tampon_tableautrinucleotides = new int[3][64];
-		tableaudinucleotides = new int[2][16];
-		tampon_tableaudinucleotides = new int[2][16];
+		tableautrinucleotides = new int[3][4][4][4];
+		tampon_tableautrinucleotides = new int[3][4][4][4];
+		tableaudinucleotides = new int[2][4][4];
+		tampon_tableaudinucleotides = new int[2][4][4];
 		
 		empty_tamp=true;
 	}
@@ -96,37 +75,52 @@ public class Bdd
 	//ajoute un dinucleotide et un tri nucleotides au phases indiquées
 	public void ajoute_nucleotides (int phase2, int phase3, int nucleotide1, int nucleotide2, int nucleotide3) throws CharInvalideException
 	{
-		tampon_tableautrinucleotides[phase3][position_of_nucleotides(nucleotide1,nucleotide2,nucleotide3)]++;
-		tamponNbTrinucleotidesParPhase[phase3]++;
-		tampon_nb_trinucleotides++;
-		
-		tampon_tableaudinucleotides[phase2][position_of_nucleotides(nucleotide1,nucleotide2)]++;
-		tamponNbDinucleotidesParPhase[phase2]++;
-		tampon_nb_dinucleotides++;
+		tampon_tableautrinucleotides[phase3][nucleotide1][nucleotide2][nucleotide3]++;
+		tampon_tableaudinucleotides[phase2][nucleotide1][nucleotide2]++;
 	}
 	
 	//ajoute un tri nucleotides a la phase indiquée
 	public void ajoute_nucleotides (int phase, int nucleotide1, int nucleotide2, int nucleotide3) throws CharInvalideException
 	{
-		tampon_tableautrinucleotides[phase][position_of_nucleotides(nucleotide1,nucleotide2,nucleotide3)]++;
-		tamponNbTrinucleotidesParPhase[phase]++;
-		tampon_nb_trinucleotides++;
+		tampon_tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3]++;
 	}
 	
 	//ajoute un dinucleotide à la phase indiquée
 	public void ajoute_nucleotides (int phase, int nucleotide1, int nucleotide2) throws CharInvalideException
 	{
-		tampon_tableaudinucleotides[phase][position_of_nucleotides(nucleotide1,nucleotide2)]++;
-		tamponNbDinucleotidesParPhase[phase]++;
-		tampon_nb_dinucleotides++;
+		tampon_tableaudinucleotides[phase][nucleotide1][nucleotide2]++;
 	}
 	
 	//retire un dinucleotide à la phase indiquée
 	public void retire_nucleotides (int phase, int nucleotide1, int nucleotide2) throws CharInvalideException
 	{
-		tampon_tableaudinucleotides[phase][position_of_nucleotides(nucleotide1,nucleotide2)]--;
-		tamponNbDinucleotidesParPhase[phase]--;
-		tampon_nb_dinucleotides--;
+		tampon_tableaudinucleotides[phase][nucleotide1][nucleotide2]--;
+	}
+	
+	//unsafe (cf Excel)
+	//ces fonctions s'utilises sans avoir besoin d'ouvrir ou fermer la base mais n'ont pas la sécuritée anti-exceptions du tampon
+	
+	//ajoute un dinucleotide et un tri nucleotides au phases indiquées
+	public void ajoute_nucleotides_unsafe (int phase2, int phase3, int nucleotide1, int nucleotide2, int nucleotide3, int nbrebucléotides) throws CharInvalideException
+	{
+		tableautrinucleotides[phase3][nucleotide1][nucleotide2][nucleotide3]+=nbrebucléotides;
+		tableaudinucleotides[phase2][nucleotide1][nucleotide2]+=nbrebucléotides;
+		nbTrinucleotidesParPhase[phase3]+=nbrebucléotides;
+		nbDinucleotidesParPhase[phase2]+=nbrebucléotides;
+	}
+	
+	//ajoute un tri nucleotides a la phase indiquée
+	public void ajoute_nucleotides_unsafe (int phase, int nucleotide1, int nucleotide2, int nucleotide3, int nbrenucléotides) throws CharInvalideException
+	{
+		tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3]+=nbrenucléotides;
+		nbTrinucleotidesParPhase[phase]+=nbrenucléotides;
+	}
+	
+	//ajoute un dinucleotide à la phase indiquée
+	public void ajoute_nucleotides_unsafe (int phase, int nucleotide1, int nucleotide2, int nbrenucléotides) throws CharInvalideException
+	{
+		tableaudinucleotides[phase][nucleotide1][nucleotide2]+=nbrenucléotides;
+		nbDinucleotidesParPhase[phase]+=nbrenucléotides;
 	}
 	
 //getters (resultat final)
@@ -135,14 +129,26 @@ public class Bdd
 		return nb_CDS;
 	}
 	
+	//toutes phases confondues
 	public int get_nb_trinucleotides ()
 	{
-		return nb_trinucleotides;
+		return (nbTrinucleotidesParPhase[0]+nbTrinucleotidesParPhase[1]+nbTrinucleotidesParPhase[2]);
 	}
 	
+	public int get_nb_trinucleotides (int phase)
+	{
+		return nbTrinucleotidesParPhase[phase];
+	}
+	
+	//toute phases confondues
 	public int get_nb_dinucleotides ()
 	{
-		return nb_dinucleotides;
+		return (nbDinucleotidesParPhase[0]+nbDinucleotidesParPhase[1]);
+	}
+	
+	public int get_nb_dinucleotides (int phase)
+	{
+		return nbDinucleotidesParPhase[phase];
 	}
 	
 	public int get_nb_CDS_non_traites ()
@@ -152,64 +158,52 @@ public class Bdd
 	
 	public int get_tableautrinucleotides (int phase, int nucleotide1, int nucleotide2, int nucleotide3) throws CharInvalideException
 	{
-		return tableautrinucleotides[phase][position_of_nucleotides(nucleotide1,nucleotide2,nucleotide3)];
+		return 	tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3];
 	}
 	
 	public int get_tableaudinucleotides (int phase, int nucleotide1, int nucleotide2) throws CharInvalideException
 	{
-		return tableaudinucleotides[phase][position_of_nucleotides(nucleotide1,nucleotide2)];
+		return tableaudinucleotides[phase][nucleotide1][nucleotide2];
 	}
-	
-	public int[][] get_tableautrinucleotides ()
-	{
-		return tableautrinucleotides;
-	}
-	
-	public int[][] get_tableaudinucleotides ()
-	{
-		return tableaudinucleotides;
-	}
-	
+
 //tampon
-	
-	public int get_nb_trinucleotides_tampon ()
-	{
-		return tampon_nb_trinucleotides;
-	}
-	
-	public int get_nb_dinucleotides_tampon ()
-	{
-		return tampon_nb_dinucleotides;
-	}
-	
+
 	//déplace le contenus du tampon dans la mémoire
 		public void close_tampon()
 		{
-			nb_trinucleotides += tampon_nb_trinucleotides;
+			int valeur_tampon;
 			
-			for(int i = 0 ; i<3 ; i++)
+			for(int nucleotide1 = 0 ; nucleotide1<4 ; nucleotide1++)
 			{
-				nbTrinucleotidesParPhase[i]+=tamponNbTrinucleotidesParPhase[i];
-				
-				for(int j = 0 ; j<64 ; j++)
+				for(int nucleotide2 = 0 ; nucleotide2<4 ; nucleotide2++)
 				{
-					tableautrinucleotides[i][j]+=tampon_tableautrinucleotides[i][j];
+					//dinucleotide
+					for(int phase = 0 ; phase<2 ; phase++)
+					{
+						valeur_tampon = tampon_tableaudinucleotides[phase][nucleotide1][nucleotide2];
+						
+						nbDinucleotidesParPhase[phase]+=valeur_tampon;
+						tableaudinucleotides[phase][nucleotide1][nucleotide2]+=valeur_tampon;
+						
+						tampon_tableaudinucleotides[phase][nucleotide1][nucleotide2]=0; //clear
+					}
+					
+					//trinucleotide
+					for(int nucleotide3 = 0 ; nucleotide3<4 ; nucleotide3++)
+					{
+						for(int phase = 0 ; phase<3 ; phase++)
+						{
+							valeur_tampon = tampon_tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3];
+							
+							nbTrinucleotidesParPhase[phase]+=valeur_tampon;
+							tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3]+=valeur_tampon;
+							
+							tampon_tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3]=0; //clear
+						}
+					}
 				}
 			}
 			
-			nb_dinucleotides += tampon_nb_dinucleotides;
-
-			for(int i = 0 ; i<2 ; i++)
-			{
-				nbDinucleotidesParPhase[i]+=tamponNbDinucleotidesParPhase[i];
-				
-				for(int j = 0 ; j<16 ; j++)
-				{
-					tableaudinucleotides[i][j]+=tampon_tableaudinucleotides[i][j];
-				}
-			}
-			
-			clear_tampon();
 			empty_tamp=true;
 		}
 		
@@ -229,197 +223,101 @@ public class Bdd
 	//remet un tampon à 0
 	public void clear_tampon()
 	{
-		tampon_nb_trinucleotides = 0;
-		
-		for(int i = 0 ; i<3 ; i++)
+		for(int nucleotide1 = 0 ; nucleotide1<4 ; nucleotide1++)
 		{
-			nbTrinucleotidesParPhase[i]=0;
-			
-			for(int j = 0 ; j<64 ; j++)
+			for(int nucleotide2 = 0 ; nucleotide2<4 ; nucleotide2++)
 			{
-				tampon_tableautrinucleotides[i][j]=0;
-			}
-		}
-		
-		tampon_nb_dinucleotides = 0;
-		
-		for(int i = 0 ; i<2 ; i++)
-		{
-			nbDinucleotidesParPhase[i]=0;
+				tampon_tableaudinucleotides[0][nucleotide1][nucleotide2]=0;
+				tampon_tableaudinucleotides[1][nucleotide1][nucleotide2]=0;
 
-			for(int j = 0 ; j<16 ; j++)
-			{
-				tampon_tableaudinucleotides[i][j]=0;
+				for(int nucleotide3 = 0 ; nucleotide3<4 ; nucleotide3++)
+				{
+					tampon_tableautrinucleotides[0][nucleotide1][nucleotide2][nucleotide3]=0;
+					tampon_tableautrinucleotides[1][nucleotide1][nucleotide2][nucleotide3]=0;
+					tampon_tableautrinucleotides[2][nucleotide1][nucleotide2][nucleotide3]=0;
+				}
 			}
 		}
 	}
 	
-//acces tableau
-	//renvois la position du tableau associee a un triplet de caractere (sous forme d'entier)
-	//renvois une erreur si un des caracteres est invalide (codé par un -1)
-	private int position_of_nucleotides (int nucleotide1, int nucleotide2, int nucleotide3) throws CharInvalideException
-	{
-		if ( (nucleotide1<0) || (nucleotide2<0) || (nucleotide3<0) )
-		{	
-			throw new CharInvalideException();
-		}
-		
-		return nucleotide1*16 + nucleotide2*4 + nucleotide3;
-	}
+//affichage
 	
-	private int position_of_nucleotides (int nucleotide1, int nucleotide2) throws CharInvalideException
+
+	//rend le nucleotide, associé à un entier, sous forme de Char
+	public static char charOfNucleotideInt(int nucleotide) throws CharInvalideException
 	{
-		if ( (nucleotide1<0) || (nucleotide2<0) )
-		{	
-			throw new CharInvalideException();
+		switch(nucleotide)
+		{
+			case 0 :
+				return 'A';
+			case 1 :
+				return 'C';
+			case 2 :
+				return 'G';
+			case 3 :
+				return 'T';
+			default:
+				throw new CharInvalideException() ;
 		}
-		
-		return nucleotide1*4 + nucleotide2;
-	}
-	
-	//renvois une chaine de caracteres (trinucleotide en majuscule) correspondant a une position dans le tableau
-	//il est beaucoup plus efficasse de mettre les case du tableau à coté de valeur notées en dur à l'avance étant donné qu'on sais d'offfice à quoi correspond chaque case
-	public String int_to_trinucleotide (int num) throws CharInvalideException
-	{
-		if ((num<0)||(num>63)) { throw new CharInvalideException(); }
-		
-		String res = "";
-		int val = num;
-		
-		//Test 1
-		if (val >= 48) 
-		{
-			res = res + "T";
-			val = val - 48;
-		} 
-		else if (val >= 32) 
-		{
-			res = res + "G";
-			val = val - 32;
-		} 
-		else if (val >= 16) 
-		{
-			res = res + "C";
-			val = val - 16;
-		}
-		else 
-		{
-			res = res + "A";
-		}
-
-		//Test 2
-		if (val >= 12) 
-		{
-			res = res + "T";
-			val = val - 12;
-		}
-		else if (val >= 8) 
-		{
-			res = res + "G";
-			val = val - 8;
-		}
-		else if (val >= 4) 
-		{
-			res = res + "C";
-			val = val - 4;
-		}
-		else 
-		{
-			res = res + "A";
-		}
-
-		// Test 3
-		if (val == 3) 
-		{
-			res = res + "T";
-		}
-		else if (val == 2) 
-		{
-			res = res + "G";
-		}
-		else if (val == 1)
-		{
-			res = res + "C";
-		}
-		else 
-		{
-			res = res + "A";
-		}
-
-		return res;
-	}
-	
-	private String int_to_dinucleotide (int num) throws CharInvalideException
-	{
-		if ((num<0)||(num>15)) { throw new CharInvalideException(); }
-		
-		String res = "";
-		int val = num;
-
-		//Test 1
-		if (val >= 12) 
-		{
-			res = res + "T";
-			val = val - 12;
-		}
-		else if (val >= 8) 
-		{
-			res = res + "G";
-			val = val - 8;
-		}
-		else if (val >= 4) 
-		{
-			res = res + "C";
-			val = val - 4;
-		}
-		else 
-		{
-			res = res + "A";
-		}
-
-		// Test 2
-		if (val == 3) 
-		{
-			res = res + "T";
-		}
-		else if (val == 2) 
-		{
-			res = res + "G";
-		}
-		else if (val == 1)
-		{
-			res = res + "C";
-		}
-		else 
-		{
-			res = res + "A";
-		}
-
-		return res;
 	}
 	
 	//sort un string qui représente le profil du tableau de trinucleotides
 	public String get_tableauxnucleotides_string ()
 	{
 		String str = "";
-				
-		try 
+		StringBuilder triplet = new StringBuilder("---");
+
+		try
 		{
 			str += "trinucleotide	phase1	phase2	phase3\n";
-			for (int i=0 ; i<64 ; i++)
+			for (int nucleotide1=0 ; nucleotide1<4 ; nucleotide1++)
 			{
-				str=str+"	"+int_to_trinucleotide(i)+" :	"+tableautrinucleotides[0][i]+"	"+tableautrinucleotides[1][i]+"	"+tableautrinucleotides[2][i]+"\n";
+				triplet.setCharAt(0, charOfNucleotideInt(nucleotide1));
+				
+				for (int nucleotide2=0 ; nucleotide2<4 ; nucleotide2++)
+				{
+					triplet.setCharAt(1, charOfNucleotideInt(nucleotide2));
+					
+					for (int nucleotide3=0 ; nucleotide3<4 ; nucleotide3++)
+					{
+						triplet.setCharAt(2, charOfNucleotideInt(nucleotide3));
+
+						str+="	"+triplet+" :";
+						
+						for (int phase=0 ; phase<3 ; phase++)
+						{
+							str+="	"+tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3];
+						}
+						
+						str+="\n";
+					}
+				}
 			}
+
 			
 			str += "dinucleotide	phase1	phase2\n";
-			for (int i=0 ; i<16 ; i++)
+			
+			triplet.setCharAt(2, ' ');
+			for (int nucleotide1=0 ; nucleotide1<4 ; nucleotide1++)
 			{
-				str=str+"	"+int_to_dinucleotide(i)+" :	"+tableaudinucleotides[0][i]+"	"+tableaudinucleotides[1][i]+"\n";
+				triplet.setCharAt(0, charOfNucleotideInt(nucleotide1));
+				
+				for (int nucleotide2=0 ; nucleotide2<4 ; nucleotide2++)
+				{
+					triplet.setCharAt(1, charOfNucleotideInt(nucleotide2));
+					str+="	"+triplet+" :";
+					
+					for (int phase=0 ; phase<2 ; phase++)
+					{
+						str+="	"+tableaudinucleotides[phase][nucleotide1][nucleotide2];
+					}
+					
+					str+="\n";
+				}
 			}
-		} 
-		catch (CharInvalideException e) {/*cette exception ne peux pas se produire, on ne rentre que des entiers valides*/}
+		}
+		catch (CharInvalideException e) { /* exception impossible mais néanmoins catchée*/ }
 		
 		return str;
 	}
-
 }
