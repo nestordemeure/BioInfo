@@ -32,6 +32,7 @@ public class IdFetcher {
 				DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 				builder = factory.newDocumentBuilder();
 				Document doc = builder.parse(is);
+				is.close();
 
 				int count = Integer.parseInt(doc.getElementsByTagName("Count").item(0).getTextContent());
 				

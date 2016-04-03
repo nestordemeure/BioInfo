@@ -153,13 +153,17 @@ public class ParserManager implements Runnable{
 	
 	public void launchParser(String ids, int length){
 		String url = Configuration.GEN_DOWNLOAD_URL.replaceAll("<ID>", ids);
+		Scanner sc = Net.getUrl(url);
 		try{
 			Parser p = new Parser(this.db, Net.getUrl(url));
 			p.parse(length);
+			sc.close();
 		}catch(Exception e){
+			sc.close();
 			UIManager.log("Error while parsing file "+url);
 			e.printStackTrace();
 		}catch(Error e){
+			sc.close();
 			UIManager.log("Error while parsing file "+url);
 			e.printStackTrace();
 		}
