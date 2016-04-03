@@ -28,7 +28,7 @@ public class MainFrame extends Frame {
 		progress = new JProgressBar();
 		progress.setDoubleBuffered(true);
 		progress.setStringPainted(true);
-
+		progress.setMaximum(100);
 		
 		this.add(scroll,  BorderLayout.CENTER);
 		this.add(progress,BorderLayout.PAGE_END);
@@ -42,12 +42,7 @@ public class MainFrame extends Frame {
 		this.logger.insert(msg + "\n",this.logger.getText().length());
 	}
 	
-	public void setMaxProgress(int n){
-		this.progress.setMaximum(n);
-	}
-	
 	public void setProgress(int n){
 		this.progress.setValue(n);
 	}
-
 }
