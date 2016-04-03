@@ -3,9 +3,9 @@ package configuration;
 public class Configuration {
 	
 	// --- General configuration ---
-	
 	public static String FOLDER_SEPARATOR = "/"; // Separateur pour les dossiers (/ sous linux et \ sous windows)
 	public static String BASE_FOLDER = "/tmp/results/"; // Dossier de base pour le stockage de nos résultats
+	public static boolean USE_GUI = true; // Permet de switcher entre le mode graphique et console.
 	
 	// --- Net configuration ---
 	public static int NET_MAX_DOWNLOAD_TRIES = 10; // Nombre d'essais pour télécharger un fichier.
@@ -22,7 +22,7 @@ public class Configuration {
 	public static String GEN_DOWNLOAD_URL = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=<ID>&rettype=gb"; // URL a utiliser pour télécharger les genes
 	
 	// --- ThreadManager Configuration ---
-	public static int THREADS_NUMBER = 20; // Nombre de threads a lancer pour la récupération des fichiers de genes.
+	public static int THREADS_NUMBER = 15; // Nombre de threads a lancer pour la récupération des fichiers de genes.
 	
 	// --- TreeManager Configuration ---
 	public static String TREE_URL = "http://www.ncbi.nlm.nih.gov/genomes/Genome2BE/genome2srv.cgi?action=GetGenomeList4Grid&filterText=%7CAll&page=";

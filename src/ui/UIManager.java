@@ -3,6 +3,8 @@ package ui;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import configuration.Configuration;
+
 public class UIManager {
 	
 	private static int max_progress;
@@ -11,10 +13,14 @@ public class UIManager {
 
 	
 	private static UIConsole console;
+	private static UIGraphics graphics;
 	
 	private static void check(){
-		if(UIManager.console == null){
-			UIManager.console = new UIConsole(); 
+		if(UIManager.console == null && ! Configuration.USE_GUI){
+			UIManager.console = new UIConsole();
+		}
+		if(UIManager.graphics == null && Configuration.USE_GUI){
+			UIManager.graphics = new UIGraphics();
 		}
 	}
 	
@@ -25,19 +31,40 @@ public class UIManager {
 	public static void addProgress(int n){
 		progressLock.lock();
 		UIManager.current_progress += n;
-		UIManager.setProgress((double) UIManager.current_progress / (double) UIManager.max_progress);
+		UIManager.setProgress(100.0f * (double) UIManager.current_progress / (double) UIManager.max_progress);
 		progressLock.unlock();
 	}
 	
 	public static void log(String message){
 		UIManager.check();
-		UIManager.console.log(message);
+		if(Configuration.USE_GUI){
+			UIManager.graphics.log(message);
+		}else {
+			UIManager.console.log(message);
+		}
 	}
 	
 	public static void setProgress(double progress){
 		UIManager.check();
-		UIManager.console.setProgress(progress);
-		
+		if(Configuration.USE_GUI){
+			UIManager.graphics.setProgress(progress);
+		} else {
+			UIManager.console.setProgress(progress);
+		}
+	}
+	
+	public static void startPreloading(){
+		if(Configuration.USE_GUI){
+			UIManager.check();
+			UIManager.graphics.startPreloader();
+		}
+	}
+	
+	public static void startMainProcess(){
+		if(Configuration.USE_GUI){
+			UIManager.check();
+			UIManager.graphics.startMainProcess();
+		}
 	}
 
 }
