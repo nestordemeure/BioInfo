@@ -179,7 +179,7 @@ public class ParserManager implements Runnable{
 				UIManager.log("[ParserManager : "+this.specy_name+"] Already done ... Skipping ...");
 			} else {
 				// S'il y a des différences, on lance le calcul.
-				this.db = new Bdd(this.data_path);
+				this.db = new Bdd();
 								
 				int pos = 0;
 				String id_list = "";

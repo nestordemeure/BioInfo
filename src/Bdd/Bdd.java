@@ -1,5 +1,13 @@
 package Bdd;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 import exceptions.CharInvalideException;
+import manager.AccessManager;
 
 public class Bdd 
 {
@@ -20,9 +28,7 @@ public class Bdd
 //variable d'instance
 	
 //sortie
-	
-	private String chemin;
-	
+		
 	private int nb_CDS;
 	private int nb_CDS_non_traites;
 	
@@ -40,12 +46,12 @@ public class Bdd
 	
 //-----------------------------------------------------------------------------	
 //fonctions publiques
-	
-//constructeur
-	public Bdd (String chem)
-	{
-		chemin = chem;
 		
+//constructeur
+	
+	//TODO WARNING les utilisateur de la base doivent cesser de lui donner un argument
+	public Bdd ()
+	{
 		nb_CDS = 0;
 		nb_CDS_non_traites = 0;
 
@@ -57,6 +63,38 @@ public class Bdd
 		tableaudinucleotides = new int[2][4][4];
 		tampon_tableaudinucleotides = new int[2][4][4];
 		
+		empty_tamp=true;
+	}
+	
+	//TODO importe la base située à l'adresse donnée
+	public Bdd (String file) throws IOException
+	{
+		String adresse = file+".bdd";
+		
+		AccessManager.accessFile(adresse); //mutex
+		FileInputStream chan = new FileInputStream(adresse);
+		ObjectInputStream inputstream = new ObjectInputStream(chan);
+
+		nb_CDS = inputstream.readInt();
+		nb_CDS_non_traites = inputstream.readInt();
+		
+		try 
+		{
+			nbTrinucleotidesParPhase = (int[]) inputstream.readObject();
+			nbDinucleotidesParPhase = (int[]) inputstream.readObject();
+			tableautrinucleotides = (int[][][][]) inputstream.readObject();
+			tableaudinucleotides = (int[][][]) inputstream.readObject();		
+		} 
+		catch (ClassNotFoundException e) //la base en mémoire n'est pas correctement écrite : improbable
+		{
+			e.printStackTrace();
+		}
+
+		inputstream.close();	
+		AccessManager.doneWithFile(adresse); //mutex
+		
+		tampon_tableautrinucleotides = new int[3][4][4][4];
+		tampon_tableaudinucleotides = new int[2][4][4];
 		empty_tamp=true;
 	}
 	
@@ -240,7 +278,65 @@ public class Bdd
 		}
 	}
 	
+	//ajoute le contenus de la base donnée en argument à la base actuelle
+	void fusionBase(Bdd base)
+	{
+		int valeur_interm;
+		
+		for(int nucleotide1 = 0 ; nucleotide1<4 ; nucleotide1++)
+		{
+			for(int nucleotide2 = 0 ; nucleotide2<4 ; nucleotide2++)
+			{
+				//dinucleotide
+				for(int phase = 0 ; phase<2 ; phase++)
+				{
+					valeur_interm = base.tableaudinucleotides[phase][nucleotide1][nucleotide2];
+					
+					nbDinucleotidesParPhase[phase]+=valeur_interm;
+					tableaudinucleotides[phase][nucleotide1][nucleotide2]+=valeur_interm;
+				}
+				
+				//trinucleotide
+				for(int nucleotide3 = 0 ; nucleotide3<4 ; nucleotide3++)
+				{
+					for(int phase = 0 ; phase<3 ; phase++)
+					{
+						valeur_interm = base.tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3];
+						
+						nbTrinucleotidesParPhase[phase]+=valeur_interm;
+						tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3]+=valeur_interm;
+					}
+				}
+			}
+		}
+		
+		nb_CDS += base.nb_CDS;
+		nb_CDS_non_traites += base.nb_CDS_non_traites;
+	}
+	
 //affichage
+	
+	//TODO exporte une base à l'adresse donnée
+	public void exportBase(String file) throws IOException
+	{
+		String adresse = file+".bdd";
+		
+		AccessManager.accessFile(adresse); //mutex
+		
+		FileOutputStream chan = new FileOutputStream(adresse);
+		ObjectOutputStream outputstream = new ObjectOutputStream(chan);
+
+		outputstream.writeInt(nb_CDS);
+		outputstream.writeInt(nb_CDS_non_traites);
+		outputstream.writeObject(nbTrinucleotidesParPhase);
+		outputstream.writeObject(nbDinucleotidesParPhase);
+		outputstream.writeObject(tableautrinucleotides);
+		outputstream.writeObject(tableaudinucleotides);
+
+		outputstream.close();
+		
+		AccessManager.doneWithFile(adresse); //mutex
+	}
 	
 	//rend le nucleotide, associé à un entier, sous forme de Char
 	public static char charOfNucleotideInt(int nucleotide) throws CharInvalideException
