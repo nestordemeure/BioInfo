@@ -278,10 +278,15 @@ public class Bdd
 		}
 	}
 	
-	//ajoute le contenus de la base donnée en argument à la base actuelle
+	//TODO ajoute le contenus de la base donnée en argument à la base actuelle
 	void fusionBase(Bdd base)
 	{
-		int valeur_interm;
+		nbDinucleotidesParPhase[0]+= base.nbDinucleotidesParPhase[0];
+		nbDinucleotidesParPhase[1]+= base.nbDinucleotidesParPhase[1];
+
+		nbTrinucleotidesParPhase[0]+= base.nbTrinucleotidesParPhase[0];
+		nbTrinucleotidesParPhase[1]+= base.nbTrinucleotidesParPhase[1];
+		nbTrinucleotidesParPhase[2]+= base.nbTrinucleotidesParPhase[2];
 		
 		for(int nucleotide1 = 0 ; nucleotide1<4 ; nucleotide1++)
 		{
@@ -290,10 +295,9 @@ public class Bdd
 				//dinucleotide
 				for(int phase = 0 ; phase<2 ; phase++)
 				{
-					valeur_interm = base.tableaudinucleotides[phase][nucleotide1][nucleotide2];
+					tableaudinucleotides[phase][nucleotide1][nucleotide2]+=
+							base.tableaudinucleotides[phase][nucleotide1][nucleotide2];
 					
-					nbDinucleotidesParPhase[phase]+=valeur_interm;
-					tableaudinucleotides[phase][nucleotide1][nucleotide2]+=valeur_interm;
 				}
 				
 				//trinucleotide
@@ -301,10 +305,8 @@ public class Bdd
 				{
 					for(int phase = 0 ; phase<3 ; phase++)
 					{
-						valeur_interm = base.tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3];
-						
-						nbTrinucleotidesParPhase[phase]+=valeur_interm;
-						tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3]+=valeur_interm;
+						tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3]+=
+								base.tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3];
 					}
 				}
 			}
