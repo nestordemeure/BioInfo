@@ -1,6 +1,7 @@
 package excel;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -10,6 +11,7 @@ public class ExcelManager {
 	
 	//prends le dossier racine et créé dans chaque sous dossier un fichier excel récapitulatif
 	public static void fusionExcels(String folder){
+		
 		File currentFolder = new File(folder);
 		//Liste des Kingdoms
 		String[] listeFichiers=currentFolder.list();
@@ -37,7 +39,7 @@ public class ExcelManager {
 								
 								String filepath = folder+"/"+listeFichiers[i]+"/"+listelvl1[j]+"/"+listelvl2[k];
 								Bdd base = ExcelReader.reader(filepath);
-								ExcelWriter.writer(filepath+"/"+listelvl2[k]+".xls", chemin, base);
+								ExcelWriter.writer(filepath+"/"+listelvl2[k], chemin, base);
 							}
 							
 							
@@ -51,7 +53,7 @@ public class ExcelManager {
 						
 						String filepath = folder+"/"+listeFichiers[i]+"/"+listelvl1[j];
 						Bdd base = ExcelReader.reader(filepath);
-						ExcelWriter.writer(filepath+"/"+listelvl1[j]+".xls", chemin, base);
+						ExcelWriter.writer(filepath+"/"+listelvl1[j], chemin, base);
 					}
 				}
 				String[] chemin = new String[4];
@@ -62,17 +64,18 @@ public class ExcelManager {
 				
 				String filepath = folder+"/"+listeFichiers[i];
 				Bdd base = ExcelReader.reader(filepath);
-				ExcelWriter.writer(filepath+"/"+listeFichiers[i]+".xls", chemin, base);
+				ExcelWriter.writer(filepath+"/"+listeFichiers[i], chemin, base);
 			}
 		}
 		String[] chemin = new String[4];
-		chemin [0] = "";
+		chemin [0] = "Récapitulatif";
 		chemin [1] = "";
 		chemin [2] = "";
 		chemin [3] = "";
 		
 		String filepath = folder;
 		Bdd base = ExcelReader.reader(filepath);
-		ExcelWriter.writer(filepath+"/"+"Recapitulatif"+".xls", chemin, base);
+		ExcelWriter.writer(filepath+"/"+"Recapitulatif", chemin, base);
+	
 	}
 }

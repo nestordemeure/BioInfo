@@ -23,24 +23,21 @@ import tree.*;
 
 public class Main {
 
-	public static void main(String[] args) throws CharInvalideException, ScannerNullException {
-		
+	public static void main(String[] args) throws Exception {
 		/*
-		//exemple d'utilisation du scanneur
-		Scanner sc = Net.getUrl("http://jonathancrabtree.github.io/Circleator/tutorials/gb_annotation/L42023.1.gb");
-		while(sc.hasNext())
-		{
-			UIManager.log(sc.next());
-		}
-		*/
-
-		//parsing
-		Bdd base = new Bdd("path");
+		Tree plop = new Tree();
+		plop=TreeManager.constree();
 		
+		ThreadManager.start(plop, new ArrayList<String>());
+		*/
+		
+		//parsing
+		Bdd base = new Bdd();
 		//Scanner scanneur = Net.getUrl("http://jonathancrabtree.github.io/Circleator/tutorials/gb_annotation/L42023.1.gb");
 		//Scanner scanneur = Net.getUrl("file:///home/nestor/Cours/2A/bioinformatique/sequence2.gb");
 		Scanner scanneur = Net.getUrl("file:///home/micka/Bureau/Cours/3/BioInfo/sequence/sequence2.gb");
 		Parser parseur = new Parser(base,scanneur);
+
 		parseur.parse();
 				
 		//affichage du contenus de la bdd
@@ -55,7 +52,7 @@ public class Main {
 		plop [1] = "groupe";
 		plop [2] = "subgroup";
 		plop [3] = "organisme";
-		ExcelWriter.writer("arbo/patate/souspatate/plop2/tortue/tortue.xls",plop, base);
+		ExcelWriter.writer("arbo/patate/souspatate/plop2/tortue/tortue",plop, base);
 		
 
 		scanneur = Net.getUrl("file:///home/micka/Bureau/Cours/3/BioInfo/sequence/sequence3.gb");
@@ -68,9 +65,10 @@ public class Main {
 		plop [1] = "groupe";
 		plop [2] = "subgroup";
 		plop [3] = "organisme";
-		ExcelWriter.writer("arbo/patate/souspatate/plop2/tortue2/tortue2.xls",plop, base);
+		ExcelWriter.writer("arbo/patate/souspatate/plop2/tortue2/tortue2",plop, base);
 		
 		ExcelManager.fusionExcels("arbo");
+
 
 
 	}
