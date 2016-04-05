@@ -68,9 +68,6 @@ public class Main {
 		ExcelWriter.writer("arbo/patate/souspatate/plop2/tortue2/tortue2",plop, base);
 		
 		ExcelManager.fusionExcels("arbo");
-
-
-
 	}
 
 }
