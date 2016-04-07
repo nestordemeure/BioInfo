@@ -39,8 +39,8 @@ public class Bdd
 	private long tableaudinucleotides[][][]; //tableaudinucleotides[phase][nucleotide1][nucleotide2]
 	
 	//tampon
-	private long tampon_tableautrinucleotides[][][][]; //tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3]
-	private long tampon_tableaudinucleotides[][][]; //tableaudinucleotides[phase][nucleotide1][nucleotide2]
+	private int tampon_tableautrinucleotides[][][][]; //tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3]
+	private int tampon_tableaudinucleotides[][][]; //tableaudinucleotides[phase][nucleotide1][nucleotide2]
 	
 	boolean empty_tamp;
 	
@@ -59,9 +59,9 @@ public class Bdd
 		nbDinucleotidesParPhase = new long[2];
 		
 		tableautrinucleotides = new long[3][4][4][4];
-		tampon_tableautrinucleotides = new long[3][4][4][4];
+		tampon_tableautrinucleotides = new int[3][4][4][4];
 		tableaudinucleotides = new long[2][4][4];
-		tampon_tableaudinucleotides = new long[2][4][4];
+		tampon_tableaudinucleotides = new int[2][4][4];
 		
 		empty_tamp=true;
 	}
@@ -93,8 +93,8 @@ public class Bdd
 		inputstream.close();	
 		AccessManager.doneWithFile(adresse); //mutex
 		
-		tampon_tableautrinucleotides = new long[3][4][4][4];
-		tampon_tableaudinucleotides = new long[2][4][4];
+		tampon_tableautrinucleotides = new int[3][4][4][4];
+		tampon_tableaudinucleotides = new int[2][4][4];
 		empty_tamp=true;
 	}
 	
@@ -139,7 +139,7 @@ public class Bdd
 	//ces fonctions s'utilises sans avoir besoin d'ouvrir ou fermer la base mais n'ont pas la sécuritée anti-exceptions du tampon
 	
 	//ajoute un dinucleotide et un tri nucleotides au phases indiquées
-	public void ajoute_nucleotides_unsafe (int phase2, int phase3, int nucleotide1, int nucleotide2, int nucleotide3, int nbrebucléotides) throws CharInvalideException
+	public void ajoute_nucleotides_unsafe (int phase2, int phase3, int nucleotide1, int nucleotide2, int nucleotide3, long nbrebucléotides) throws CharInvalideException
 	{
 		tableautrinucleotides[phase3][nucleotide1][nucleotide2][nucleotide3]+=nbrebucléotides;
 		tableaudinucleotides[phase2][nucleotide1][nucleotide2]+=nbrebucléotides;
@@ -148,14 +148,14 @@ public class Bdd
 	}
 	
 	//ajoute un tri nucleotides a la phase indiquée
-	public void ajoute_nucleotides_unsafe (int phase, int nucleotide1, int nucleotide2, int nucleotide3, int nbrebucléotides) throws CharInvalideException
+	public void ajoute_nucleotides_unsafe (int phase, int nucleotide1, int nucleotide2, int nucleotide3, long nbrebucléotides) throws CharInvalideException
 	{
 		tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3]+=nbrebucléotides;
 		nbTrinucleotidesParPhase[phase]+=nbrebucléotides;
 	}
 	
 	//ajoute un dinucleotide à la phase indiquée
-	public void ajoute_nucleotides_unsafe (int phase, int nucleotide1, int nucleotide2, int nbrebucléotides) throws CharInvalideException
+	public void ajoute_nucleotides_unsafe (int phase, int nucleotide1, int nucleotide2, long nbrebucléotides) throws CharInvalideException
 	{
 		tableaudinucleotides[phase][nucleotide1][nucleotide2]+=nbrebucléotides;
 		nbDinucleotidesParPhase[phase]+=nbrebucléotides;
