@@ -29,18 +29,18 @@ public class Bdd
 	
 //sortie
 		
-	private long nb_CDS;
-	private long nb_CDS_non_traites;
+	private int nb_CDS;
+	private int nb_CDS_non_traites;
 	
-	private long nbTrinucleotidesParPhase[]; //nb_trinucleotides_par_phase[phase]
-	private long nbDinucleotidesParPhase[]; //nb_dinucleotides_par_phase[phase]
+	private int nbTrinucleotidesParPhase[]; //nb_trinucleotides_par_phase[phase]
+	private int nbDinucleotidesParPhase[]; //nb_dinucleotides_par_phase[phase]
 	
-	private long tableautrinucleotides[][][][]; //tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3]
-	private long tableaudinucleotides[][][]; //tableaudinucleotides[phase][nucleotide1][nucleotide2]
+	private int tableautrinucleotides[][][][]; //tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3]
+	private int tableaudinucleotides[][][]; //tableaudinucleotides[phase][nucleotide1][nucleotide2]
 	
 	//tampon
-	private long tampon_tableautrinucleotides[][][][]; //tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3]
-	private long tampon_tableaudinucleotides[][][]; //tableaudinucleotides[phase][nucleotide1][nucleotide2]
+	private int tampon_tableautrinucleotides[][][][]; //tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3]
+	private int tampon_tableaudinucleotides[][][]; //tableaudinucleotides[phase][nucleotide1][nucleotide2]
 	
 	boolean empty_tamp;
 	
@@ -55,13 +55,13 @@ public class Bdd
 		nb_CDS = 0;
 		nb_CDS_non_traites = 0;
 
-		nbTrinucleotidesParPhase = new long[3];
-		nbDinucleotidesParPhase = new long[2];
+		nbTrinucleotidesParPhase = new int[3];
+		nbDinucleotidesParPhase = new int[2];
 		
-		tableautrinucleotides = new long[3][4][4][4];
-		tampon_tableautrinucleotides = new long[3][4][4][4];
-		tableaudinucleotides = new long[2][4][4];
-		tampon_tableaudinucleotides = new long[2][4][4];
+		tableautrinucleotides = new int[3][4][4][4];
+		tampon_tableautrinucleotides = new int[3][4][4][4];
+		tableaudinucleotides = new int[2][4][4];
+		tampon_tableaudinucleotides = new int[2][4][4];
 		
 		empty_tamp=true;
 	}
@@ -75,15 +75,15 @@ public class Bdd
 		FileInputStream chan = new FileInputStream(adresse);
 		ObjectInputStream inputstream = new ObjectInputStream(chan);
 
-		nb_CDS = inputstream.readLong();
-		nb_CDS_non_traites = inputstream.readLong();
+		nb_CDS = inputstream.readInt();
+		nb_CDS_non_traites = inputstream.readInt();
 		
 		try 
 		{
-			nbTrinucleotidesParPhase = (long[]) inputstream.readObject();
-			nbDinucleotidesParPhase = (long[]) inputstream.readObject();
-			tableautrinucleotides = (long[][][][]) inputstream.readObject();
-			tableaudinucleotides = (long[][][]) inputstream.readObject();		
+			nbTrinucleotidesParPhase = (int[]) inputstream.readObject();
+			nbDinucleotidesParPhase = (int[]) inputstream.readObject();
+			tableautrinucleotides = (int[][][][]) inputstream.readObject();
+			tableaudinucleotides = (int[][][]) inputstream.readObject();		
 		} 
 		catch (ClassNotFoundException e) //la base en mémoire n'est pas correctement écrite : improbable
 		{
@@ -93,8 +93,8 @@ public class Bdd
 		inputstream.close();	
 		AccessManager.doneWithFile(adresse); //mutex
 		
-		tampon_tableautrinucleotides = new long[3][4][4][4];
-		tampon_tableaudinucleotides = new long[2][4][4];
+		tampon_tableautrinucleotides = new int[3][4][4][4];
+		tampon_tableaudinucleotides = new int[2][4][4];
 		empty_tamp=true;
 	}
 	
@@ -162,44 +162,44 @@ public class Bdd
 	}
 	
 //getters (resultat final)
-	public long get_nb_CDS ()
+	public int get_nb_CDS ()
 	{
 		return nb_CDS;
 	}
 	
 	//toutes phases confondues
-	public long get_nb_trinucleotides ()
+	public int get_nb_trinucleotides ()
 	{
 		return (nbTrinucleotidesParPhase[0]+nbTrinucleotidesParPhase[1]+nbTrinucleotidesParPhase[2]);
 	}
 	
-	public long get_nb_trinucleotides (int phase)
+	public int get_nb_trinucleotides (int phase)
 	{
 		return nbTrinucleotidesParPhase[phase];
 	}
 	
 	//toute phases confondues
-	public long get_nb_dinucleotides ()
+	public int get_nb_dinucleotides ()
 	{
 		return (nbDinucleotidesParPhase[0]+nbDinucleotidesParPhase[1]);
 	}
 	
-	public long get_nb_dinucleotides (int phase)
+	public int get_nb_dinucleotides (int phase)
 	{
 		return nbDinucleotidesParPhase[phase];
 	}
 	
-	public long get_nb_CDS_non_traites ()
+	public int get_nb_CDS_non_traites ()
 	{
 		return nb_CDS_non_traites;
 	}
 	
-	public long get_tableautrinucleotides (int phase, int nucleotide1, int nucleotide2, int nucleotide3) throws CharInvalideException
+	public int get_tableautrinucleotides (int phase, int nucleotide1, int nucleotide2, int nucleotide3) throws CharInvalideException
 	{
 		return 	tampon_tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3];
 	}
 	
-	public long get_tableaudinucleotides (int phase, int nucleotide1, int nucleotide2) throws CharInvalideException
+	public int get_tableaudinucleotides (int phase, int nucleotide1, int nucleotide2) throws CharInvalideException
 	{
 		return tableaudinucleotides[phase][nucleotide1][nucleotide2];
 	}
@@ -209,7 +209,7 @@ public class Bdd
 	//déplace le contenus du tampon dans la mémoire
 		public void close_tampon()
 		{
-			long valeur_tampon;
+			int valeur_tampon;
 			
 			for(int nucleotide1 = 0 ; nucleotide1<4 ; nucleotide1++)
 			{
@@ -279,7 +279,7 @@ public class Bdd
 	}
 	
 	//TODO ajoute le contenus de la base donnée en argument à la base actuelle
-	public void fusionBase(Bdd base)
+	void fusionBase(Bdd base)
 	{
 		nbDinucleotidesParPhase[0]+= base.nbDinucleotidesParPhase[0];
 		nbDinucleotidesParPhase[1]+= base.nbDinucleotidesParPhase[1];
@@ -328,8 +328,8 @@ public class Bdd
 		FileOutputStream chan = new FileOutputStream(adresse);
 		ObjectOutputStream outputstream = new ObjectOutputStream(chan);
 
-		outputstream.writeLong(nb_CDS);
-		outputstream.writeLong(nb_CDS_non_traites);
+		outputstream.writeInt(nb_CDS);
+		outputstream.writeInt(nb_CDS_non_traites);
 		outputstream.writeObject(nbTrinucleotidesParPhase);
 		outputstream.writeObject(nbDinucleotidesParPhase);
 		outputstream.writeObject(tableautrinucleotides);
