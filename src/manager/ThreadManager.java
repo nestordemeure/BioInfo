@@ -14,10 +14,13 @@ public class ThreadManager {
 	protected static int NB_THREADS = Configuration.THREADS_NUMBER;
 	private static Lock mainLock = new ReentrantLock();
 	
-	public static void start(Tree t, ArrayList<String> path) throws InterruptedException {
+	public static void start(Tree t, ArrayList<String> path){
 		ThreadManager.startThreads(t, path);
 		while(ThreadManager.nbThreads() != Configuration.THREADS_NUMBER) {
-			Thread.sleep(1000);
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+			}
 		}
 	}
 	
