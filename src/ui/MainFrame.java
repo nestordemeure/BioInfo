@@ -11,8 +11,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.JTree;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.text.DefaultCaret;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeSelectionModel;
 
 import manager.ParserManager;
 import manager.ThreadManager;
@@ -48,11 +51,36 @@ public class MainFrame extends Frame {
 		
 		infos = new JTextArea();
 		infos.setEditable(false);
-		infos.append("info1 \n info2");
+		infos.append("Pas d'information disponible");
 		
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode("Root");
-		MainFrame.createJTree(t, root);	
+		MainFrame.createJTree(t, root, new ArrayList<String>());	
 		tree = new JTree(root);
+		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+		tree.addTreeSelectionListener(new TreeSelectionListener() {
+		    public void valueChanged(TreeSelectionEvent e) {
+		        DefaultMutableTreeNode node = (DefaultMutableTreeNode)
+		                           tree.getLastSelectedPathComponent();
+ 
+		        if (node == null) {
+		        	infos.setText("Pas d'information disponible");
+		        	return;
+		        }
+		        else {
+		        	InfoNode nodeInfo = (InfoNode) node.getUserObject();
+		        	// TODO : Check si le fichier existe déjà et affiche ses informations
+		        	/* File f = new File(nodeInfo.getPath());
+		        	   if(f.exists() && !f.isDirectory()) { 
+		        	     infos.setText(nodeInfo.getPath());
+		        	   }
+		        	   else {
+		        	   	 infos.setText("Pas d'information disponible");
+		        	   }*/
+		        	infos.setText(nodeInfo.getPath());
+		        }
+		    }
+		});
+
 		scrolltree = new JScrollPane(tree);
 		scrolltree.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		
@@ -77,19 +105,21 @@ public class MainFrame extends Frame {
 		this.progress.setValue(n);
 	}
 	
-   public static void createJTree(Tree t, DefaultMutableTreeNode treeNode){
+   public static void createJTree(Tree t, DefaultMutableTreeNode treeNode, ArrayList<String> path){
 	   Object[] nodes = t.nodes();
 	   
 	   for (Object o : nodes) {
 			String node = (String) o;
+			ArrayList<String> new_path = new ArrayList<String>(path);
+			new_path.add(node);
 			
 			if (t.isLeaf(node)) {
-				treeNode.add(new DefaultMutableTreeNode(node));
+				treeNode.add(new DefaultMutableTreeNode(new InfoNode(node,new_path)));
 			}
 			else {
-				DefaultMutableTreeNode customNode = new DefaultMutableTreeNode(node);
+				DefaultMutableTreeNode customNode = new DefaultMutableTreeNode(new InfoNode(node,new_path));
 				treeNode.add(customNode);
-				MainFrame.createJTree((Tree) t.get(node), customNode);
+				MainFrame.createJTree((Tree) t.get(node), customNode, new_path);
 			}
 		}
    }
