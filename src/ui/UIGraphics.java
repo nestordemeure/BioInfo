@@ -1,4 +1,5 @@
 package ui;
+import tree.Tree;
 
 public class UIGraphics {
 	private PreLoaderFrame plFrame;
@@ -13,13 +14,13 @@ public class UIGraphics {
 		this.plFrame = new PreLoaderFrame();
 	}
 	
-	public void startMainProcess(){
+	public void startMainProcess(Tree t){
 		if(this.plFrame != null){
 			this.plFrame.setVisible(false);
 			this.plFrame.dispose();
 			this.plFrame = null;
 		}
-		this.mFrame = new MainFrame();
+		this.mFrame = new MainFrame(t);
 	}
 	
 	public void log(String str){

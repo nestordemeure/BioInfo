@@ -87,7 +87,7 @@ public class Main {
 		UIManager.setMaxProgress(plop.size());
 		
 		// Creating species statistics
-		UIManager.startMainProcess();
+		UIManager.startMainProcess(plop);
 		ThreadManager.start(plop, new ArrayList<String>());
 		
 		// Merge excels files
