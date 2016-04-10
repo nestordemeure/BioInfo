@@ -17,7 +17,6 @@ public class Main {
 		
 		UIManager.log("Creating excel files...");
 		ExcelManager.fusionExcels(Configuration.BASE_FOLDER);
-
 	}
 
 }
