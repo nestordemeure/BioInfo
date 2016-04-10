@@ -1,7 +1,6 @@
 package manager;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -15,7 +14,14 @@ public class ThreadManager {
 	protected static int NB_THREADS = Configuration.THREADS_NUMBER;
 	private static Lock mainLock = new ReentrantLock();
 	
-	public static void start(Tree t, ArrayList<String> path) {
+	public static void start(Tree t, ArrayList<String> path) throws InterruptedException {
+		ThreadManager.startThreads(t, path);
+		while(ThreadManager.nbThreads() != Configuration.THREADS_NUMBER) {
+			Thread.sleep(1000);
+		}
+	}
+	
+	private static void startThreads(Tree t, ArrayList<String> path) {
 		Object[] nodes = t.nodes();
 		
 		for (Object o : nodes) {
@@ -54,7 +60,7 @@ public class ThreadManager {
 				}		
 			}
 			else {
-				ThreadManager.start((Tree) t.get(node), new_path);
+				ThreadManager.startThreads((Tree) t.get(node), new_path);
 			}
 		}
 	}
@@ -87,6 +93,13 @@ public class ThreadManager {
 		mainLock.lock();
 		NB_THREADS--;
 		mainLock.unlock();
+	}
+	
+	private static int nbThreads() {
+		mainLock.lock();
+		int nb = NB_THREADS;
+		mainLock.unlock();
+		return nb;
 	}
 
 }
