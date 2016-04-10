@@ -157,13 +157,19 @@ public class ParserManager implements Runnable{
 		try{
 			Parser p = new Parser(this.db, Net.getUrl(url));
 			p.parse(length);
-			sc.close();
+			if(sc != null){
+				sc.close();
+			}
 		}catch(Exception e){
-			sc.close();
+			if(sc != null){
+				sc.close();
+			}
 			UIManager.log("Error while parsing file "+url);
 			e.printStackTrace();
 		}catch(Error e){
-			sc.close();
+			if(sc != null){
+				sc.close();
+			}
 			UIManager.log("Error while parsing file "+url);
 			e.printStackTrace();
 		}
