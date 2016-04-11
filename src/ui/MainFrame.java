@@ -15,6 +15,7 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.text.DefaultCaret;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeSelectionModel;
 
 import manager.ParserManager;
@@ -53,38 +54,12 @@ public class MainFrame extends Frame {
 		infos.setEditable(false);
 		infos.append("Pas d'information disponible");
 		
-		DefaultMutableTreeNode root = new DefaultMutableTreeNode("Root");
+		DefaultMutableTreeNode root = new DefaultMutableTreeNode(new InfoNode("All", new ArrayList<String>()));
 		MainFrame.createJTree(t, root, new ArrayList<String>());	
 		tree = new JTree(root);
-		tree.setCellRenderer(new TreeCheckBoxRenderer());
-		tree.addMouseListener(new TreeCheckBoxMouseListener(tree, tree.getModel()));
-//		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-		//CheckTreeManager checkTreeManager = new CheckTreeManager(tree);
-		
-		//tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-//		tree.addTreeSelectionListener(new TreeSelectionListener() {
-//		    public void valueChanged(TreeSelectionEvent e) {
-//		        DefaultMutableTreeNode node = (DefaultMutableTreeNode)
-//		                           tree.getLastSelectedPathComponent();
-// 
-//		        if (node == null) {
-//		        	infos.setText("Pas d'information disponible");
-//		        	return;
-//		        }
-//		        else {
-//		        	InfoNode nodeInfo = (InfoNode) node.getUserObject();
-//		        	// TODO : Check si le fichier existe déjà et affiche ses informations
-//		        	/* File f = new File(nodeInfo.getPath());
-//		        	   if(f.exists() && !f.isDirectory()) { 
-//		        	     infos.setText(nodeInfo.getPath());
-//		        	   }
-//		        	   else {
-//		        	   	 infos.setText("Pas d'information disponible");
-//		        	   }*/
-//		        	infos.setText(nodeInfo.getPath());
-//		        }
-//		    }
-//		});
+		TreeCheckBoxSelectionModel model = new TreeCheckBoxSelectionModel(tree.getModel());
+		tree.setCellRenderer(new TreeCheckBoxRenderer(model));
+		tree.addMouseListener(new TreeCheckBoxMouseListener(tree, model));
 
 		scrolltree = new JScrollPane(tree);
 		scrolltree.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);

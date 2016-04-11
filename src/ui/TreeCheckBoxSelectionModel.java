@@ -1,5 +1,7 @@
 package ui;
 
+import java.util.ArrayList;
+
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeSelectionModel;
 import javax.swing.tree.TreeModel;
@@ -13,16 +15,32 @@ public class TreeCheckBoxSelectionModel extends DefaultTreeSelectionModel{
 	
 	public TreeCheckBoxSelectionModel(TreeModel model){
 		this.model = model;
-		
 		this.setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
 	}
 	
 	public boolean isPathSelected(TreePath path){
 		InfoNode node = getInfoNode(path);
-		return (node == null) ? false : node.isSelected();
+		if(node != null && node.isSelected()){
+			return true;
+		}
+		
+		Object curNode = path.getLastPathComponent();
+		int childCount = this.model.getChildCount(curNode);
+		
+		for(int i = 0; i < childCount; i++){
+			Object child = this.model.getChild(curNode, i);
+			DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) child;
+			TreePath temp = new TreePath(treeNode.getPath());
+			InfoNode n = this.getInfoNode(temp);
+			if(! n.isSelected()){
+				return false;
+			}
+		}
+		return childCount > 0;
+		
 	}
 	
-	public void selectPath(TreePath path){
+	public void selectChilds(TreePath path){
 		InfoNode node = this.getInfoNode(path);
 		if(node != null){
 			node.setSelected(true);
@@ -35,8 +53,43 @@ public class TreeCheckBoxSelectionModel extends DefaultTreeSelectionModel{
 			Object child = this.model.getChild(curNode, i);
 			DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) child;
 			TreePath temp = new TreePath(treeNode.getPath());
-			this.selectPath(temp);
+			this.selectChilds(temp);
 		}
+	}
+	
+	public void updateParents(TreePath path){
+		if(path.getParentPath() == null){
+			return;
+		}
+		
+		path = path.getParentPath();
+		
+		Object curNode = path.getLastPathComponent();
+		int childCount = this.model.getChildCount(curNode);
+		
+		boolean update = true;
+		
+		for(int i = 0; i < childCount; i++){
+			Object child = this.model.getChild(curNode, i);
+			DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) child;
+			TreePath temp = new TreePath(treeNode.getPath());
+			if(! this.isPathSelected(temp)){
+				update = false;
+				break;
+			}
+		}
+		if(update){
+			InfoNode node = this.getInfoNode(path);
+			if(node != null){
+				node.setSelected(true);
+			}
+			this.updateParents(path);
+		}
+	}
+	
+	public void selectPath(TreePath path){
+		this.selectChilds(path);
+		this.updateParents(path);
 	}
 	
 	

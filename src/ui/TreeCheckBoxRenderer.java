@@ -9,16 +9,18 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeCellRenderer;
+import javax.swing.tree.TreePath;
 
 public class TreeCheckBoxRenderer implements TreeCellRenderer{
-	JLabel mainLabel = new JLabel("");
-	JCheckBox checkBox = new JCheckBox();
+	private JLabel mainLabel = new JLabel("");
+	private TristateCheckBox checkBox = new TristateCheckBox();
+	private JPanel renderer = new JPanel();
+	private DefaultTreeCellRenderer defaultRenderer = new DefaultTreeCellRenderer();
 	
-	JPanel renderer = new JPanel();
+	private TreeCheckBoxSelectionModel model;
 
-	DefaultTreeCellRenderer defaultRenderer = new DefaultTreeCellRenderer();
-
-	public TreeCheckBoxRenderer() {
+	public TreeCheckBoxRenderer(TreeCheckBoxSelectionModel model) {
+		this.model = model;
 		checkBox.setOpaque(false);
 		renderer.add(checkBox);
 		renderer.add(mainLabel);
@@ -31,16 +33,19 @@ public class TreeCheckBoxRenderer implements TreeCellRenderer{
 		Component returnValue = null;
 		
 		if ((value != null) && (value instanceof DefaultMutableTreeNode)) {
-			
-			Object userObject = ((DefaultMutableTreeNode) value).getUserObject();
+			DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
+			Object userObject = node.getUserObject();
+			TreePath path = new TreePath(node.getPath());
 			
 			if(userObject instanceof InfoNode){
 				InfoNode n = (InfoNode) userObject;
 				mainLabel.setText(n.toString()); 
-				if(n.isSelected()){
-					this.checkBox.setSelected(true);
+				if(this.model.isPathSelected(path)){
+					this.checkBox.setState(TristateCheckBox.SELECTED);
+				} else if(this.model.isPartiallySelected(path)){
+					this.checkBox.setState(TristateCheckBox.DONT_CARE);
 				} else {
-					this.checkBox.setSelected(false);
+					this.checkBox.setState(TristateCheckBox.NOT_SELECTED);
 				}
 			} else {
 				mainLabel.setText("/");
