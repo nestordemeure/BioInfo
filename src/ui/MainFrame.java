@@ -56,30 +56,35 @@ public class MainFrame extends Frame {
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode("Root");
 		MainFrame.createJTree(t, root, new ArrayList<String>());	
 		tree = new JTree(root);
-		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-		tree.addTreeSelectionListener(new TreeSelectionListener() {
-		    public void valueChanged(TreeSelectionEvent e) {
-		        DefaultMutableTreeNode node = (DefaultMutableTreeNode)
-		                           tree.getLastSelectedPathComponent();
- 
-		        if (node == null) {
-		        	infos.setText("Pas d'information disponible");
-		        	return;
-		        }
-		        else {
-		        	InfoNode nodeInfo = (InfoNode) node.getUserObject();
-		        	// TODO : Check si le fichier existe déjà et affiche ses informations
-		        	/* File f = new File(nodeInfo.getPath());
-		        	   if(f.exists() && !f.isDirectory()) { 
-		        	     infos.setText(nodeInfo.getPath());
-		        	   }
-		        	   else {
-		        	   	 infos.setText("Pas d'information disponible");
-		        	   }*/
-		        	infos.setText(nodeInfo.getPath());
-		        }
-		    }
-		});
+		tree.setCellRenderer(new TreeCheckBoxRenderer());
+		tree.addMouseListener(new TreeCheckBoxMouseListener(tree));
+//		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+		//CheckTreeManager checkTreeManager = new CheckTreeManager(tree);
+		
+		//tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+//		tree.addTreeSelectionListener(new TreeSelectionListener() {
+//		    public void valueChanged(TreeSelectionEvent e) {
+//		        DefaultMutableTreeNode node = (DefaultMutableTreeNode)
+//		                           tree.getLastSelectedPathComponent();
+// 
+//		        if (node == null) {
+//		        	infos.setText("Pas d'information disponible");
+//		        	return;
+//		        }
+//		        else {
+//		        	InfoNode nodeInfo = (InfoNode) node.getUserObject();
+//		        	// TODO : Check si le fichier existe déjà et affiche ses informations
+//		        	/* File f = new File(nodeInfo.getPath());
+//		        	   if(f.exists() && !f.isDirectory()) { 
+//		        	     infos.setText(nodeInfo.getPath());
+//		        	   }
+//		        	   else {
+//		        	   	 infos.setText("Pas d'information disponible");
+//		        	   }*/
+//		        	infos.setText(nodeInfo.getPath());
+//		        }
+//		    }
+//		});
 
 		scrolltree = new JScrollPane(tree);
 		scrolltree.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
