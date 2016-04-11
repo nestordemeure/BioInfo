@@ -57,7 +57,7 @@ public class MainFrame extends Frame {
 		MainFrame.createJTree(t, root, new ArrayList<String>());	
 		tree = new JTree(root);
 		tree.setCellRenderer(new TreeCheckBoxRenderer());
-		tree.addMouseListener(new TreeCheckBoxMouseListener(tree));
+		tree.addMouseListener(new TreeCheckBoxMouseListener(tree, tree.getModel()));
 //		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		//CheckTreeManager checkTreeManager = new CheckTreeManager(tree);
 		

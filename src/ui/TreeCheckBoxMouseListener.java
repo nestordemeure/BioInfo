@@ -5,14 +5,17 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
 public class TreeCheckBoxMouseListener extends MouseAdapter{
 	
 	private JTree tree;
+	private TreeCheckBoxSelectionModel model;
 	
-	public TreeCheckBoxMouseListener(JTree tree){
+	public TreeCheckBoxMouseListener(JTree tree, TreeModel model){
 		this.tree = tree;
+		this.model = new TreeCheckBoxSelectionModel(model);
 	}
 	
 	@Override
@@ -22,19 +25,9 @@ public class TreeCheckBoxMouseListener extends MouseAdapter{
 			return;
 		}
 		
-		DefaultMutableTreeNode mutable = (DefaultMutableTreeNode) tp.getLastPathComponent();
-		if(mutable != null){
-			Object userObject = mutable.getUserObject();
-			if(userObject != null && userObject instanceof InfoNode){
-				InfoNode node = (InfoNode) userObject;
-				if(node.isSelected()){
-					node.setSelected(false);
-				} else {
-					node.setSelected(true);
-				}
-				tree.treeDidChange();
-			}
-		}
+		this.model.toggleSelect(tp);
+		
+		tree.treeDidChange();
 	}
 
 }
