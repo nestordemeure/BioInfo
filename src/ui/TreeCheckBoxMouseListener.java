@@ -2,6 +2,7 @@ package ui;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 import javax.swing.JTree;
 import javax.swing.tree.TreeModel;
@@ -24,9 +25,17 @@ public class TreeCheckBoxMouseListener extends MouseAdapter{
 			return;
 		}
 		
+		this.model.getSelectedNodes();
+		
 		this.model.toggleSelect(tp);
 		
 		tree.treeDidChange();
+		
+		ArrayList<InfoNode> n = this.model.getSelectedNodes();
+		
+		for(InfoNode node : n){
+			System.out.println(node.getPath());
+		}
 	}
 
 }

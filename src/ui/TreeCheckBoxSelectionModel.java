@@ -150,6 +150,39 @@ public class TreeCheckBoxSelectionModel extends DefaultTreeSelectionModel{
 		return false;
 	}
 	
+	public ArrayList<InfoNode> getSelectedSubNodes(Object root){
+		ArrayList<InfoNode> nodes = new ArrayList<InfoNode>();
+		DefaultMutableTreeNode node = (DefaultMutableTreeNode) root;
+		Object userObject = node.getUserObject();
+		
+		boolean curSelected = false;
+		
+		if(userObject != null && userObject instanceof InfoNode){
+			InfoNode n = (InfoNode) userObject;
+			if(n.isSelected()){
+				nodes.add(n);
+				curSelected = true;
+			}
+		}
+		
+		if(!curSelected){
+			int childCount = node.getChildCount();
+			for(int i = 0; i < childCount ; i++){
+				Object n = this.model.getChild(root, i);
+				ArrayList<InfoNode> temp = this.getSelectedSubNodes(n);
+				nodes.addAll(temp);
+			}
+		}
+		
+		return nodes;
+	}
+	
+	public ArrayList<InfoNode> getSelectedNodes()
+	{
+		return this.getSelectedSubNodes(this.model.getRoot());
+	}
+	
+	
 	private InfoNode getInfoNode(TreePath path){
 		DefaultMutableTreeNode mutable = (DefaultMutableTreeNode) path.getLastPathComponent();
 		if(mutable != null){
