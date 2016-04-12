@@ -103,8 +103,11 @@ public class MainFrame extends Frame {
 		this.logger.insert(msg + "\n",this.logger.getText().length());
 	}
 
-	public void setProgress(int n){
-		this.progress.setValue(n);
+	public void setProgress(double n){
+		String str = Double.toString(n);
+		str = str.substring(0,(str.length() >= 7 ? 7 : str.length()));
+		this.progress.setString(str+"%");
+		this.progress.setValue((int)n);
 	}
 
 	public static void createJTree(Tree t, DefaultMutableTreeNode treeNode, ArrayList<String> path){

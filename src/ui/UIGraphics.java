@@ -40,7 +40,7 @@ public class UIGraphics {
 
 	public void setProgress(double n){
 		if(this.mFrame != null){
-			this.mFrame.setProgress((int)n);
+			this.mFrame.setProgress(n);
 		}
 	}
 
