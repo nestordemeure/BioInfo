@@ -41,9 +41,9 @@ public class TreeCheckBoxRenderer implements TreeCellRenderer{
 				InfoNode n = (InfoNode) userObject;
 				mainLabel.setText(n.toString()); 
 				if(this.model.isPathSelected(path)){
-					this.checkBox.setState(TristateCheckBox.SELECTED);
+					this.checkBox.setState(TristateCheckBox.CHECKED);
 				} else if(this.model.isPartiallySelected(path)){
-					this.checkBox.setState(TristateCheckBox.DONT_CARE);
+					this.checkBox.setState(TristateCheckBox.CROSSED);
 				} else {
 					this.checkBox.setState(TristateCheckBox.NOT_SELECTED);
 				}

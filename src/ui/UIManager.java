@@ -67,5 +67,12 @@ public class UIManager {
 			UIManager.graphics.startMainProcess(t);
 		}
 	}
+	
+	public static void launchProcess(){
+		if(Configuration.USE_GUI){
+			UIManager.check();
+			UIManager.graphics.launchProcess();
+		}
+	}
 
 }
