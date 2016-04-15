@@ -85,14 +85,16 @@ public class Main {
 		Tree plop = new Tree();
 		plop=TreeManager.constree();
 		UIManager.setMaxProgress(plop.size());
+		UIManager.startMainProcess(plop);
 		
-		// Creating species statistics
-		UIManager.startMainProcess();
-		ThreadManager.start(plop, new ArrayList<String>());
-		
-		// Merge excels files
-		UIManager.log("Creating excel files...");
-		ExcelManager.fusionExcels(Configuration.BASE_FOLDER);
+		if(! Configuration.USE_GUI){
+			// Creating species statistics
+			ThreadManager.start(plop, new ArrayList<String>());
+			
+			// Merge excels files
+			UIManager.log("Creating excel files...");
+			ExcelManager.fusionExcels(Configuration.BASE_FOLDER);
+		}
 	}
 
 }

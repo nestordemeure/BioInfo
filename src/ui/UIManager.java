@@ -2,6 +2,7 @@ package ui;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import tree.Tree;
 
 import configuration.Configuration;
 
@@ -60,10 +61,17 @@ public class UIManager {
 		}
 	}
 	
-	public static void startMainProcess(){
+	public static void startMainProcess(Tree t){
 		if(Configuration.USE_GUI){
 			UIManager.check();
-			UIManager.graphics.startMainProcess();
+			UIManager.graphics.startMainProcess(t);
+		}
+	}
+	
+	public static void launchProcess(){
+		if(Configuration.USE_GUI){
+			UIManager.check();
+			UIManager.graphics.launchProcess();
 		}
 	}
 
