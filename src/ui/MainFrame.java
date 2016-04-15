@@ -1,15 +1,10 @@
 package ui;
 
 import java.awt.BorderLayout;
-import java.awt.Desktop;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
-
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
@@ -17,17 +12,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.JTree;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
 import javax.swing.text.DefaultCaret;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreeModel;
-import javax.swing.tree.TreeSelectionModel;
-
-import manager.ParserManager;
-import manager.ThreadManager;
 import tree.Tree;
-import tree.TreeManager;
 
 public class MainFrame extends Frame {
 
@@ -38,10 +25,12 @@ public class MainFrame extends Frame {
 	private JScrollPane scroll;
 	private JTree tree;
 	private JScrollPane scrolltree;
-	private JTextArea infos;
+	private JTextArea infosFile;
 	private JSplitPane split;
 	private JButton start;
 	private JPanel rightpanel;
+	private JButton openButton;
+	private JPanel infospanel;
 
 	public MainFrame(Tree t) {
 		this.setLayout(new BorderLayout());
@@ -60,49 +49,34 @@ public class MainFrame extends Frame {
 		progress.setMaximum(100);
 		progress.setVisible(false);
 
-		infos = new JTextArea();
-		infos.setEditable(false);
-		infos.append("Pas d'information disponible");
+		openButton = new JButton("Ouvrir le fichier");
+		openButton.setVisible(false);
+		
+		infosFile = new JTextArea();
+		infosFile.setEditable(false);
+		infosFile.append("Pas d'information disponible");
 
-		DefaultMutableTreeNode root = new DefaultMutableTreeNode(new InfoNode(
-				"All", new ArrayList<String>()));
+		DefaultMutableTreeNode root = new DefaultMutableTreeNode(new InfoNode("All", new ArrayList<String>()));
 		MainFrame.createJTree(t, root, new ArrayList<String>());
 		tree = new JTree(root);
-		TreeCheckBoxSelectionModel model = new TreeCheckBoxSelectionModel(
-				tree.getModel());
+		TreeCheckBoxSelectionModel model = new TreeCheckBoxSelectionModel(tree.getModel());
 		tree.setCellRenderer(new TreeCheckBoxRenderer(model));
 		tree.addMouseListener(new TreeCheckBoxMouseListener(tree, model));
-		tree.addTreeSelectionListener(new TreeSelectionListener() {
-		    public void valueChanged(TreeSelectionEvent e) {
-		        DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
-		        if (node == null) {
-		        	infos.setText("Pas d'information disponible");
-		        	return;
-		        }
-		        else {
-		        	InfoNode nodeInfo = (InfoNode) node.getUserObject();
-		        	String file = FindExtension.check("/home/pauline", ".xls");
-		        	if (file != "") {
-		        		JButton open = new JButton("Ouvrir le fichier");
-		        	
-		        	} else {
-		        		infos.setText("Pas d'information disponible");
-		        	}
-		        }
-		    }
-		});
+		tree.addTreeSelectionListener(new TreeInfosListener(tree, infosFile, openButton));
 
 		scrolltree = new JScrollPane(tree);
-		scrolltree
-				.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		scrolltree.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
+		infospanel = new JPanel(new BorderLayout());
+		infospanel.add(infosFile, BorderLayout.NORTH);
+		infospanel.add(openButton, BorderLayout.SOUTH);
+		
 		rightpanel = new JPanel(new BorderLayout());
-		rightpanel.add(infos, BorderLayout.NORTH);
+		rightpanel.add(infospanel, BorderLayout.NORTH);
 		rightpanel.add(scroll, BorderLayout.CENTER);
 		rightpanel.add(start, BorderLayout.PAGE_END);
 
-		split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scrolltree,
-				rightpanel);
+		split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scrolltree, rightpanel);
 		this.add(split);
 
 		setTitle("BioInfo : Main");
