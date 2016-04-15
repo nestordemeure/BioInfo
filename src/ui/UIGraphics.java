@@ -44,10 +44,10 @@ public class UIGraphics {
 		}
 	}
 
-	public void launchProcess(){
+	public void launchProcess(final ArrayList<InfoNode> nodes){
 		Thread thread = new Thread(){
 			public void run(){
-				ThreadManager.start(tree, new ArrayList<String>());
+				ThreadManager.start(tree, nodes);
 
 				// Merge excels files
 				UIManager.log("Creating excel files...");

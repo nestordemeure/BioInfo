@@ -42,6 +42,7 @@ public class MainFrame extends Frame {
 	private JSplitPane split;
 	private JButton start;
 	private JPanel rightpanel;
+	private TreeCheckBoxSelectionModel model;
 
 	public MainFrame(Tree t) {
 		this.setLayout(new BorderLayout());
@@ -68,7 +69,7 @@ public class MainFrame extends Frame {
 				"All", new ArrayList<String>()));
 		MainFrame.createJTree(t, root, new ArrayList<String>());
 		tree = new JTree(root);
-		TreeCheckBoxSelectionModel model = new TreeCheckBoxSelectionModel(
+		model = new TreeCheckBoxSelectionModel(
 				tree.getModel());
 		tree.setCellRenderer(new TreeCheckBoxRenderer(model));
 		tree.addMouseListener(new TreeCheckBoxMouseListener(tree, model));
@@ -115,7 +116,8 @@ public class MainFrame extends Frame {
 				rightpanel.remove(start);
 				rightpanel.add(progress, BorderLayout.PAGE_END);
 				progress.setVisible(true);
-				UIManager.launchProcess();
+				
+				UIManager.launchProcess(MainFrame.this.model.getSelectedNodes());
 			}
 		});
 

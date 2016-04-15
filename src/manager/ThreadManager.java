@@ -8,20 +8,31 @@ import java.util.concurrent.locks.ReentrantLock;
 import configuration.Configuration;
 
 import tree.Tree;
+import ui.InfoNode;
 import ui.UIManager;
 
 public class ThreadManager {
 	protected static int NB_THREADS = Configuration.THREADS_NUMBER;
 	private static Lock mainLock = new ReentrantLock();
+	private static ArrayList<InfoNode> selected;
 	
-	public static void start(Tree t, ArrayList<String> path){
-		ThreadManager.startThreads(t, path);
+	public static void start(Tree t, ArrayList<InfoNode> s){
+		ThreadManager.selected = s;
+		ThreadManager.startThreads(t, new ArrayList<String>());
 		while(ThreadManager.nbThreads() != Configuration.THREADS_NUMBER) {
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
+				
 			}
 		}
+	}
+	
+	public static void start(Tree t){
+		InfoNode n = new InfoNode("All", new ArrayList<String>());
+		ArrayList<InfoNode> a = new ArrayList<InfoNode>();
+		a.add(n);
+		ThreadManager.start(t,a);
 	}
 	
 	private static void startThreads(Tree t, ArrayList<String> path) {
@@ -33,37 +44,40 @@ public class ThreadManager {
 			ArrayList<String> new_path = new ArrayList<String>(path);
 			new_path.add(node);
 			
-			// Si le noeud est une feuille
-			if (t.isLeaf(node)) {
-				// Si il est possible de lancer un thread on le fait
-				if (ThreadManager.threadAvailable()) {
-					UIManager.addProgress(1);
-					UIManager.log("Launching new thread ("+new_path.get(new_path.size() - 1)+")");
-					new Thread(new ParserManager(new_path)).start();
-					ThreadManager.minusThread();
-				}
-				// Sinon on attend qu'un thread finisse 
-				else {
-					boolean done = false;
-					while (!done) {
-						if (!ThreadManager.threadAvailable()) {
-							try {
-								TimeUnit.SECONDS.sleep(1);
-							} catch (InterruptedException e) {
-							}
-						}
-						else {
-							done = true;
-						}		
+			// Si l'on a choisi le nouveau chemin
+			if(ThreadManager.isInSelected(new_path)){
+				// Si le noeud est une feuille
+				if (t.isLeaf(node)) {
+					// Si il est possible de lancer un thread on le fait
+					if (ThreadManager.threadAvailable()) {
+						UIManager.addProgress(1);
+						UIManager.log("Launching new thread ("+new_path.get(new_path.size() - 1)+")");
+						new Thread(new ParserManager(new_path)).start();
+						ThreadManager.minusThread();
 					}
-					UIManager.addProgress(1);
-					UIManager.log("Launching new thread ("+new_path.get(new_path.size() - 1)+")");
-					new Thread(new ParserManager(new_path)).start();
-					ThreadManager.minusThread();;
-				}		
-			}
-			else {
-				ThreadManager.startThreads((Tree) t.get(node), new_path);
+					// Sinon on attend qu'un thread finisse 
+					else {
+						boolean done = false;
+						while (!done) {
+							if (!ThreadManager.threadAvailable()) {
+								try {
+									TimeUnit.SECONDS.sleep(1);
+								} catch (InterruptedException e) {
+								}
+							}
+							else {
+								done = true;
+							}		
+						}
+						UIManager.addProgress(1);
+						UIManager.log("Launching new thread ("+new_path.get(new_path.size() - 1)+")");
+						new Thread(new ParserManager(new_path)).start();
+						ThreadManager.minusThread();;
+					}		
+				}
+				else {
+					ThreadManager.startThreads((Tree) t.get(node), new_path);
+				}
 			}
 		}
 	}
@@ -103,6 +117,16 @@ public class ThreadManager {
 		int nb = NB_THREADS;
 		mainLock.unlock();
 		return nb;
+	}
+	
+	private static boolean isInSelected(ArrayList<String> path){
+		for(InfoNode n : ThreadManager.selected){
+			if(n.canBeInPath(path)){
+				return true;
+			}
+		}
+		
+		return false;
 	}
 
 }
