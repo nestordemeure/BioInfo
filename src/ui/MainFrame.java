@@ -1,9 +1,12 @@
 package ui;
 
 import java.awt.BorderLayout;
+import java.awt.Desktop;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
@@ -40,7 +43,7 @@ public class MainFrame extends Frame {
 	private JButton start;
 	private JPanel rightpanel;
 
-	public MainFrame(Tree t){
+	public MainFrame(Tree t) {
 		this.setLayout(new BorderLayout());
 		logger = new JTextArea();
 		DefaultCaret c = (DefaultCaret) logger.getCaret();
@@ -61,34 +64,53 @@ public class MainFrame extends Frame {
 		infos.setEditable(false);
 		infos.append("Pas d'information disponible");
 
-		DefaultMutableTreeNode root = new DefaultMutableTreeNode(new InfoNode("All", new ArrayList<String>()));
-		MainFrame.createJTree(t, root, new ArrayList<String>());	
+		DefaultMutableTreeNode root = new DefaultMutableTreeNode(new InfoNode(
+				"All", new ArrayList<String>()));
+		MainFrame.createJTree(t, root, new ArrayList<String>());
 		tree = new JTree(root);
-		TreeCheckBoxSelectionModel model = new TreeCheckBoxSelectionModel(tree.getModel());
+		TreeCheckBoxSelectionModel model = new TreeCheckBoxSelectionModel(
+				tree.getModel());
 		tree.setCellRenderer(new TreeCheckBoxRenderer(model));
 		tree.addMouseListener(new TreeCheckBoxMouseListener(tree, model));
-
+		tree.addTreeSelectionListener(new TreeSelectionListener() {
+		    public void valueChanged(TreeSelectionEvent e) {
+		        DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+		        if (node == null) {
+		        	infos.setText("Pas d'information disponible");
+		        	return;
+		        }
+		        else {
+		        	InfoNode nodeInfo = (InfoNode) node.getUserObject();
+		        	String file = FindExtension.check("/home/pauline", ".xls");
+		        	if (file != "") {
+		        		JButton open = new JButton("Ouvrir le fichier");
+		        	
+		        	} else {
+		        		infos.setText("Pas d'information disponible");
+		        	}
+		        }
+		    }
+		});
 
 		scrolltree = new JScrollPane(tree);
-		scrolltree.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		scrolltree
+				.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
 		rightpanel = new JPanel(new BorderLayout());
 		rightpanel.add(infos, BorderLayout.NORTH);
 		rightpanel.add(scroll, BorderLayout.CENTER);
 		rightpanel.add(start, BorderLayout.PAGE_END);
 
-
-		split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scrolltree, rightpanel);
+		split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scrolltree,
+				rightpanel);
 		this.add(split);
 
 		setTitle("BioInfo : Main");
-		setSize(800,600);
+		setSize(800, 600);
 		setVisible(true);
 
-		start.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
+		start.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
 				start.setVisible(false);
 				rightpanel.remove(start);
 				rightpanel.add(progress, BorderLayout.PAGE_END);
@@ -99,18 +121,19 @@ public class MainFrame extends Frame {
 
 	}
 
-	public void log(String msg){
-		this.logger.insert(msg + "\n",this.logger.getText().length());
+	public void log(String msg) {
+		this.logger.insert(msg + "\n", this.logger.getText().length());
 	}
 
-	public void setProgress(double n){
+	public void setProgress(double n) {
 		String str = Double.toString(n);
-		str = str.substring(0,(str.length() >= 7 ? 7 : str.length()));
-		this.progress.setString(str+"%");
-		this.progress.setValue((int)n);
+		str = str.substring(0, (str.length() >= 7 ? 7 : str.length()));
+		this.progress.setString(str + "%");
+		this.progress.setValue((int) n);
 	}
 
-	public static void createJTree(Tree t, DefaultMutableTreeNode treeNode, ArrayList<String> path){
+	public static void createJTree(Tree t, DefaultMutableTreeNode treeNode,
+			ArrayList<String> path) {
 		Object[] nodes = t.nodes();
 
 		for (Object o : nodes) {
@@ -119,10 +142,11 @@ public class MainFrame extends Frame {
 			new_path.add(node);
 
 			if (t.isLeaf(node)) {
-				treeNode.add(new DefaultMutableTreeNode(new InfoNode(node,new_path)));
-			}
-			else {
-				DefaultMutableTreeNode customNode = new DefaultMutableTreeNode(new InfoNode(node,new_path));
+				treeNode.add(new DefaultMutableTreeNode(new InfoNode(node,
+						new_path)));
+			} else {
+				DefaultMutableTreeNode customNode = new DefaultMutableTreeNode(
+						new InfoNode(node, new_path));
 				treeNode.add(customNode);
 				MainFrame.createJTree((Tree) t.get(node), customNode, new_path);
 			}

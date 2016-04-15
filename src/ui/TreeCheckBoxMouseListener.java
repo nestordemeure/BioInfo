@@ -34,7 +34,7 @@ public class TreeCheckBoxMouseListener extends MouseAdapter{
 		ArrayList<InfoNode> n = this.model.getSelectedNodes();
 		
 		for(InfoNode node : n){
-			System.out.println(node.getPath());
+			System.out.println(node.getRealPath());
 		}
 	}
 
