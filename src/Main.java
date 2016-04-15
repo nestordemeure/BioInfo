@@ -24,7 +24,6 @@ public class Main {
 		UIManager.startPreloading();
 		Tree plop = new Tree();
 		plop=TreeManager.constree();
-		UIManager.setMaxProgress(plop.size());
 		UIManager.startMainProcess(plop);
 	}
 	

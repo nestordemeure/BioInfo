@@ -47,6 +47,7 @@ public class UIGraphics {
 	public void launchProcess(final ArrayList<InfoNode> nodes){
 		Thread thread = new Thread(){
 			public void run(){
+				UIManager.setMaxProgress(ThreadManager.getNodesCount(tree, new ArrayList<String>(), nodes));
 				ThreadManager.start(tree, nodes);
 
 				// Merge excels files

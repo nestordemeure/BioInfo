@@ -14,11 +14,9 @@ import ui.UIManager;
 public class ThreadManager {
 	protected static int NB_THREADS = Configuration.THREADS_NUMBER;
 	private static Lock mainLock = new ReentrantLock();
-	private static ArrayList<InfoNode> selected;
 	
 	public static void start(Tree t, ArrayList<InfoNode> s){
-		ThreadManager.selected = s;
-		ThreadManager.startThreads(t, new ArrayList<String>());
+		ThreadManager.startThreads(t, new ArrayList<String>(), s);
 		while(ThreadManager.nbThreads() != Configuration.THREADS_NUMBER) {
 			try {
 				Thread.sleep(1000);
@@ -28,6 +26,25 @@ public class ThreadManager {
 		}
 	}
 	
+	public static int getNodesCount(Tree t, ArrayList<String> path, ArrayList<InfoNode> selected){
+		int sum = 0;
+		Object[] nodes = t.nodes();
+		for(Object o : nodes){
+			String node = (String) o;
+			ArrayList<String> new_path = new ArrayList<String>(path);
+			new_path.add(node);
+			if(ThreadManager.isInSelected(new_path, selected)){
+				if(t.isLeaf(node)){
+					sum += 1;
+				} else {
+					sum += ThreadManager.getNodesCount((Tree)t.get(node), new_path, selected);
+				}
+			}
+		}
+		
+		return sum;
+	}
+	
 	public static void start(Tree t){
 		InfoNode n = new InfoNode("All", new ArrayList<String>());
 		ArrayList<InfoNode> a = new ArrayList<InfoNode>();
@@ -35,7 +52,7 @@ public class ThreadManager {
 		ThreadManager.start(t,a);
 	}
 	
-	private static void startThreads(Tree t, ArrayList<String> path) {
+	private static void startThreads(Tree t, ArrayList<String> path, ArrayList<InfoNode> selected) {
 		Object[] nodes = t.nodes();
 		
 		for (Object o : nodes) {
@@ -45,7 +62,7 @@ public class ThreadManager {
 			new_path.add(node);
 			
 			// Si l'on a choisi le nouveau chemin
-			if(ThreadManager.isInSelected(new_path)){
+			if(ThreadManager.isInSelected(new_path, selected)){
 				// Si le noeud est une feuille
 				if (t.isLeaf(node)) {
 					// Si il est possible de lancer un thread on le fait
@@ -76,7 +93,7 @@ public class ThreadManager {
 					}		
 				}
 				else {
-					ThreadManager.startThreads((Tree) t.get(node), new_path);
+					ThreadManager.startThreads((Tree) t.get(node), new_path, selected);
 				}
 			}
 		}
@@ -119,13 +136,12 @@ public class ThreadManager {
 		return nb;
 	}
 	
-	private static boolean isInSelected(ArrayList<String> path){
-		for(InfoNode n : ThreadManager.selected){
+	private static boolean isInSelected(ArrayList<String> path, ArrayList<InfoNode> selected){
+		for(InfoNode n : selected){
 			if(n.canBeInPath(path)){
 				return true;
 			}
 		}
-		
 		return false;
 	}
 
