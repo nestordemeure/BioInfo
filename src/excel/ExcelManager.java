@@ -6,6 +6,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import Bdd.Bdd;
+import configuration.Configuration;
 
 public class ExcelManager {
 	
@@ -18,18 +19,18 @@ public class ExcelManager {
 		
 		for (int i =0; i< listeFichiers.length;i++){
 			//Liste des Groupes
-			File lvl1 = new File(folder+"/"+listeFichiers[i]);
+			File lvl1 = new File(folder+Configuration.FOLDER_SEPARATOR+listeFichiers[i]);
 			if(lvl1.isDirectory()==true){
 				String[] listelvl1=lvl1.list();
 				for(int j = 0;j<listelvl1.length;j++){
 					
 					//Liste des Sous-groupes
-					File lvl2 = new File(folder+"/"+listeFichiers[i]+"/"+listelvl1[j]);
+					File lvl2 = new File(folder+Configuration.FOLDER_SEPARATOR+listeFichiers[i]+Configuration.FOLDER_SEPARATOR+listelvl1[j]);
 					if(lvl2.isDirectory()==true){
 						String[] listelvl2=lvl2.list();
 						
 						for(int k = 0;k<listelvl2.length;k++){
-							File lvl3 = new File(folder+"/"+listeFichiers[i]+"/"+listelvl1[j]+"/"+listelvl2[k]);
+							File lvl3 = new File(folder+Configuration.FOLDER_SEPARATOR+listeFichiers[i]+Configuration.FOLDER_SEPARATOR+listelvl1[j]+Configuration.FOLDER_SEPARATOR+listelvl2[k]);
 							if(lvl3.isDirectory()==true){
 								String[] chemin = new String[4];
 								chemin [0] = listeFichiers[i];
@@ -37,9 +38,9 @@ public class ExcelManager {
 								chemin [2] = listelvl2[k];
 								chemin [3] = "";
 								
-								String filepath = folder+"/"+listeFichiers[i]+"/"+listelvl1[j]+"/"+listelvl2[k];
+								String filepath = folder+Configuration.FOLDER_SEPARATOR+listeFichiers[i]+Configuration.FOLDER_SEPARATOR+listelvl1[j]+Configuration.FOLDER_SEPARATOR+listelvl2[k];
 								Bdd base = ExcelReader.reader(filepath);
-								ExcelWriter.writer(filepath+"/"+listelvl2[k], chemin, base);
+								ExcelWriter.writer(filepath+Configuration.FOLDER_SEPARATOR+listelvl2[k], chemin, base);
 							}
 							
 							
@@ -51,9 +52,9 @@ public class ExcelManager {
 						chemin [2] = "";
 						chemin [3] = "";
 						
-						String filepath = folder+"/"+listeFichiers[i]+"/"+listelvl1[j];
+						String filepath = folder+Configuration.FOLDER_SEPARATOR+listeFichiers[i]+Configuration.FOLDER_SEPARATOR+listelvl1[j];
 						Bdd base = ExcelReader.reader(filepath);
-						ExcelWriter.writer(filepath+"/"+listelvl1[j], chemin, base);
+						ExcelWriter.writer(filepath+Configuration.FOLDER_SEPARATOR+listelvl1[j], chemin, base);
 					}
 				}
 				String[] chemin = new String[4];
@@ -62,9 +63,9 @@ public class ExcelManager {
 				chemin [2] = "";
 				chemin [3] = "";
 				
-				String filepath = folder+"/"+listeFichiers[i];
+				String filepath = folder+Configuration.FOLDER_SEPARATOR+listeFichiers[i];
 				Bdd base = ExcelReader.reader(filepath);
-				ExcelWriter.writer(filepath+"/"+listeFichiers[i], chemin, base);
+				ExcelWriter.writer(filepath+Configuration.FOLDER_SEPARATOR+listeFichiers[i], chemin, base);
 			}
 		}
 		String[] chemin = new String[4];
@@ -75,7 +76,6 @@ public class ExcelManager {
 		
 		String filepath = folder;
 		Bdd base = ExcelReader.reader(filepath);
-		ExcelWriter.writer(filepath+"/"+"Recapitulatif", chemin, base);
-	
+		ExcelWriter.writer(filepath+Configuration.FOLDER_SEPARATOR+"Recapitulatif", chemin, base);
 	}
 }

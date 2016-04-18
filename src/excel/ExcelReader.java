@@ -12,6 +12,7 @@ import java.util.List;
 
 
 import Bdd.Bdd;
+import configuration.Configuration;
 import exceptions.CharInvalideException;
 
 //Transforme plusieurs fichiers excels dans les sous dossiers, et les transforme en une Bdd
@@ -24,12 +25,12 @@ public class ExcelReader {
 		
 		//on récupère dans listebdd les bdd des sous dossiers
 		for(int i = 0; i<listeFichiers.length; i++ ){
-			File tmp = new File(folder+"/"+listeFichiers[i]);
+			File tmp = new File(folder+Configuration.FOLDER_SEPARATOR+listeFichiers[i]);
 			if (tmp.isDirectory() == true){
 				String[] listeSousFichiers = tmp.list();
 				for (int j = 0; j< listeSousFichiers.length; j++ ){
 					if (listeSousFichiers[j].endsWith(".bdd")) {
-						listebdd.add(folder+"/"+listeFichiers[i]+"/"+listeSousFichiers[j]);
+						listebdd.add(folder+Configuration.FOLDER_SEPARATOR+listeFichiers[i]+Configuration.FOLDER_SEPARATOR+listeSousFichiers[j]);
 					}
 				}
 			}
