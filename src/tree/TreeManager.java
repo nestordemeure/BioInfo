@@ -93,6 +93,7 @@ public class TreeManager {
 				level3.add(organism, null);
 				
 			}
+			buffer.close();
 			page++;
 		}
 		//res.printTree();

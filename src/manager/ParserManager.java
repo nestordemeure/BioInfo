@@ -4,6 +4,7 @@ import io.IdFetcher;
 import io.Net;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -58,31 +59,9 @@ public class ParserManager implements Runnable{
 		}
 	}
 	
-	// Création (ou réécriture) du fichier d'ids
-	private void createOrResetFile(){
-		
-		// Construction du chemin
-		String file = this.data_path+Configuration.FOLDER_SEPARATOR+"ids.txt";
-		
-		AccessManager.accessFile(file);
-		File f = new File(file);
-		if(f.exists() && f.isFile()){
-			// Si le fichier existe, on le supprime
-			f.delete();
-		}
-		
-		try {
-			f.createNewFile();
-		} catch (IOException e) {
-			UIManager.log("[ParserManager : "+this.specy_name+"] Cannot create file : "+file);
-		}
-		
-		AccessManager.doneWithFile(file);
-	}
-	
 	
 	// Verifie si le fichier ids.txt correspond a ce qu'on a en mémoire
-	public boolean isDone(){
+	public void removeAlreadyDone(){
 		ArrayList<Integer> list = new ArrayList<Integer>();
 		String file = this.data_path+Configuration.FOLDER_SEPARATOR+"ids.txt";
 		// On liste les Ids présents dans le fichier.
@@ -107,12 +86,36 @@ public class ParserManager implements Runnable{
 		}
 		AccessManager.doneWithFile(file);
 		
-		// Si la liste des ids est strictement similaire à celle présente dans le fichier
-		if(list.containsAll(this.ids) && this.ids.containsAll(list)){
-			return true;
-		} else {
-			return false;
+		this.ids.removeAll(list);
+		
+	}
+	
+	public void deleteIdFile(){
+		String file = this.data_path+Configuration.FOLDER_SEPARATOR+"ids.txt";
+		File f = new File(file);
+		if(f.exists() && f.isFile()){
+			f.delete();
 		}
+	}
+	
+	public Bdd createDB(){
+		String dbFile = this.data_path+Configuration.FOLDER_SEPARATOR+"db";
+		File f = new File(dbFile + ".bdd");
+		Bdd db = null;
+		if(f.exists() && f.isFile()){
+			try {
+				db = new Bdd(dbFile);
+			} catch (IOException e) {
+				db = null;
+			}
+		}
+		
+		if(db == null){
+			db = new Bdd();
+			this.deleteIdFile();
+		}
+		
+		return db;
 	}
 
 	// Ecriture des fichiers de résultats
@@ -120,14 +123,15 @@ public class ParserManager implements Runnable{
 		// Construction des chemins de fichiers
 		String file = this.data_path+Configuration.FOLDER_SEPARATOR+"ids.txt";
 		String excelFile = this.data_path+Configuration.FOLDER_SEPARATOR+"results.xls";
+		String dbFile = this.data_path+Configuration.FOLDER_SEPARATOR+"db";
 		
 		// Création du fichier d'identifiants
-		this.createOrResetFile();
+		//this.createOrResetFile();
 		AccessManager.accessFile(file);
 		
 		try{
 			// Ajout des identifiants dans le fichier ids.txt
-			PrintWriter writer = new PrintWriter(file, "UTF-8");
+			PrintWriter writer = new PrintWriter(new FileOutputStream(new File(file),true));
 			for(int id : this.ids){
 				writer.println(id);
 			}
@@ -149,17 +153,34 @@ public class ParserManager implements Runnable{
 		}
 		
 		AccessManager.doneWithFile(excelFile);
+		
+		try {
+			this.db.exportBase(dbFile);
+		} catch (IOException e) {
+			UIManager.log("[ParserManager : "+this.specy_name+"] Cannot write db file ...");
+			e.printStackTrace();
+		}
 	}
 	
 	public void launchParser(String ids, int length){
 		String url = Configuration.GEN_DOWNLOAD_URL.replaceAll("<ID>", ids);
+		Scanner sc = Net.getUrl(url);
 		try{
 			Parser p = new Parser(this.db, Net.getUrl(url));
 			p.parse(length);
+			if(sc != null){
+				sc.close();
+			}
 		}catch(Exception e){
+			if(sc != null){
+				sc.close();
+			}
 			UIManager.log("Error while parsing file "+url);
 			e.printStackTrace();
 		}catch(Error e){
+			if(sc != null){
+				sc.close();
+			}
 			UIManager.log("Error while parsing file "+url);
 			e.printStackTrace();
 		}
@@ -173,13 +194,16 @@ public class ParserManager implements Runnable{
 		} else {
 			// Recuperation des Ids
 			ids = IdFetcher.getIds(this.specy_name);
+			
+			this.removeAlreadyDone();
 			// S'il n'y a aucune différence (avec le fichier ids.txt).
-			if(this.isDone()){
+			if(this.ids.size() == 0){
 				// On skip.
 				UIManager.log("[ParserManager : "+this.specy_name+"] Already done ... Skipping ...");
 			} else {
+				UIManager.log("[ParserManager : "+this.specy_name+"] Starting with "+this.ids.size()+" ids.");
 				// S'il y a des différences, on lance le calcul.
-				this.db = new Bdd();
+				this.db = this.createDB();
 								
 				int pos = 0;
 				String id_list = "";

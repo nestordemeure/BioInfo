@@ -5,14 +5,13 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Scanner;
-
 import configuration.Configuration;
 
 import ui.UIManager;
 
 public class Net {
 	
-	
+	@SuppressWarnings("resource")
 	public static Scanner getUrl(String url){
 		InputStream is = Net.getUrlIS(url);
 		if(is == null){
@@ -30,8 +29,11 @@ public class Net {
 			} catch (MalformedURLException e) {
 				return null;
 			} catch (IOException e) {
-				UIManager.log("Error while downloading : "+url+" (Try "+(nb_try + 1)+"/10)");
+				UIManager.log("Error while downloading : "+url+" (Try "+(nb_try + 1)+"/"+Configuration.NET_MAX_DOWNLOAD_TRIES+")");
 				nb_try ++;
+				if(nb_try == Configuration.NET_MAX_DOWNLOAD_TRIES){
+					e.printStackTrace();
+				}
 				try {
 					long sleep_time = (long)Math.floor(Math.random() * Configuration.NET_TIME_BETWEEN_TRIES);
 					Thread.sleep(sleep_time);
