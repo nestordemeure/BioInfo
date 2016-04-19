@@ -20,9 +20,6 @@ public class TreeManager {
 		Scanner buffer = new Scanner("");
 		Boolean flag = true;
 		while (flag){
-			if (page == 3) {
-				flag = false;
-			}
 			UIManager.log("Page : "+page);
 			buffer = Net.getUrl(baseurl+page+"&pageSize="+pageSize);
 			int debut=0;
