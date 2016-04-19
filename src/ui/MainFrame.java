@@ -34,6 +34,10 @@ public class MainFrame extends Frame {
 
 	public MainFrame(Tree t) {
 		this.setLayout(new BorderLayout());
+		
+		// Dialog pour le choix d'un répertoire
+		new FileChooserDialog(this);
+		
 		logger = new JTextArea();
 		DefaultCaret c = (DefaultCaret) logger.getCaret();
 		c.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
@@ -61,7 +65,7 @@ public class MainFrame extends Frame {
 		tree = new JTree(root);
 		TreeCheckBoxSelectionModel model = new TreeCheckBoxSelectionModel(tree.getModel());
 		tree.setCellRenderer(new TreeCheckBoxRenderer(model));
-		tree.addMouseListener(new TreeCheckBoxMouseListener(tree, model, infosFile, openButton));
+		//tree.addMouseListener(new TreeCheckBoxMouseListener(tree, model, infosFile, openButton));
 		//tree.addTreeSelectionListener(new TreeInfosListener(tree, infosFile, openButton));
 
 		scrolltree = new JScrollPane(tree);
