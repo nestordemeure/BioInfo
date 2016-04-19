@@ -97,7 +97,7 @@ public class ParserManager implements Runnable{
 	}
 	
 	public Bdd createDB(){
-		String dbFile = this.data_path+Configuration.FOLDER_SEPARATOR+"db";
+		String dbFile = this.data_path+Configuration.FOLDER_SEPARATOR+"results";
 		File f = new File(dbFile + ".bdd");
 		Bdd db = null;
 		if(f.exists() && f.isFile()){
@@ -106,6 +106,8 @@ public class ParserManager implements Runnable{
 			} catch (IOException e) {
 				db = null;
 			}
+		} else {
+			UIManager.log("Cannot open db file.");
 		}
 		
 		if(db == null){
@@ -151,13 +153,6 @@ public class ParserManager implements Runnable{
 		}
 		
 		AccessManager.doneWithFile(excelFile);
-		
-		try {
-			this.db.exportBase(dbFile);
-		} catch (IOException e) {
-			UIManager.log("[ParserManager : "+this.specy_name+"] Cannot write db file ...");
-			e.printStackTrace();
-		}
 	}
 	
 	public void launchParser(String ids, int length){

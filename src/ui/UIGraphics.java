@@ -43,6 +43,10 @@ public class UIGraphics {
 			this.mFrame.setProgress(n);
 		}
 	}
+	
+	public void setDone(){
+		this.mFrame.setDone();
+	}
 
 	public void launchProcess(final ArrayList<InfoNode> nodes){
 		Thread thread = new Thread(){
@@ -53,6 +57,8 @@ public class UIGraphics {
 				// Merge excels files
 				UIManager.log("Creating excel files...");
 				ExcelManager.fusionExcels(Configuration.BASE_FOLDER);
+				UIManager.log("Done !");
+				UIGraphics.this.setDone();
 			}
 		};
 

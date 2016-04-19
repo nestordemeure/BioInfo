@@ -141,6 +141,13 @@ public class MainFrame extends Frame {
 		this.progress.setValue((int) n);
 	}
 	
+	public void setDone(){
+		progress.setVisible(false);
+		rightpanel.remove(progress);
+		start.setVisible(true);
+		rightpanel.add(start,BorderLayout.PAGE_END);
+	}
+	
 	public void setInfos(InfoNode infos){
 		if (infos == null) {
 			this.pathLabel.setText("Unknown3");

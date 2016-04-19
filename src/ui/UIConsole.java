@@ -40,6 +40,7 @@ public class UIConsole {
 		// Merge excels files
 		UIManager.log("Creating excel files...");
 		ExcelManager.fusionExcels(Configuration.BASE_FOLDER);
+		UIManager.log("Done !");
 	}
 
 }
