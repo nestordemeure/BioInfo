@@ -122,8 +122,7 @@ public class ParserManager implements Runnable{
 	public void writeFiles(){
 		// Construction des chemins de fichiers
 		String file = this.data_path+Configuration.FOLDER_SEPARATOR+"ids.txt";
-		String excelFile = this.data_path+Configuration.FOLDER_SEPARATOR+"results.xls";
-		String dbFile = this.data_path+Configuration.FOLDER_SEPARATOR+"db";
+		String excelFile = this.data_path+Configuration.FOLDER_SEPARATOR+"results";
 		
 		// Création du fichier d'identifiants
 		//this.createOrResetFile();
