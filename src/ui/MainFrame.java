@@ -150,7 +150,7 @@ public class MainFrame extends Frame {
 	
 	public void setInfos(InfoNode infos){
 		if (infos == null) {
-			this.pathLabel.setText("Unknown3");
+			this.pathLabel.setText("Unknown");
 			this.CDSCount.setText("Unknown");
 			this.CDSFailed.setText("Unknown");
 			this.dinucleotideCount.setText("Unknown");
@@ -179,14 +179,14 @@ public class MainFrame extends Frame {
 					this.trinucleotideCount.setText(res.get("nb_trinucleotides").toString());
 
 				} catch (IOException e) {
-	    			this.pathLabel.setText("Unknown2");
+	    			this.pathLabel.setText("Unknown");
 	    			this.CDSCount.setText("Unknown");
 	    			this.CDSFailed.setText("Unknown");
 	    			this.dinucleotideCount.setText("Unknown");
 	    			this.trinucleotideCount.setText("Unknown");
 				}
         	} else {
-    			this.pathLabel.setText("Unknown 1");
+    			this.pathLabel.setText("Unknown");
     			this.CDSCount.setText("Unknown");
     			this.CDSFailed.setText("Unknown");
     			this.dinucleotideCount.setText("Unknown");
