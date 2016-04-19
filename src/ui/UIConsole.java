@@ -34,8 +34,8 @@ public class UIConsole {
 	
 	public void launchProcess(Tree t){
 		// Creating species statistics
-		ThreadManager.start(t);
 		UIManager.setMaxProgress(t.size());
+		ThreadManager.start(t);
 		
 		// Merge excels files
 		UIManager.log("Creating excel files...");
