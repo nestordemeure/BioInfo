@@ -41,6 +41,10 @@ public class MainFrame extends Frame {
 
 	public MainFrame(Tree t) {
 		this.setLayout(new BorderLayout());
+		
+		// Dialog pour le choix d'un répertoire
+		new FileChooserDialog(this);
+		
 		logger = new JTextArea();
 		DefaultCaret c = (DefaultCaret) logger.getCaret();
 		c.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
