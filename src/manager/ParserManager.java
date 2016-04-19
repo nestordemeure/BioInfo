@@ -61,7 +61,7 @@ public class ParserManager implements Runnable{
 	
 	
 	// Verifie si le fichier ids.txt correspond a ce qu'on a en mémoire
-	public void removeAlreadyDone(){
+	public ArrayList<Integer> getAlreadyDone(){
 		ArrayList<Integer> list = new ArrayList<Integer>();
 		String file = this.data_path+Configuration.FOLDER_SEPARATOR+"ids.txt";
 		// On liste les Ids présents dans le fichier.
@@ -85,9 +85,7 @@ public class ParserManager implements Runnable{
 			UIManager.log("[ParserManager : "+this.specy_name+"] Cannot read file : "+file);
 		}
 		AccessManager.doneWithFile(file);
-		
-		this.ids.removeAll(list);
-		
+		return list;		
 	}
 	
 	public void deleteIdFile(){
@@ -193,9 +191,9 @@ public class ParserManager implements Runnable{
 			UIManager.log("[ParserManager : "+this.specy_name+"] Unable to create path : "+data_path+" stopping thread.");
 		} else {
 			// Recuperation des Ids
-			ids = IdFetcher.getIds(this.specy_name);
-			
-			this.removeAlreadyDone();
+			ArrayList<Integer> done = this.getAlreadyDone();
+			ids = IdFetcher.getIds(this.specy_name, done.size());
+			this.ids.removeAll(done);
 			// S'il n'y a aucune différence (avec le fichier ids.txt).
 			if(this.ids.size() == 0){
 				// On skip.
