@@ -27,7 +27,6 @@ public class FileChooserDialog extends JDialog {
 		
 		dialog = this;
 		ActionListener actionListener = new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				JFileChooser theFileChooser = (JFileChooser) actionEvent.getSource();
                 String command = actionEvent.getActionCommand();
@@ -36,7 +35,10 @@ public class FileChooserDialog extends JDialog {
                     String path = selectedFile.getAbsolutePath();
                     
                     File f = new File(path);
-                    if(f.exists() && f.isDirectory()) { 
+                    if(f.exists() && f.isDirectory()) {
+                    	if(! path.endsWith(Configuration.FOLDER_SEPARATOR)){
+                    		path = path + Configuration.FOLDER_SEPARATOR;
+                    	}
                     	Configuration.BASE_FOLDER = path;
                     	dialog.dispose();
                     }

@@ -13,7 +13,7 @@ public class ExcelManager {
 	
 	public static HashMap<String, Long> getInfo(String info) throws IOException{
 		HashMap<String, Long> res = new HashMap<String, Long>();
-		Bdd tmp = new Bdd(info+".bdd");
+		Bdd tmp = new Bdd(info);
 		
 		res.put("nb_cds", tmp.get_nb_CDS());
 		res.put("cds_non_traites",tmp.get_nb_CDS_non_traites());

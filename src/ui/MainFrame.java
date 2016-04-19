@@ -5,7 +5,10 @@ import java.awt.Frame;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -16,6 +19,10 @@ import javax.swing.JTextArea;
 import javax.swing.JTree;
 import javax.swing.text.DefaultCaret;
 import javax.swing.tree.DefaultMutableTreeNode;
+
+import org.w3c.dom.Node;
+
+import excel.ExcelManager;
 import tree.Tree;
 
 public class MainFrame extends Frame {
@@ -136,10 +143,10 @@ public class MainFrame extends Frame {
 	
 	public void setInfos(InfoNode infos){
 		if (infos == null) {
-			this.pathLabel.setText("Unknown");
+			this.pathLabel.setText("Unknown3");
 			this.CDSCount.setText("Unknown");
 			this.CDSFailed.setText("Unknown");
-			this.dinucleotideCount.setText("Uknown");
+			this.dinucleotideCount.setText("Unknown");
 			this.trinucleotideCount.setText("Unknown");
 			openButton.setVisible(false);
         	return;
@@ -156,12 +163,26 @@ public class MainFrame extends Frame {
         	}
         	
         	if(bdd != ""){
-        		
+        		try {
+        			HashMap<String, Long> res = ExcelManager.getInfo(bdd.substring(0, bdd.length() - 4));
+					this.pathLabel.setText(infos.getTreePath());
+					this.CDSCount.setText(res.get("nb_cds").toString());
+					this.CDSFailed.setText(res.get("cds_non_traites").toString());
+					this.dinucleotideCount.setText(res.get("nb_dinucleotides").toString());
+					this.trinucleotideCount.setText(res.get("nb_trinucleotides").toString());
+
+				} catch (IOException e) {
+	    			this.pathLabel.setText("Unknown2");
+	    			this.CDSCount.setText("Unknown");
+	    			this.CDSFailed.setText("Unknown");
+	    			this.dinucleotideCount.setText("Unknown");
+	    			this.trinucleotideCount.setText("Unknown");
+				}
         	} else {
-    			this.pathLabel.setText("Unknown");
+    			this.pathLabel.setText("Unknown 1");
     			this.CDSCount.setText("Unknown");
     			this.CDSFailed.setText("Unknown");
-    			this.dinucleotideCount.setText("Uknown");
+    			this.dinucleotideCount.setText("Unknown");
     			this.trinucleotideCount.setText("Unknown");
         	}
         }

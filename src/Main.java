@@ -29,47 +29,12 @@ import ui.UIManager;
 public class Main {
 
 	public static void main(String[] args) throws Exception {
-		
-		
-		//parsing
-		Bdd base = new Bdd();
-		//Scanner scanneur = Net.getUrl("http://jonathancrabtree.github.io/Circleator/tutorials/gb_annotation/L42023.1.gb");
-		//Scanner scanneur = Net.getUrl("file:///home/nestor/Cours/2A/bioinformatique/sequence2.gb");
-		Scanner scanneur = Net.getUrl("file:///home/micka/Bureau/Cours/3/BioInfo/sequence/sequence2.gb");
-		Parser parseur = new Parser(base,scanneur);
-
-		parseur.parse();
-				
-		
-		String[] plop = new String[4];
-		plop [0] = "kingdom";
-		plop [1] = "groupe";
-		plop [2] = "subgroup";
-		plop [3] = "organisme";
-		ExcelWriter.writer("arbo/patate/souspatate/plop2/tortue/tortue",plop, base);
-		
-
-		scanneur = Net.getUrl("file:///home/micka/Bureau/Cours/3/BioInfo/sequence/sequence3.gb");
-		//scanneur = Net.getUrl("file:///home/nestor/Cours/2A/bioinformatique/sequence3.gb");
-
-		parseur = new Parser(base,scanneur);
-		parseur.parse();
-		plop = new String[4];
-		plop [0] = "kingdom";
-		plop [1] = "groupe";
-		plop [2] = "subgroup";
-		plop [3] = "organisme";
-		ExcelWriter.writer("arbo/patate/souspatate/plop2/tortue2/tortue2",plop, base);
-		
-		ExcelManager.fusionExcels("arbo");
-		
-		/*
 		parseArgs(args);
 
 		UIManager.startPreloading();
 		Tree plop = new Tree();
 		plop=TreeManager.constree();
-		UIManager.startMainProcess(plop);*/
+		UIManager.startMainProcess(plop);
 	}
 	
 	public static void parseArgs(String[] args){
