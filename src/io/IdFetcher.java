@@ -14,7 +14,7 @@ import ui.UIManager;
 
 
 public class IdFetcher {
-	public static ArrayList<Integer> getIds(String specie){
+	public static ArrayList<Integer> getIds(String specie, int minObjects){
 		ArrayList<Integer> list = new ArrayList<Integer>();
 		int retstart = 0;
 		int tries = 0;
@@ -35,6 +35,9 @@ public class IdFetcher {
 				is.close();
 
 				int count = Integer.parseInt(doc.getElementsByTagName("Count").item(0).getTextContent());
+				if(count <= minObjects){
+					return new ArrayList<Integer>();
+				}
 				
 				NodeList nl = doc.getElementsByTagName("Id");
 				for(int i = 0 ; i < nl.getLength(); i++){

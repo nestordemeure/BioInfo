@@ -1,4 +1,9 @@
 import java.util.ArrayList;
+import java.io.IOException;
+import java.net.URL;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+import java.util.Scanner;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -10,17 +15,26 @@ import org.apache.commons.cli.ParseException;
 
 import configuration.Configuration;
 
-import excel.ExcelManager;
+
+import manager.AccessManager;
+import Parser.*;
+import Bdd.Bdd;
+
+import excel.*;
+import io.Net;
 import manager.ThreadManager;
 import tree.*;
 import ui.UIManager;
 
 public class Main {
 
-	public static void main(String[] args){
-		
+	public static void main(String[] args) throws Exception {
 		parseArgs(args);
-		launchProcess();
+
+		UIManager.startPreloading();
+		Tree plop = new Tree();
+		plop=TreeManager.constree();
+		UIManager.startMainProcess(plop);
 	}
 	
 	public static void parseArgs(String[] args){
@@ -77,22 +91,6 @@ public class Main {
 			Configuration.FOLDER_SEPARATOR = "\\";
 		}
 		
-	}
-	
-	public static void launchProcess(){
-		// Building tree
-		UIManager.startPreloading();
-		Tree plop = new Tree();
-		plop=TreeManager.constree();
-		UIManager.setMaxProgress(plop.size());
-		
-		// Creating species statistics
-		UIManager.startMainProcess();
-		ThreadManager.start(plop, new ArrayList<String>());
-		
-		// Merge excels files
-		UIManager.log("Creating excel files...");
-		ExcelManager.fusionExcels(Configuration.BASE_FOLDER);
 	}
 
 }
