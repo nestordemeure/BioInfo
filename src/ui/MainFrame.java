@@ -2,10 +2,12 @@ package ui;
 
 import java.awt.BorderLayout;
 import java.awt.Frame;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
@@ -25,12 +27,16 @@ public class MainFrame extends Frame {
 	private JScrollPane scroll;
 	private JTree tree;
 	private JScrollPane scrolltree;
-	private JTextArea infosFile;
 	private JSplitPane split;
 	private JButton start;
 	private JPanel rightpanel;
 	private JButton openButton;
 	private JPanel infospanel;
+	private JLabel CDSCount;
+	private JLabel CDSFailed;
+	private JLabel dinucleotideCount;
+	private JLabel trinucleotideCount;
+	private JLabel pathLabel;
 	private TreeCheckBoxSelectionModel model;
 
 	public MainFrame(Tree t) {
@@ -52,28 +58,44 @@ public class MainFrame extends Frame {
 
 		openButton = new JButton("Ouvrir le fichier");
 		openButton.setVisible(false);
-		
-		infosFile = new JTextArea();
-		infosFile.setEditable(false);
-		infosFile.append("Pas d'information disponible");
 
+		
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode(new InfoNode("All", new ArrayList<String>()));
 		MainFrame.createJTree(t, root, new ArrayList<String>());
 		tree = new JTree(root);
-		TreeCheckBoxSelectionModel model = new TreeCheckBoxSelectionModel(tree.getModel());
+		model = new TreeCheckBoxSelectionModel(tree.getModel());
 		tree.setCellRenderer(new TreeCheckBoxRenderer(model));
-		tree.addMouseListener(new TreeCheckBoxMouseListener(tree, model, infosFile, openButton));
+		tree.addMouseListener(new TreeCheckBoxMouseListener(tree, model, this));
 		//tree.addTreeSelectionListener(new TreeInfosListener(tree, infosFile, openButton));
 
 		scrolltree = new JScrollPane(tree);
 		scrolltree.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
-		infospanel = new JPanel(new BorderLayout());
-		infospanel.add(infosFile, BorderLayout.NORTH);
-		infospanel.add(openButton, BorderLayout.SOUTH);
+		pathLabel = new JLabel("Unknown");
+		CDSCount = new JLabel("Unknown");
+		CDSFailed = new JLabel("Unknown");
+		dinucleotideCount = new JLabel("Unknown");
+		trinucleotideCount = new JLabel("Unknown");
+		
+		JPanel gInfosPanel = new JPanel(new BorderLayout());
+		
+		infospanel = new JPanel(new GridLayout(5,2));
+		infospanel.add(new JLabel("Path : "));
+		infospanel.add(pathLabel);
+		infospanel.add(new JLabel("CDS Count : "));
+		infospanel.add(CDSCount);
+		infospanel.add(new JLabel("CDS Failed : "));
+		infospanel.add(CDSFailed);
+		infospanel.add(new JLabel("Dinucleotide Count : "));
+		infospanel.add(dinucleotideCount);
+		infospanel.add(new JLabel("Trinucleotide Count : "));
+		infospanel.add(trinucleotideCount);
+		
+		gInfosPanel.add(infospanel, BorderLayout.NORTH);
+		gInfosPanel.add(openButton, BorderLayout.PAGE_END);
 		
 		rightpanel = new JPanel(new BorderLayout());
-		rightpanel.add(infospanel, BorderLayout.NORTH);
+		rightpanel.add(gInfosPanel, BorderLayout.NORTH);
 		rightpanel.add(scroll, BorderLayout.CENTER);
 		rightpanel.add(start, BorderLayout.PAGE_END);
 
@@ -106,6 +128,39 @@ public class MainFrame extends Frame {
 		str = str.substring(0, (str.length() >= 7 ? 7 : str.length()));
 		this.progress.setString(str + "%");
 		this.progress.setValue((int) n);
+	}
+	
+	public void setInfos(InfoNode infos){
+		if (infos == null) {
+			this.pathLabel.setText("Unknown");
+			this.CDSCount.setText("Unknown");
+			this.CDSFailed.setText("Unknown");
+			this.dinucleotideCount.setText("Uknown");
+			this.trinucleotideCount.setText("Unknown");
+			openButton.setVisible(false);
+        	return;
+        }
+        else {
+        	String xls = FindExtension.check(infos.getRealPath(), ".xls");
+        	String bdd = FindExtension.check(infos.getRealPath(), ".bdd");
+        	
+        	if (xls != "") {
+        		openButton.addActionListener(new OpenFileListener(xls));
+        		openButton.setVisible(true);
+        	} else {
+        		openButton.setVisible(false);
+        	}
+        	
+        	if(bdd != ""){
+        		
+        	} else {
+    			this.pathLabel.setText("Unknown");
+    			this.CDSCount.setText("Unknown");
+    			this.CDSFailed.setText("Unknown");
+    			this.dinucleotideCount.setText("Uknown");
+    			this.trinucleotideCount.setText("Unknown");
+        	}
+        }
 	}
 
 	public static void createJTree(Tree t, DefaultMutableTreeNode treeNode,
