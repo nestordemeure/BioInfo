@@ -20,7 +20,11 @@ public class Main {
 	public static void main(String[] args){
 		
 		parseArgs(args);
-		launchProcess();
+
+		UIManager.startPreloading();
+		Tree plop = new Tree();
+		plop=TreeManager.constree();
+		UIManager.startMainProcess(plop);
 	}
 	
 	public static void parseArgs(String[] args){
@@ -77,24 +81,6 @@ public class Main {
 			Configuration.FOLDER_SEPARATOR = "\\";
 		}
 		
-	}
-	
-	public static void launchProcess(){
-		// Building tree
-		UIManager.startPreloading();
-		Tree plop = new Tree();
-		plop=TreeManager.constree();
-		UIManager.setMaxProgress(plop.size());
-		UIManager.startMainProcess(plop);
-		
-		if(! Configuration.USE_GUI){
-			// Creating species statistics
-			ThreadManager.start(plop, new ArrayList<String>());
-			
-			// Merge excels files
-			UIManager.log("Creating excel files...");
-			ExcelManager.fusionExcels(Configuration.BASE_FOLDER);
-		}
 	}
 
 }

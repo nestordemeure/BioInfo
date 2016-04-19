@@ -39,7 +39,9 @@ public class ExcelWriter {
 				folders.mkdirs();
 			}
 			
-			FileOutputStream fileOut = new FileOutputStream(filepath);
+			String xlsfile = filepath+".xls";
+			
+			FileOutputStream fileOut = new FileOutputStream(xlsfile);
 			HSSFWorkbook workbook = new HSSFWorkbook();
 			HSSFSheet worksheet = workbook.createSheet("POI Worksheet");
 
@@ -66,7 +68,24 @@ public class ExcelWriter {
 			
 			// ligne 1 
 			rowlist.get(0).getCell(0).setCellValue("Nom");
-			rowlist.get(0).getCell(1).setCellValue(chemin[3]);
+			String filename = "";
+			if (chemin[3] != null && chemin[3] != "" ) {
+				filename = chemin[3];
+			}
+			else if (chemin[2] != null && chemin[2] != "" ) {
+				filename = chemin[2];
+			}
+			else if (chemin[1] != null && chemin[1] != "") {
+				filename = chemin[1];
+			}
+			else {
+				filename = chemin[0];
+			}
+			
+			
+			rowlist.get(0).getCell(1).setCellValue(filename);
+			
+			
 			
 			//ligne 2
 			rowlist.get(1).getCell(0).setCellValue("Chemin");			
@@ -228,6 +247,9 @@ public class ExcelWriter {
 			workbook.write(fileOut);
 			fileOut.flush();
 			fileOut.close();
+
+			
+			base.exportBase(filepath);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

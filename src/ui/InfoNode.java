@@ -59,4 +59,26 @@ public class InfoNode {
 	public void setSelected(boolean selected){
 		this.selected = selected;
 	}
+	
+
+	public boolean canBeInPath(ArrayList<String> r_path){
+		if(this.path.size() == 0){
+			return true;
+		}
+		
+		int length = 0;
+		if(this.path.size() < r_path.size()) {
+			length = this.path.size();
+		} else {
+			length = r_path.size();
+		}
+		
+		for(int i = 0; i < length; i++){
+			if(! this.path.get(i).toLowerCase().equals(r_path.get(i).toLowerCase())){
+				return false;
+			}
+		}
+		
+		return true;
+	}
 }

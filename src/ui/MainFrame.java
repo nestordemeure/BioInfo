@@ -31,6 +31,7 @@ public class MainFrame extends Frame {
 	private JPanel rightpanel;
 	private JButton openButton;
 	private JPanel infospanel;
+	private TreeCheckBoxSelectionModel model;
 
 	public MainFrame(Tree t) {
 		this.setLayout(new BorderLayout());
@@ -89,7 +90,8 @@ public class MainFrame extends Frame {
 				rightpanel.remove(start);
 				rightpanel.add(progress, BorderLayout.PAGE_END);
 				progress.setVisible(true);
-				UIManager.launchProcess();
+				
+				UIManager.launchProcess(MainFrame.this.model.getSelectedNodes());
 			}
 		});
 

@@ -1,5 +1,6 @@
 package ui;
 
+import java.util.ArrayList;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import tree.Tree;
@@ -65,13 +66,16 @@ public class UIManager {
 		if(Configuration.USE_GUI){
 			UIManager.check();
 			UIManager.graphics.startMainProcess(t);
+		} else {
+			UIManager.check();
+			UIManager.console.launchProcess(t);
 		}
 	}
 	
-	public static void launchProcess(){
+	public static void launchProcess(ArrayList<InfoNode> nodes){
 		if(Configuration.USE_GUI){
 			UIManager.check();
-			UIManager.graphics.launchProcess();
+			UIManager.graphics.launchProcess(nodes);
 		}
 	}
 
