@@ -2,6 +2,7 @@ package excel;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -9,6 +10,18 @@ import Bdd.Bdd;
 import configuration.Configuration;
 
 public class ExcelManager {
+	
+	public static HashMap<String, Long> getInfo(String info) throws IOException{
+		HashMap<String, Long> res = new HashMap<String, Long>();
+		Bdd tmp = new Bdd(info+".bdd");
+		
+		res.put("nb_cds", tmp.get_nb_CDS());
+		res.put("cds_non_traites",tmp.get_nb_CDS_non_traites());
+		res.put("nb_dinucleotides",tmp.get_nb_dinucleotides());
+		res.put("nb_trinucleotides",tmp.get_nb_trinucleotides());
+		
+		return res;
+	}
 	
 	//prends le dossier racine et créé dans chaque sous dossier un fichier excel récapitulatif
 	public static void fusionExcels(String folder){
