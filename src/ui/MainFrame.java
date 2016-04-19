@@ -61,8 +61,8 @@ public class MainFrame extends Frame {
 		tree = new JTree(root);
 		TreeCheckBoxSelectionModel model = new TreeCheckBoxSelectionModel(tree.getModel());
 		tree.setCellRenderer(new TreeCheckBoxRenderer(model));
-		tree.addMouseListener(new TreeCheckBoxMouseListener(tree, model));
-		tree.addTreeSelectionListener(new TreeInfosListener(tree, infosFile, openButton));
+		tree.addMouseListener(new TreeCheckBoxMouseListener(tree, model, infosFile, openButton));
+		//tree.addTreeSelectionListener(new TreeInfosListener(tree, infosFile, openButton));
 
 		scrolltree = new JScrollPane(tree);
 		scrolltree.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);

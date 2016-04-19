@@ -18,7 +18,6 @@ public class TreeInfosListener implements TreeSelectionListener {
 		this.openButton = openButton;
 	}
 	
-	@Override
 	public void valueChanged(TreeSelectionEvent e) {
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
         if (node == null) {
