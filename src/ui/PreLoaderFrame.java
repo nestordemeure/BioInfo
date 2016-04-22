@@ -16,11 +16,11 @@ public class PreLoaderFrame extends Frame{
 	
 	public PreLoaderFrame(){
 		this.setLayout(new BorderLayout());
-		title = new Label("BioInfo : Preloading (Building tree)");
+		title = new Label("Construction de l'arbre...");
 		title.setFont(new Font("Arial", Font.BOLD, 30));
 		
 		info = new Label();
-		info.setText("Loading ...");
+		info.setText("Chargement ...");
 		
 		progress = new JProgressBar();
 		progress.setIndeterminate(true);
@@ -30,7 +30,7 @@ public class PreLoaderFrame extends Frame{
 		this.add(title,   BorderLayout.CENTER);
 		this.add(info,    BorderLayout.PAGE_END);
 		
-		this.setTitle("BionInfo : Preloader");
+		this.setTitle("BioInfo : Chargement");
 		this.setVisible(true);
 		this.setSize(600,150);
 	}

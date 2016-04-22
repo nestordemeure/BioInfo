@@ -5,12 +5,15 @@ import java.awt.Frame;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
@@ -59,7 +62,7 @@ public class MainFrame extends Frame {
 		scroll = new JScrollPane(logger);
 		scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
-		start = new JButton("Start");
+		start = new JButton("Commencer");
 
 		progress = new JProgressBar();
 		progress.setDoubleBuffered(true);
@@ -82,24 +85,24 @@ public class MainFrame extends Frame {
 		scrolltree = new JScrollPane(tree);
 		scrolltree.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
-		pathLabel = new JLabel("Unknown");
-		CDSCount = new JLabel("Unknown");
-		CDSFailed = new JLabel("Unknown");
-		dinucleotideCount = new JLabel("Unknown");
-		trinucleotideCount = new JLabel("Unknown");
+		pathLabel = new JLabel("Inconnu");
+		CDSCount = new JLabel("Inconnu");
+		CDSFailed = new JLabel("Inconnu");
+		dinucleotideCount = new JLabel("Inconnu");
+		trinucleotideCount = new JLabel("Inconnu");
 		
 		JPanel gInfosPanel = new JPanel(new BorderLayout());
 		
 		infospanel = new JPanel(new GridLayout(5,2));
-		infospanel.add(new JLabel("Path : "));
+		infospanel.add(new JLabel("Chemin : "));
 		infospanel.add(pathLabel);
-		infospanel.add(new JLabel("CDS Count : "));
+		infospanel.add(new JLabel("Nombre de CDS : "));
 		infospanel.add(CDSCount);
-		infospanel.add(new JLabel("CDS Failed : "));
+		infospanel.add(new JLabel("CDS non traité : "));
 		infospanel.add(CDSFailed);
-		infospanel.add(new JLabel("Dinucleotide Count : "));
+		infospanel.add(new JLabel("Nombre de dinucleotide : "));
 		infospanel.add(dinucleotideCount);
-		infospanel.add(new JLabel("Trinucleotide Count : "));
+		infospanel.add(new JLabel("Nombre de trinucleotide : "));
 		infospanel.add(trinucleotideCount);
 		
 		gInfosPanel.add(infospanel, BorderLayout.NORTH);
@@ -112,6 +115,14 @@ public class MainFrame extends Frame {
 
 		split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scrolltree, rightpanel);
 		this.add(split);
+		
+		this.addWindowListener(new WindowAdapter(){
+            public void windowClosing(WindowEvent e){
+                int i = JOptionPane.showConfirmDialog(null, "Etes vous sur ?");
+                if(i==0)
+                    System.exit(0);
+            }
+        });
 
 		setTitle("BioInfo : Main");
 		setSize(800, 600);
@@ -150,11 +161,11 @@ public class MainFrame extends Frame {
 	
 	public void setInfos(InfoNode infos){
 		if (infos == null) {
-			this.pathLabel.setText("Unknown");
-			this.CDSCount.setText("Unknown");
-			this.CDSFailed.setText("Unknown");
-			this.dinucleotideCount.setText("Unknown");
-			this.trinucleotideCount.setText("Unknown");
+			this.pathLabel.setText("Inconnu");
+			this.CDSCount.setText("Inconnu");
+			this.CDSFailed.setText("Inconnu");
+			this.dinucleotideCount.setText("Inconnu");
+			this.trinucleotideCount.setText("Inconnu");
 			openButton.setVisible(false);
         	return;
         }
@@ -179,18 +190,18 @@ public class MainFrame extends Frame {
 					this.trinucleotideCount.setText(res.get("nb_trinucleotides").toString());
 
 				} catch (IOException e) {
-	    			this.pathLabel.setText("Unknown");
-	    			this.CDSCount.setText("Unknown");
-	    			this.CDSFailed.setText("Unknown");
-	    			this.dinucleotideCount.setText("Unknown");
-	    			this.trinucleotideCount.setText("Unknown");
+	    			this.pathLabel.setText("Inconnu");
+	    			this.CDSCount.setText("Inconnu");
+	    			this.CDSFailed.setText("Inconnu");
+	    			this.dinucleotideCount.setText("Inconnu");
+	    			this.trinucleotideCount.setText("Inconnu");
 				}
         	} else {
-    			this.pathLabel.setText("Unknown");
-    			this.CDSCount.setText("Unknown");
-    			this.CDSFailed.setText("Unknown");
-    			this.dinucleotideCount.setText("Unknown");
-    			this.trinucleotideCount.setText("Unknown");
+    			this.pathLabel.setText("Inconnu");
+    			this.CDSCount.setText("Inconnu");
+    			this.CDSFailed.setText("Inconnu");
+    			this.dinucleotideCount.setText("Inconnu");
+    			this.trinucleotideCount.setText("Inconnu");
         	}
         }
 	}
