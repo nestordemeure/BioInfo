@@ -206,6 +206,7 @@ public class Bdd
 	}
 	
 	//ajoute le contenus de la base donnée en argument à la base actuelle
+	//TODO WARNING cette base pourrait garder des chromosomes issus de la base originale -> il faut creer une nouvelle base, vierge, si on veux éviter sa
 	public void fusionBase(Bdd base)
 	{
 		String cleft_foreign;
@@ -213,10 +214,15 @@ public class Bdd
 		
 		for (Entry<String, content> entry : base.contenus.entrySet())
 		{
-			//TODO ici il faut ajouter un test pour envoyer tout ce qui n'est pas mitochondrie/chloroplaste vers général
-			cleft_foreign = entry.getKey();
 			contenus_cleft_foreign = entry.getValue();
 						
+			cleft_foreign = entry.getKey();
+			//TODO ici il faut ajouter un test pour envoyer tout ce qui n'est pas mitochondrie/chloroplaste vers général
+			if ( (cleft_foreign != "mito") || (cleft_foreign != "chloro") )
+			{
+				cleft_foreign = "General";
+			}
+			
 			content contenus_cleft_local = contenus.get(cleft_foreign);
 			
 			if (contenus_cleft_local == null)
