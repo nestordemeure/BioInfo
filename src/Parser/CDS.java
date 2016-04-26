@@ -52,7 +52,7 @@ public class CDS
 			try
 			{
 				//on s'assure que le tampon est vide avant d'attaquer
-				base_de_donnees.open_tampon();
+				base_de_donnees.open_tampon("General"); //TODO mettre la vrai cleft parsée
 				
 				//l'automate qui va parcourir cette séquence, dans le sens directe par défaut
 				automateLecteurDeGenes auto = new automateLecteurDeGenes(base_de_donnees);
@@ -68,12 +68,12 @@ public class CDS
 				//on test le codon stop et la taille du CDS
 				auto.test_CDS();
 				
+				base_de_donnees.incr_nb_CDS("General");  //TODO mettre la vrai cleft parsée
 				base_de_donnees.close_tampon();
-				base_de_donnees.incr_nb_CDS();
 			}
 			catch (CDSInvalideException e)
 			{
-				base_de_donnees.incr_nb_CDS_non_traites();
+				base_de_donnees.incr_nb_CDS_non_traites("General");  //TODO mettre la vrai cleft parsée
 			}
 			
 			//ce CDS ne sert plus

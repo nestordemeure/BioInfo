@@ -9,7 +9,7 @@ import java.io.ObjectOutputStream;
 import exceptions.CharInvalideException;
 import manager.AccessManager;
 
-public class Bdd 
+public class Bdd_deprecated 
 {
 /*
  * s'utilise en faisant open_tampon, remplissant la base puis close_tampon si tout c'est bien passé
@@ -50,7 +50,7 @@ public class Bdd
 //constructeur
 	
 	//TODO WARNING les utilisateur de la base doivent cesser de lui donner un argument
-	public Bdd ()
+	public Bdd_deprecated ()
 	{
 		nb_CDS = 0;
 		nb_CDS_non_traites = 0;
@@ -67,7 +67,7 @@ public class Bdd
 	}
 	
 	//TODO importe la base située à l'adresse donnée
-	public Bdd (String file) throws IOException
+	public Bdd_deprecated (String file) throws IOException
 	{
 		String adresse = file+".bdd";
 		
@@ -139,26 +139,26 @@ public class Bdd
 	//ces fonctions s'utilises sans avoir besoin d'ouvrir ou fermer la base mais n'ont pas la sécuritée anti-exceptions du tampon
 	
 	//ajoute un dinucleotide et un tri nucleotides au phases indiquées
-	public void ajoute_nucleotides_unsafe (int phase2, int phase3, int nucleotide1, int nucleotide2, int nucleotide3, long nbrebucléotides) throws CharInvalideException
+	public void ajoute_nucleotides_unsafe (int phase2, int phase3, int nucleotide1, int nucleotide2, int nucleotide3, long nbrebucleotides) throws CharInvalideException
 	{
-		tableautrinucleotides[phase3][nucleotide1][nucleotide2][nucleotide3]+=nbrebucléotides;
-		tableaudinucleotides[phase2][nucleotide1][nucleotide2]+=nbrebucléotides;
-		nbTrinucleotidesParPhase[phase3]+=nbrebucléotides;
-		nbDinucleotidesParPhase[phase2]+=nbrebucléotides;
+		tableautrinucleotides[phase3][nucleotide1][nucleotide2][nucleotide3]+=nbrebucleotides;
+		tableaudinucleotides[phase2][nucleotide1][nucleotide2]+=nbrebucleotides;
+		nbTrinucleotidesParPhase[phase3]+=nbrebucleotides;
+		nbDinucleotidesParPhase[phase2]+=nbrebucleotides;
 	}
 	
 	//ajoute un tri nucleotides a la phase indiquée
-	public void ajoute_nucleotides_unsafe (int phase, int nucleotide1, int nucleotide2, int nucleotide3, long nbrebucléotides) throws CharInvalideException
+	public void ajoute_nucleotides_unsafe (int phase, int nucleotide1, int nucleotide2, int nucleotide3, long nbrebucleotides) throws CharInvalideException
 	{
-		tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3]+=nbrebucléotides;
-		nbTrinucleotidesParPhase[phase]+=nbrebucléotides;
+		tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3]+=nbrebucleotides;
+		nbTrinucleotidesParPhase[phase]+=nbrebucleotides;
 	}
 	
 	//ajoute un dinucleotide à la phase indiquée
-	public void ajoute_nucleotides_unsafe (int phase, int nucleotide1, int nucleotide2, long nbrebucléotides) throws CharInvalideException
+	public void ajoute_nucleotides_unsafe (int phase, int nucleotide1, int nucleotide2, long nbrebucleotides) throws CharInvalideException
 	{
-		tableaudinucleotides[phase][nucleotide1][nucleotide2]+=nbrebucléotides;
-		nbDinucleotidesParPhase[phase]+=nbrebucléotides;
+		tableaudinucleotides[phase][nucleotide1][nucleotide2]+=nbrebucleotides;
+		nbDinucleotidesParPhase[phase]+=nbrebucleotides;
 	}
 	
 //getters (resultat final)
@@ -279,7 +279,7 @@ public class Bdd
 	}
 	
 	//TODO ajoute le contenus de la base donnée en argument à la base actuelle
-	public void fusionBase(Bdd base)
+	public void fusionBase(Bdd_deprecated base)
 	{
 		nbDinucleotidesParPhase[0]+= base.nbDinucleotidesParPhase[0];
 		nbDinucleotidesParPhase[1]+= base.nbDinucleotidesParPhase[1];
@@ -416,5 +416,10 @@ public class Bdd
 		catch (CharInvalideException e) { /* exception impossible mais néanmoins catchée*/ }
 		
 		return str;
+	}
+	
+	public class content
+	{
+		
 	}
 }

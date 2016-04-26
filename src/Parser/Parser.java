@@ -123,7 +123,7 @@ public class Parser
 		} 
 		catch (CDSInvalideException e) 
 		{
-			base_de_donnees.incr_nb_CDS_non_traites();
+			base_de_donnees.incr_nb_CDS_non_traites("General"); //TODO mettre la bonne cleft
 		}
 	}
 	
