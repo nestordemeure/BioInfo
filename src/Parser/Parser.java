@@ -24,7 +24,6 @@ public class Parser
 		scanner = scan;
 	}
 
-	//TODO pour plus d'efficassitée, il faut peut-etre ajouter un argument qui définie si les entrées seront multiples?
 	//fonction qui fait tourner le parseur
 	public void parse() throws ScannerNullException
 	{
@@ -81,7 +80,8 @@ public class Parser
 			
 			boolean recherche_en_cour = true;
 
-			/*on parcours l'entete
+			/*
+			 * on parcours l'entete
 			 * si on croise ORIGIN, on s'arrete
 			 * si on croise un CDS, on l'ajoute et on repars
 			 * sinon, on continue

@@ -85,11 +85,12 @@ public class Bdd
 //incrementeurs
 
 	//TODO
+	/*
 	public void incr_nb_CDS (String cleft)
 	{
 		contenus.get(cleft).nb_CDS++;
 	}
-	
+	*/
 	//TODO
 	public void incr_nb_CDS_non_traites (String cleft)
 	{
@@ -166,6 +167,9 @@ public class Bdd
 					}
 				}
 			}
+			
+			//TODO on suppose qu'on ouvre le tampon que pour écrire un CDS : risque?
+			contenus_cleft.nb_CDS++;
 			
 			empty_tamp=true;
 		}

@@ -19,7 +19,7 @@ public class CDS
 		base_de_donnees=base;
 	}
 
-	//on coupe les ponts vers les séquences et on envois une execption pour signaler que ce cds ne sert plus
+	//on coupe les ponts vers les séquences et on envois une exception pour signaler que ce cds ne sert plus
 	void suicide() throws DeadCDSException
 	{
 		sequence_list = null;
@@ -68,7 +68,6 @@ public class CDS
 				//on test le codon stop et la taille du CDS
 				auto.test_CDS();
 				
-				base_de_donnees.incr_nb_CDS("General");  //TODO mettre la vrai cleft parsée
 				base_de_donnees.close_tampon();
 			}
 			catch (CDSInvalideException e)
@@ -122,7 +121,6 @@ public class CDS
 		//-----
 		
 		//ajoute une ligne au code genetique
-		//TODO on peux peut-etre faire plus efficasse en gardant les lignes dans un arraylist
 		public void appendLigne(String ligne)
 		{
 			code_genetique.append('\n'); //on conserve un caracter séparateur de lignes
