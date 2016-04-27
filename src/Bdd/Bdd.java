@@ -94,7 +94,14 @@ public class Bdd
 	//TODO
 	public void incr_nb_CDS_non_traites (String cleft)
 	{
-		contenus.get(cleft).nb_CDS_non_traites++;
+		content contenus_cleft = contenus.get(cleft);
+		if (contenus_cleft == null)
+		{
+			contenus_cleft = new content();
+			contenus.put(tampon_cleft,contenus_cleft);
+		}
+		
+		contenus_cleft.nb_CDS_non_traites++;
 	}
 
 	//tampon
@@ -168,7 +175,7 @@ public class Bdd
 				}
 			}
 			
-			//TODO on suppose qu'on ouvre le tampon que pour écrire un CDS : risque?
+			//TODO on suppose qu'on ne ferme le tampon que pour écrire un CDS : risque?
 			contenus_cleft.nb_CDS++;
 			
 			empty_tamp=true;
@@ -222,9 +229,9 @@ public class Bdd
 						
 			cleft_foreign = entry.getKey();
 			//TODO ici il faut ajouter un test pour envoyer tout ce qui n'est pas mitochondrie/chloroplaste vers général
-			if ( (cleft_foreign != "mito") || (cleft_foreign != "chloro") )
+			if ( (cleft_foreign != "mitochondrion") && (cleft_foreign != "chloroplast") )
 			{
-				cleft_foreign = "General";
+				cleft_foreign = "Général";
 			}
 			
 			content contenus_cleft_local = contenus.get(cleft_foreign);
@@ -289,7 +296,7 @@ public class Bdd
 		String str = "";
 		StringBuilder triplet = new StringBuilder("---");
 		content contenus_cleft;
-
+		
 		try
 		{
 			//TODO
@@ -459,5 +466,8 @@ public class Bdd
 			nb_CDS += cont.nb_CDS;
 			nb_CDS_non_traites += cont.nb_CDS_non_traites;
 		}
+		
+		//il faut implémenter un pattern serialize pour le rendre lisible ?
+		
 	}
 }
