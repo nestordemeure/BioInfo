@@ -16,15 +16,19 @@ public class Main {
 		Bdd base = new Bdd();
 		
 		//mitochondrie et une séquence de type General vide
-		Scanner scanneur = Net.getUrl("file:///home/nestor/Cours/2A/bioinformatique/sequence.gb");
+		Scanner scanneur = Net.getUrl("file:///home/nestor/Cours/2A/bioinformatique/sequence2.gb");
 		Parser parseur = new Parser(base,scanneur);
 		parseur.parse();
 		//chloroplastes
 		scanneur = Net.getUrl("file:///home/nestor/Cours/2A/bioinformatique/sequence1.gb");
 		parseur = new Parser(base,scanneur);
 		parseur.parse();
-		//chromosome="truc"
+		//chromosome1
 		scanneur = Net.getUrl("file:///home/nestor/Cours/2A/bioinformatique/sequence0.gb");
+		parseur = new Parser(base,scanneur);
+		parseur.parse();
+		//chromosome2
+		scanneur = Net.getUrl("file:///home/nestor/Cours/2A/bioinformatique/sequence4.gb");
 		parseur = new Parser(base,scanneur);
 		parseur.parse();
 		
