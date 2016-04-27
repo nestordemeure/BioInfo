@@ -4,6 +4,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -359,7 +360,7 @@ public class Bdd
 	}
 	
 	//contient les valeures associées a un type (mitochondrie, géne, chloroplaste, general,...)
-	public class content
+	public class content implements Serializable
 	{
 		private long nb_CDS;
 		private long nb_CDS_non_traites;
@@ -467,7 +468,26 @@ public class Bdd
 			nb_CDS_non_traites += cont.nb_CDS_non_traites;
 		}
 		
-		//il faut implémenter un pattern serialize pour le rendre lisible ?
-		
+		//serialization
+
+	   private void readObject(ObjectInputStream inputstream) throws IOException, ClassNotFoundException 
+	   {
+		   nb_CDS = inputstream.readLong();
+		   nb_CDS_non_traites = inputstream.readLong();
+		   nbTrinucleotidesParPhase = (long[]) inputstream.readObject();
+		   nbDinucleotidesParPhase = (long[]) inputstream.readObject();
+		   tableautrinucleotides = (long[][][][]) inputstream.readObject();
+		   tableaudinucleotides = (long[][][]) inputstream.readObject();	
+	   }
+
+	   private void writeObject(ObjectOutputStream outputstream) throws IOException
+	   {
+			outputstream.writeLong(nb_CDS);
+			outputstream.writeLong(nb_CDS_non_traites);
+			outputstream.writeObject(nbTrinucleotidesParPhase);
+			outputstream.writeObject(nbDinucleotidesParPhase);
+			outputstream.writeObject(tableautrinucleotides);
+			outputstream.writeObject(tableaudinucleotides);
+	  }
 	}
 }
