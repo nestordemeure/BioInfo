@@ -33,13 +33,22 @@ public class Main {
 		parseur.parse();
 		
 		//affichage du contenus de la bdd
-		System.out.println(base.get_tableauxnucleotides_string());
+		//System.out.println(base.get_tableauxnucleotides_string());
 		
 		//test l'import/export
 		base.exportBase("adressetest");
-		Bdd base2 = new Bdd("adressetest");
-		
+		/*
+		Bdd base2 = new Bdd();
+		Bdd base3 = new Bdd("adressetest");
+		base2.fusionBase(base3);
 		System.out.println(base2.get_tableauxnucleotides_string());
+		*/
+		
+		Bdd tmp = new Bdd();
+		tmp.fusionBase(new Bdd("adressetest"));
+		tmp.fusionBase(new Bdd("adressetest"));
+		System.out.println(tmp.get_tableauxnucleotides_string());
+		
 	}
 
 }

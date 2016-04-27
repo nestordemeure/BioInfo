@@ -230,7 +230,7 @@ public class Bdd
 						
 			cleft_foreign = entry.getKey();
 			//TODO ici il faut ajouter un test pour envoyer tout ce qui n'est pas mitochondrie/chloroplaste vers général
-			if ( (cleft_foreign != "mitochondrion") && (cleft_foreign != "chloroplast") )
+			if ( cleft_foreign.startsWith("chromosome") )
 			{
 				cleft_foreign = "Général";
 			}
@@ -249,7 +249,7 @@ public class Bdd
 	}
 	
 	//retourne le contenus de la base
-	Set<Map.Entry<String,content>> getContenus()
+	public Set<Map.Entry<String,content>> getContenus()
 	{
 		return contenus.entrySet();
 	}
