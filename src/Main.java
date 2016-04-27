@@ -34,30 +34,42 @@ public class Main {
 		Bdd base = new Bdd();
 		
 		//mitochondrie et une séquence de type General vide
-		Scanner scanneur = Net.getUrl("file:///home/nestor/Cours/2A/bioinformatique/sequence2.gb");
+		Scanner scanneur = Net.getUrl("file:///home/adrien/Dev/BioInfo/sequence2.gb");
 		Parser parseur = new Parser(base,scanneur);
 		parseur.parse();
 		//chloroplastes
-		scanneur = Net.getUrl("file:///home/nestor/Cours/2A/bioinformatique/sequence1.gb");
+		scanneur = Net.getUrl("file:///home/adrien/Dev/BioInfo/sequence1.gb");
 		parseur = new Parser(base,scanneur);
 		parseur.parse();
 		//chromosome1
-		scanneur = Net.getUrl("file:///home/nestor/Cours/2A/bioinformatique/sequence0.gb");
+		scanneur = Net.getUrl("file:///home/adrien/Dev/BioInfo/sequence0.gb");
 		parseur = new Parser(base,scanneur);
 		parseur.parse();
 		//chromosome2
-		scanneur = Net.getUrl("file:///home/nestor/Cours/2A/bioinformatique/sequence4.gb");
+		scanneur = Net.getUrl("file:///home/adrien/Dev/BioInfo/sequence4.gb");
 		parseur = new Parser(base,scanneur);
 		parseur.parse();
 		
 		//affichage du contenus de la bdd
-		System.out.println(base.get_tableauxnucleotides_string());
+		//System.out.println(base.get_tableauxnucleotides_string());
 		
 		//test l'import/export
-		base.exportBase("adressetest");
-		Bdd base2 = new Bdd("adressetest");
+		//base.exportBase("adressetest");
+		//Bdd base2 = new Bdd("adressetest");
 		
-		System.out.println(base2.get_tableauxnucleotides_string());
+		//System.out.println(base2.get_tableauxnucleotides_string());
+		
+		String[] chemin=new String[4];
+		chemin[0]="Kingdom";
+		chemin[1]="Groupe";
+		chemin[2]="Sous-Groupe";
+		chemin[3]="Organisme";
+		
+		//ExcelWriter.writer("arbo/patate/patate2/sous-grp/plop/plop", chemin, base);
+		//ExcelWriter.writer("arbo/patate/patate2/sous-grp/plop2/plop2", chemin, base);
+		
+		//ExcelManager.fusionExcels("arbo");
+		
 	}
 
 }

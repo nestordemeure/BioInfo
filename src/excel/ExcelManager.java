@@ -3,24 +3,45 @@ package excel;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import Bdd.Bdd;
+import Bdd.Bdd.content;
 import configuration.Configuration;
 
 public class ExcelManager {
 	
 	public static HashMap<String, Long> getInfo(String info) throws IOException{
+		
 		HashMap<String, Long> res = new HashMap<String, Long>();
 		Bdd tmp = new Bdd(info);
 		
-		res.put("nb_cds", tmp.get_nb_CDS());
-		res.put("cds_non_traites",tmp.get_nb_CDS_non_traites());
-		res.put("nb_dinucleotides",tmp.get_nb_dinucleotides());
-		res.put("nb_trinucleotides",tmp.get_nb_trinucleotides());
+		String cleft;
+		content contenus;
+		
+		Long nb_CDS=(long) 0, CDS_non_traites=(long) 0, NB_dinucl=(long) 0, NB_trinucl=(long) 0;
+				
+		for (Entry<String, content> entry : tmp.getContenus())
+		{
+			cleft = entry.getKey(); //"mitochondire", "chloroplaste", "general"
+			contenus = entry.getValue(); //un objet content équipé de toute les fonction que vous appliquiez a la base avant
+			
+			nb_CDS+=contenus.get_nb_CDS();
+			CDS_non_traites+=contenus.get_nb_CDS_non_traites();
+			NB_dinucl+=contenus.get_nb_dinucleotides();
+			NB_trinucl+=contenus.get_nb_trinucleotides();
+			
+		}
+		
+		res.put("nb_cds", nb_CDS);
+		res.put("cds_non_traites",CDS_non_traites);
+		res.put("nb_dinucleotides",NB_dinucl);
+		res.put("nb_trinucleotides",NB_trinucl);
 		
 		return res;
+		
 	}
 	
 	//prends le dossier racine et créé dans chaque sous dossier un fichier excel récapitulatif
