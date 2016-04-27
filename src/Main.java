@@ -27,70 +27,37 @@ import tree.*;
 import ui.UIManager;
 
 public class Main {
-
-	public static void main(String[] args) throws Exception {
-		parseArgs(args);
-
-		UIManager.startPreloading();
-		Tree plop = new Tree();
-		plop=TreeManager.constree();
-		UIManager.startMainProcess(plop);
-	}
 	
-	public static void parseArgs(String[] args){
-		Option help = new Option("h","help",false, "print this message");
-		Option nogui = new Option("g", "no-gui",false, "Text mode only");
-		Option path = new Option("p","path", true, "Path to the ressources");
-		Option windows = new Option("w", "windows", false, "Use windows style path");
-		Option threads = new Option("t", "threads", true, "Specify how many threads will be launched");
+	public static void main(String[] args) throws Exception 
+	{
+		//parsing
+		Bdd base = new Bdd();
 		
-		Options options = new Options();
-		options.addOption(help);
-		options.addOption(nogui);
-		options.addOption(path);
-		options.addOption(windows);
-		options.addOption(threads);
+		//mitochondrie et une séquence de type General vide
+		Scanner scanneur = Net.getUrl("file:///home/nestor/Cours/2A/bioinformatique/sequence2.gb");
+		Parser parseur = new Parser(base,scanneur);
+		parseur.parse();
+		//chloroplastes
+		scanneur = Net.getUrl("file:///home/nestor/Cours/2A/bioinformatique/sequence1.gb");
+		parseur = new Parser(base,scanneur);
+		parseur.parse();
+		//chromosome1
+		scanneur = Net.getUrl("file:///home/nestor/Cours/2A/bioinformatique/sequence0.gb");
+		parseur = new Parser(base,scanneur);
+		parseur.parse();
+		//chromosome2
+		scanneur = Net.getUrl("file:///home/nestor/Cours/2A/bioinformatique/sequence4.gb");
+		parseur = new Parser(base,scanneur);
+		parseur.parse();
 		
-		CommandLineParser parser = new DefaultParser();
-		CommandLine line = null;
-		boolean showHelp = false;
-		try{
-			line = parser.parse(options, args);
-		}catch(ParseException exp){
-			showHelp = true;
-		}
+		//affichage du contenus de la bdd
+		System.out.println(base.get_tableauxnucleotides_string());
 		
-		if(! showHelp && line.hasOption("help")){
-			showHelp = true;
-		}
+		//test l'import/export
+		base.exportBase("adressetest");
+		Bdd base2 = new Bdd("adressetest");
 		
-		if(showHelp){
-			HelpFormatter formatter = new HelpFormatter();
-			formatter.printHelp("BioInfo", options );
-			System.exit(1);
-		}
-		
-		if(line.hasOption("no-gui")){
-			Configuration.USE_GUI = false;
-		}
-		
-		if(line.hasOption("path")){
-			if(line.getOptionValue("path") != null){
-				Configuration.BASE_FOLDER = line.getOptionValue("path");
-			}
-		}
-		
-		if(line.hasOption("threads")){
-			int a = Integer.parseInt(line.getOptionValue("threads"));
-			if(a > 0){
-				Configuration.THREADS_NUMBER = a;
-			}
-		}
-		
-		if(line.hasOption("windows")){
-			Configuration.FOLDER_SEPARATOR = "\\";
-		}
-		
+		System.out.println(base2.get_tableauxnucleotides_string());
 	}
 
 }

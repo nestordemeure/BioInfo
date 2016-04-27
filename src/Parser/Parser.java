@@ -17,6 +17,7 @@ public class Parser
 	private Scanner scanner;
 	private ArrayList<CDS> CDS_list;
 	private ReservationTable table_des_reservations;
+	String cleft;
 	
 	public Parser (Bdd base, Scanner scan)
 	{
@@ -24,7 +25,6 @@ public class Parser
 		scanner = scan;
 	}
 
-	//TODO pour plus d'efficassitée, il faut peut-etre ajouter un argument qui définie si les entrées seront multiples?
 	//fonction qui fait tourner le parseur
 	public void parse() throws ScannerNullException
 	{
@@ -33,6 +33,7 @@ public class Parser
 			//on réinitialise le systhème de réservation
 			CDS_list = new ArrayList<CDS>();
 			table_des_reservations = new ReservationTable();
+			cleft = "Général";
 			
 			try 
 			{
@@ -55,6 +56,7 @@ public class Parser
 				//on réinitialise le systhème de réservation
 				CDS_list = new ArrayList<CDS>();
 				table_des_reservations = new ReservationTable();
+				cleft = "Général";
 				
 				try 
 				{
@@ -79,13 +81,13 @@ public class Parser
 			//on se place dans la catégorie features
 			trouverPrefix("FEATURES");
 			
-			boolean recherche_en_cour = true;
-
-			/*on parcours l'entete
+			/*
+			 * on parcours l'entete
 			 * si on croise ORIGIN, on s'arrete
 			 * si on croise un CDS, on l'ajoute et on repars
 			 * sinon, on continue
 			 */
+			boolean recherche_en_cour = true;
 			while (recherche_en_cour)
 			{
 				importAndCheckNull(); //succeptible de renvoyer une exception qu'on va catcher
@@ -102,6 +104,22 @@ public class Parser
 				{
 					parser_descripteur_CDS();
 				}
+				else if (ligne_actuelle.startsWith("organelle=",22)) //TODO
+				{
+					if (ligne_actuelle.startsWith("mitochondrion",33))
+					{
+						cleft = "mitochondrion";
+					}
+					else if (ligne_actuelle.startsWith("chloroplast",41))
+					{
+						cleft = "chloroplast";
+					}
+				}
+				else if (ligne_actuelle.startsWith("chromosome=",22)) //TODO
+				{
+					//'chromosome="11"' par exemple
+					cleft = ligne_actuelle.substring(22);
+				}
 			}
 		}
 		catch (NoSuchElementException e)
@@ -113,7 +131,7 @@ public class Parser
 	//prend une ligne contenant un CDS en entrée et l'ajoute à la liste de CDS en le parsant
 	void parser_descripteur_CDS() throws ScannerNullException
 	{		
-		CDS cds = new CDS(base_de_donnees);
+		CDS cds = new CDS(base_de_donnees,cleft);
 		try 
 		{
 			table_des_reservations.open(); //on indique qu'on va passer de nouvelles réservations
@@ -123,7 +141,7 @@ public class Parser
 		} 
 		catch (CDSInvalideException e) 
 		{
-			base_de_donnees.incr_nb_CDS_non_traites();
+			base_de_donnees.incr_nb_CDS_non_traites("General"); //TODO mettre la bonne cleft
 		}
 	}
 	

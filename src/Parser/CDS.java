@@ -11,15 +11,17 @@ public class CDS
 	private ArrayList<sequence> sequence_list;
 	private Bdd base_de_donnees;
 	int expected_ligne_number;
+	String cleft;
 	
-	CDS(Bdd base)
+	CDS(Bdd base, String clef)
 	{
 		sequence_list = new ArrayList<sequence>();
 		expected_ligne_number=0;
 		base_de_donnees=base;
+		cleft = clef;
 	}
 
-	//on coupe les ponts vers les séquences et on envois une execption pour signaler que ce cds ne sert plus
+	//on coupe les ponts vers les séquences et on envois une exception pour signaler que ce cds ne sert plus
 	void suicide() throws DeadCDSException
 	{
 		sequence_list = null;
@@ -52,7 +54,7 @@ public class CDS
 			try
 			{
 				//on s'assure que le tampon est vide avant d'attaquer
-				base_de_donnees.open_tampon();
+				base_de_donnees.open_tampon(cleft); //TODO mettre la vrai cleft parsée
 				
 				//l'automate qui va parcourir cette séquence, dans le sens directe par défaut
 				automateLecteurDeGenes auto = new automateLecteurDeGenes(base_de_donnees);
@@ -69,11 +71,10 @@ public class CDS
 				auto.test_CDS();
 				
 				base_de_donnees.close_tampon();
-				base_de_donnees.incr_nb_CDS();
 			}
 			catch (CDSInvalideException e)
 			{
-				base_de_donnees.incr_nb_CDS_non_traites();
+				base_de_donnees.incr_nb_CDS_non_traites(cleft);  //TODO mettre la vrai cleft parsée
 			}
 			
 			//ce CDS ne sert plus
@@ -122,7 +123,6 @@ public class CDS
 		//-----
 		
 		//ajoute une ligne au code genetique
-		//TODO on peux peut-etre faire plus efficasse en gardant les lignes dans un arraylist
 		public void appendLigne(String ligne)
 		{
 			code_genetique.append('\n'); //on conserve un caracter séparateur de lignes
