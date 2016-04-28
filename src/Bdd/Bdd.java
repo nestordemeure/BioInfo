@@ -99,7 +99,7 @@ public class Bdd
 		if (contenus_cleft == null)
 		{
 			contenus_cleft = new content();
-			contenus.put(tampon_cleft,contenus_cleft);
+			contenus.put(cleft,contenus_cleft);
 		}
 		
 		contenus_cleft.nb_CDS_non_traites++;
