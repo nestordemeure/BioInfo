@@ -104,7 +104,7 @@ public class Parser
 				{
 					parser_descripteur_CDS();
 				}
-				else if (ligne_actuelle.startsWith("organelle=",22)) //TODO
+				else if (ligne_actuelle.startsWith("organelle=",22))
 				{
 					if (ligne_actuelle.startsWith("mitochondrion",33))
 					{
@@ -122,7 +122,7 @@ public class Parser
 						}
 					}
 				}
-				else if (ligne_actuelle.startsWith("chromosome=",22)) //TODO
+				else if (ligne_actuelle.startsWith("chromosome=",22))
 				{
 					//'chromosome="11"' par exemple
 					cleft = ligne_actuelle.substring(22);
@@ -148,7 +148,7 @@ public class Parser
 		} 
 		catch (CDSInvalideException e) 
 		{
-			base_de_donnees.incr_nb_CDS_non_traites("General"); //TODO mettre la bonne cleft
+			base_de_donnees.incr_nb_CDS_non_traites(cleft); //TODO
 		}
 	}
 	
