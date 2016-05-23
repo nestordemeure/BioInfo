@@ -116,10 +116,10 @@ public class Parser
 						{
 							cleft = "Chloroplaste";
 						}
-						/*else
+						else
 						{
 							cleft = "Plaste";
-						}*/
+						}
 					}
 				}
 				else if (ligne_actuelle.startsWith("plasmid=",22))
