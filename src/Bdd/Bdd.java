@@ -231,7 +231,7 @@ public class Bdd
 			contenus_cleft_foreign = entry.getValue();
 						
 			cleft_foreign = entry.getKey();
-			//TODO ici il faut ajouter un test pour envoyer tout ce qui n'est pas mitochondrie/chloroplaste vers général
+			//TODO test pour envoyer tout ce qui n'est pas mitochondrie/chloroplaste vers général
 			if ( cleft_foreign.startsWith("chromosome") )
 			{
 				cleft_foreign = "Général";
