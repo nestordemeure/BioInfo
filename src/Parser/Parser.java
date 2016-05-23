@@ -122,6 +122,10 @@ public class Parser
 						}
 					}
 				}
+				else if (ligne_actuelle.startsWith("plasmid=",22))
+				{
+					cleft = "Plasmide";
+				}
 				else if (ligne_actuelle.startsWith("chromosome=",22))
 				{
 					//'chromosome="11"' par exemple
