@@ -145,10 +145,10 @@ public class MainFrame extends Frame {
 		this.logger.insert(msg + "\n", this.logger.getText().length());
 	}
 
-	public void setProgress(double n) {
+	public void setProgress(double n, int cur, int max) {
 		String str = Double.toString(n);
 		str = str.substring(0, (str.length() >= 7 ? 7 : str.length()));
-		this.progress.setString(str + "%");
+		this.progress.setString(str + "% ("+cur+" / "+max+")");
 		this.progress.setValue((int) n);
 	}
 	

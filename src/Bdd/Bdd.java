@@ -74,8 +74,10 @@ public class Bdd
 		{
 			e.printStackTrace(); //base mal écrite : improbable
 		}
-
-		inputstream.close();	
+		try{
+			inputstream.close();
+			chan.close();
+		}catch(Exception e){}
 		AccessManager.doneWithFile(adresse); //mutex
 		
 		tampon_tableautrinucleotides = new int[3][4][4][4];

@@ -38,9 +38,9 @@ public class UIGraphics {
 		}
 	}
 
-	public void setProgress(double n){
+	public void setProgress(double n, int cur, int max){
 		if(this.mFrame != null){
-			this.mFrame.setProgress(n);
+			this.mFrame.setProgress(n, cur,max);
 		}
 	}
 	

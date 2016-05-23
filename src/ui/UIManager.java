@@ -49,7 +49,7 @@ public class UIManager {
 	public static void setProgress(double progress){
 		UIManager.check();
 		if(Configuration.USE_GUI){
-			UIManager.graphics.setProgress(progress);
+			UIManager.graphics.setProgress(progress, UIManager.current_progress, UIManager.max_progress);
 		} else {
 			UIManager.console.setProgress(progress);
 		}

@@ -66,8 +66,9 @@ public class ParserManager implements Runnable{
 		String file = this.data_path+Configuration.FOLDER_SEPARATOR+"ids.txt";
 		// On liste les Ids présents dans le fichier.
 		AccessManager.accessFile(file);
+		Scanner sc = null;
 		try{
-			Scanner sc = new Scanner(new FileReader(file));
+			sc = new Scanner(new FileReader(file));
 			// Pour tous les lignes du fichiers
 			while(sc.hasNext()){
 				try{
@@ -80,9 +81,16 @@ public class ParserManager implements Runnable{
 					
 				}
 			}
-			sc.close();
 		}catch(Exception e){
 			UIManager.log("[ParserManager : "+this.specy_name+"] Cannot read file : "+file);
+		} finally {
+			if(sc != null){
+				try{
+					sc.close();
+				}catch(Exception e){
+					e.printStackTrace();
+				}
+			}
 		}
 		AccessManager.doneWithFile(file);
 		return list;		
