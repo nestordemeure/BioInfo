@@ -34,19 +34,19 @@ public class Main {
 		Bdd base = new Bdd();
 		
 		//mitochondrie et une séquence de type General vide
-		Scanner scanneur = Net.getUrl("file:///home/adrien/Dev/BioInfo/sequence2.gb");
+		Scanner scanneur = Net.getUrl("file:///home/micka/Bureau/BioInfo/sequence2.gb");
 		Parser parseur = new Parser(base,scanneur);
 		parseur.parse();
 		//chloroplastes
-		scanneur = Net.getUrl("file:///home/adrien/Dev/BioInfo/sequence1.gb");
+		scanneur = Net.getUrl("file:///home/micka/Bureau/BioInfo/sequence1.gb");
 		parseur = new Parser(base,scanneur);
 		parseur.parse();
 		//chromosome1
-		scanneur = Net.getUrl("file:///home/adrien/Dev/BioInfo/sequence0.gb");
+		scanneur = Net.getUrl("file:///home/micka/Bureau/BioInfo/sequence0.gb");
 		parseur = new Parser(base,scanneur);
 		parseur.parse();
 		//chromosome2
-		scanneur = Net.getUrl("file:///home/adrien/Dev/BioInfo/sequence4.gb");
+		scanneur = Net.getUrl("file:///home/micka/Bureau/BioInfo/sequence4.gb");
 		parseur = new Parser(base,scanneur);
 		parseur.parse();
 		
@@ -65,10 +65,10 @@ public class Main {
 		chemin[2]="Sous-Groupe";
 		chemin[3]="Organisme";
 		
-		//ExcelWriter.writer("arbo/patate/patate2/sous-grp/plop/plop", chemin, base);
-		//ExcelWriter.writer("arbo/patate/patate2/sous-grp/plop2/plop2", chemin, base);
+		ExcelWriter.writer("Results/patate/patate2/sous-grp/plop/plop", chemin, base);
+		//ExcelWriter.writer("Results/patate/patate2/sous-grp/plop2/plop2", chemin, base);
 		
-		//ExcelManager.fusionExcels("arbo");
+		//ExcelManager.fusionExcels("Results");
 		
 	}
 
