@@ -47,10 +47,10 @@ public class automateLecteurDeGenes
 			//on vérifie que la taille de la sequence est bien un multiple de trois
 			throw new CDSInvalideException("taille invalide");
 		}
-		else if ( ! ((nucleotide1 == 3) && ((nucleotide2==0)&&((nucleotide3==2)||(nucleotide3==0))) || ((nucleotide2==2)&&(nucleotide3==0))) )
+		else if ( ! ((nucleotide1 == 3) && ((nucleotide2==0)&&((nucleotide3==2)||(nucleotide3==0))) || ((nucleotide3==0)&&((nucleotide2==2)||(nucleotide2==3)))) )
 		{
 			//codon stop
-			//on vérifie que le dernier triplet est bien un codon stop (TAA,TAG,TGA)
+			//on vérifie que le dernier triplet est bien un codon stop (TAA,TAG,TGA,TTA)
 			throw new CDSInvalideException("codon stop invalide " +nucleotide1+nucleotide2+nucleotide3);
 		}
 		else if (phase2 != 0)
@@ -344,7 +344,7 @@ public class automateLecteurDeGenes
 		phase3 = (phase3+1)%3;
 	}
 	
-	//cet fonction vérifie que le triplet de nucleotides en mémoire est un codon start
+	// cet fonction vérifie que le triplet de nucleotides en mémoire est un codon start
 	void test_codon_start() throws CDSInvalideException
 	{
 		if (nucleotide2 != 3) //il faut un 't' au milieu du codon
