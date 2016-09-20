@@ -33,7 +33,7 @@ public class Parser
 			//on réinitialise le systhème de réservation
 			CDS_list = new ArrayList<CDS>();
 			table_des_reservations = new ReservationTable();
-			cleft = "Général";
+			cleft = "DNA"; //TODO is it the right "général" categorie ?
 			
 			try 
 			{
@@ -56,7 +56,7 @@ public class Parser
 				//on réinitialise le systhème de réservation
 				CDS_list = new ArrayList<CDS>();
 				table_des_reservations = new ReservationTable();
-				cleft = "Général";
+				cleft = "DNA"; //TODO is it the right "général" categorie ?
 				
 				try 
 				{
@@ -78,12 +78,20 @@ public class Parser
 	{
 		try
 		{
+			//TODO find and extract the locus
+			trouverPrefix("LOCUS");
+			
+			String locus = ligne_actuelle.substring(12);
+			if(locus.contains(" ")){
+			   locus = locus.substring(0, locus.indexOf(" ")); 
+			}
+
 			//on se place dans la catégorie features
 			trouverPrefix("FEATURES");
 			
 			/*
 			 * on parcours l'entete
-			 * si on croise ORIGIN, on s'arrete
+			 * si on croise ORIGIN, on ajoute le locus à la cleft puis on s'arrete
 			 * si on croise un CDS, on l'ajoute et on repars
 			 * sinon, on continue
 			 */
@@ -98,6 +106,9 @@ public class Parser
 				}
 				else if (ligne_actuelle.startsWith("ORIGIN")) //on a finit
 				{
+					//TODO add the locus to the key
+					cleft += "_" + locus;
+					
 					recherche_en_cour=false;
 				}
 				else if (ligne_actuelle.startsWith("CDS",5)) //on a un CDS (5 espaces après le début de la ligne)
@@ -108,28 +119,29 @@ public class Parser
 				{
 					if (ligne_actuelle.startsWith("mitochondrion",33))
 					{
-						cleft = "Mitochondrie";
+						cleft = "Mitochondrion";
 					}
 					else if (ligne_actuelle.startsWith("plastid",33))
 					{
 						if (ligne_actuelle.startsWith("chloroplast",41))
 						{
-							cleft = "Chloroplaste";
+							cleft = "Chloroplast";
 						}
 						else
 						{
-							cleft = "Plaste";
+							cleft = "Plastid";
 						}
 					}
 				}
 				else if (ligne_actuelle.startsWith("plasmid=",22))
 				{
-					cleft = "Plasmide";
+					cleft = "Plasmid";
 				}
 				else if (ligne_actuelle.startsWith("chromosome=",22))
 				{
 					//'chromosome="11"' par exemple
-					cleft = ligne_actuelle.substring(22);
+					//cleft = ligne_actuelle.substring(22); //TODO do we keep that information ? (voir aussi plasmid)
+					cleft = "Chromosome";
 				}
 			}
 		}
@@ -152,7 +164,7 @@ public class Parser
 		} 
 		catch (CDSInvalideException e) 
 		{
-			base_de_donnees.incr_nb_CDS_non_traites(cleft); //TODO
+			base_de_donnees.incr_nb_CDS_non_traites(cleft);
 		}
 	}
 	

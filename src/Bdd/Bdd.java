@@ -159,6 +159,7 @@ public class Bdd
 					//trinucleotide
 					for(int nucleotide3 = 0 ; nucleotide3<4 ; nucleotide3++)
 					{
+						//TODO handling for the phase pref
 						// phase 0
 						valeur_tampon = tampon_tableautrinucleotides[0][nucleotide1][nucleotide2][nucleotide3];
 						
@@ -291,10 +292,21 @@ public class Bdd
 			contenus_cleft_foreign = entry.getValue();
 						
 			cleft_foreign = entry.getKey();
+			/*
 			//test pour envoyer tout ce qui n'est pas mitochondrie/chloroplaste vers général
-			if ( cleft_foreign.startsWith("chromosome") )
+			if ( cleft_foreign.startsWith("Chromosome") )
 			{
-				cleft_foreign = "Général";
+				cleft_foreign = "DNA"; //TODO is it the right name for the "général" key ?
+			}
+			*/
+			//TODO turns data from the leaft into sum_data for the nodes
+			if ( !cleft_foreign.startsWith("Sum") )
+			{
+				if(cleft_foreign.contains("_"))
+				{
+					cleft_foreign = cleft_foreign.substring(0, cleft_foreign.indexOf("_")); 
+				}
+				cleft_foreign = "Sum_" + cleft_foreign ;
 			}
 			
 			content contenus_cleft_local = contenus.get(cleft_foreign);
