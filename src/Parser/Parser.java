@@ -18,6 +18,8 @@ public class Parser
 	private ArrayList<CDS> CDS_list;
 	private ReservationTable table_des_reservations;
 	String cleft;
+	String accession;
+	String organism;
 	
 	public Parser (Bdd base, Scanner scan)
 	{
@@ -34,6 +36,7 @@ public class Parser
 			CDS_list = new ArrayList<CDS>();
 			table_des_reservations = new ReservationTable();
 			cleft = key;
+			accession = "";
 			
 			try 
 			{
@@ -57,6 +60,7 @@ public class Parser
 				CDS_list = new ArrayList<CDS>();
 				table_des_reservations = new ReservationTable();
 				cleft = key;
+				accession = "";
 				
 				try 
 				{
@@ -78,7 +82,7 @@ public class Parser
 	{
 		try
 		{
-			//TODO find and parse the locus or any info
+			//TODO find and parse the locus or any info (organism, accession)
 			/*
 			trouverPrefix("LOCUS");
 			String locus = ligne_actuelle.substring(12);
@@ -86,13 +90,26 @@ public class Parser
 			   locus = locus.substring(0, locus.indexOf(" ")); 
 			}
 			*/
+			
+			//on va parser l'accession
+			trouverPrefix("ACCESSION");
+			accession = ligne_actuelle.substring(12);
+			//TODO transmettre à la base
+			
+			//on va parser l'organisme
+			trouverPrefix("  ORGANISM");
+			organism = ligne_actuelle.substring(12) + "; ";
+			while (organism.charAt(organism.length()-1) != '.') {
+				importAndCheckNull();
+				organism += ligne_actuelle.substring(12);
+			}
 
 			//on se place dans la catégorie features
 			trouverPrefix("FEATURES");
 			
 			/*
 			 * on parcours l'entete
-			 * si on croise ORIGIN, on ajoute le locus à la cleft puis on s'arrete
+			 * si on croise ORIGIN, on s'arrete
 			 * si on croise un CDS, on l'ajoute et on repars
 			 * sinon, on continue
 			 */
@@ -124,7 +141,7 @@ public class Parser
 	//prend une ligne contenant un CDS en entrée et l'ajoute à la liste de CDS en le parsant
 	void parser_descripteur_CDS() throws ScannerNullException
 	{		
-		CDS cds = new CDS(base_de_donnees,cleft);
+		CDS cds = new CDS(base_de_donnees,cleft,accession,organism);
 		try 
 		{
 			table_des_reservations.open(); //on indique qu'on va passer de nouvelles réservations
@@ -134,7 +151,7 @@ public class Parser
 		} 
 		catch (CDSInvalideException e) 
 		{
-			base_de_donnees.incr_nb_CDS_non_traites(cleft);
+			base_de_donnees.incr_nb_CDS_non_traites(cleft,accession,organism);
 		}
 	}
 	
