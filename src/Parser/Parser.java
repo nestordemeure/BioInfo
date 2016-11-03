@@ -26,22 +26,19 @@ public class Parser
 	}
 
 	//fonction qui fait tourner le parseur
-	public void parse() throws ScannerNullException
+	public void parse(String key) throws ScannerNullException
 	{
 		while ( scanner.hasNext() )
 		{
 			//on réinitialise le systhème de réservation
 			CDS_list = new ArrayList<CDS>();
 			table_des_reservations = new ReservationTable();
-			cleft = ""; //TODO no categorie so far
-			//TODO problem, this key should not be transmited !!!
+			cleft = key;
+			
 			try 
 			{
 				parser_entete();
-				if(cleft != "") // TODO on a parser des infos sur cette créature
-				{
-					parser_genome();
-				}
+				parser_genome();
 			} 
 			catch (NoOriginException eorig) 
 			{
@@ -50,7 +47,7 @@ public class Parser
 		}
 	}
 	
-	public void parse(int filenum /* nombre de fichiers aglomérées*/ ) throws ScannerNullException
+	public void parse(String key, int filenum /* nombre de fichiers aglomérées*/ ) throws ScannerNullException
 	{
 		for ( int i=1 ; i <= filenum ; i++ )
 		{
@@ -59,15 +56,12 @@ public class Parser
 				//on réinitialise le systhème de réservation
 				CDS_list = new ArrayList<CDS>();
 				table_des_reservations = new ReservationTable();
-				cleft = ""; //TODO no categorie so far
+				cleft = key;
 				
 				try 
 				{
 					parser_entete();
-					if(cleft != "") // TODO on a parser des infos sur cette créature
-					{
-						parser_genome();
-					}
+					parser_genome();
 				} 
 				catch (NoOriginException eorig) 
 				{ 
@@ -84,12 +78,14 @@ public class Parser
 	{
 		try
 		{
-			//TODO find and extract the locus
+			//TODO find and parse the locus or any info
+			/*
 			trouverPrefix("LOCUS");
 			String locus = ligne_actuelle.substring(12);
 			if(locus.contains(" ")){
 			   locus = locus.substring(0, locus.indexOf(" ")); 
 			}
+			*/
 
 			//on se place dans la catégorie features
 			trouverPrefix("FEATURES");
@@ -111,49 +107,11 @@ public class Parser
 				}
 				else if (ligne_actuelle.startsWith("ORIGIN")) //on a finit
 				{
-					//TODO add the locus to the key
-					if (cleft!="") //si on sais face a quel genre d'organisme on est
-					{
-						cleft += "_" + locus;
-					}
-					else
-					{
-						throw new NoOriginException("pas de cleft");
-					}
-					
 					recherche_en_cour=false;
 				}
 				else if (ligne_actuelle.startsWith("CDS",5)) //on a un CDS (5 espaces après le début de la ligne)
 				{
 					parser_descripteur_CDS();
-				}
-				else if (ligne_actuelle.startsWith("organelle=",22))
-				{
-					if (ligne_actuelle.startsWith("mitochondrion",33))
-					{
-						cleft = "Mitochondrion";
-					}
-					else if (ligne_actuelle.startsWith("plastid",33))
-					{
-						if (ligne_actuelle.startsWith("chloroplast",41))
-						{
-							cleft = "Chloroplast";
-						}
-						else
-						{
-							cleft = "Plastid";
-						}
-					}
-				}
-				else if (ligne_actuelle.startsWith("plasmid=",22))
-				{
-					cleft = "Plasmid";
-				}
-				else if (ligne_actuelle.startsWith("chromosome=",22))
-				{
-					//'chromosome="11"' par exemple
-					//cleft = ligne_actuelle.substring(22); //TODO we extract that information
-					cleft = "Chromosome";
 				}
 			}
 		}
