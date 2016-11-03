@@ -224,17 +224,6 @@ public class Bdd
 								contenus_cleft.tableauPhasePref[2][nucleotide1][nucleotide2][nucleotide3]++;
 							}
 						}
-						/*
-						for(int phase = 0 ; phase<3 ; phase++)
-						{
-							valeur_tampon = tampon_tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3];
-							
-							contenus_cleft.nbTrinucleotidesParPhase[phase]+=valeur_tampon;
-							contenus_cleft.tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3]+=valeur_tampon;
-							
-							tampon_tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3]=0; //clear
-						}
-						*/
 					}
 				}
 			}
@@ -280,8 +269,7 @@ public class Bdd
 		}
 	}
 	
-	//ajoute le contenus de la base donnée en argument à la base actuelle
-	//WARNING cette base pourrait garder des chromosomes issus de la base originale -> il faut creer une nouvelle base, vierge, si on veux éviter sa
+	// ajoute le contenus de la base donnée en argument à la base actuelle
 	public void fusionBase(Bdd base)
 	{
 		String cleft_foreign;
@@ -289,26 +277,8 @@ public class Bdd
 		
 		for (Entry<String, content> entry : base.contenus.entrySet())
 		{
-			contenus_cleft_foreign = entry.getValue();
-						
+			contenus_cleft_foreign = entry.getValue();		
 			cleft_foreign = entry.getKey();
-			/*
-			//test pour envoyer tout ce qui n'est pas mitochondrie/chloroplaste vers général
-			if ( cleft_foreign.startsWith("Chromosome") )
-			{
-				cleft_foreign = "DNA"; //TODO is it the right name for the "général" key ?
-			}
-			*/
-			//TODO turns data from the leaft into sum_data for the nodes
-			if ( !cleft_foreign.startsWith("Sum") )
-			{
-				if(cleft_foreign.contains("_"))
-				{
-					cleft_foreign = cleft_foreign.substring(0, cleft_foreign.indexOf("_")); 
-				}
-				cleft_foreign = "Sum_" + cleft_foreign ;
-			}
-			
 			content contenus_cleft_local = contenus.get(cleft_foreign);
 			
 			if (contenus_cleft_local == null)

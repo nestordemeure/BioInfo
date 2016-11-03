@@ -33,15 +33,18 @@ public class Parser
 			//on réinitialise le systhème de réservation
 			CDS_list = new ArrayList<CDS>();
 			table_des_reservations = new ReservationTable();
-			cleft = "DNA"; //TODO is it the right "général" categorie ?
-			
+			cleft = ""; //TODO no categorie so far
+			//TODO problem, this key should not be transmited !!!
 			try 
 			{
 				parser_entete();
-				parser_genome();
+				if(cleft != "") // TODO on a parser des infos sur cette créature
+				{
+					parser_genome();
+				}
 			} 
 			catch (NoOriginException eorig) 
-			{ 
+			{
 				/*en l'absence d'origine dans un fichier, on n'en fait rien*/
 			}
 		}
@@ -56,12 +59,15 @@ public class Parser
 				//on réinitialise le systhème de réservation
 				CDS_list = new ArrayList<CDS>();
 				table_des_reservations = new ReservationTable();
-				cleft = "DNA"; //TODO is it the right "général" categorie ?
+				cleft = ""; //TODO no categorie so far
 				
 				try 
 				{
 					parser_entete();
-					parser_genome();
+					if(cleft != "") // TODO on a parser des infos sur cette créature
+					{
+						parser_genome();
+					}
 				} 
 				catch (NoOriginException eorig) 
 				{ 
@@ -80,7 +86,6 @@ public class Parser
 		{
 			//TODO find and extract the locus
 			trouverPrefix("LOCUS");
-			
 			String locus = ligne_actuelle.substring(12);
 			if(locus.contains(" ")){
 			   locus = locus.substring(0, locus.indexOf(" ")); 
@@ -107,7 +112,14 @@ public class Parser
 				else if (ligne_actuelle.startsWith("ORIGIN")) //on a finit
 				{
 					//TODO add the locus to the key
-					cleft += "_" + locus;
+					if (cleft!="") //si on sais face a quel genre d'organisme on est
+					{
+						cleft += "_" + locus;
+					}
+					else
+					{
+						throw new NoOriginException("pas de cleft");
+					}
 					
 					recherche_en_cour=false;
 				}
@@ -140,7 +152,7 @@ public class Parser
 				else if (ligne_actuelle.startsWith("chromosome=",22))
 				{
 					//'chromosome="11"' par exemple
-					//cleft = ligne_actuelle.substring(22); //TODO do we keep that information ? (voir aussi plasmid)
+					//cleft = ligne_actuelle.substring(22); //TODO we extract that information
 					cleft = "Chromosome";
 				}
 			}
