@@ -29,7 +29,9 @@ public class Net {
 			} catch (MalformedURLException e) {
 				return null;
 			} catch (IOException e) {
-				UIManager.log("Error while downloading : "+url+" (Try "+(nb_try + 1)+"/"+Configuration.NET_MAX_DOWNLOAD_TRIES+")");
+				if(nb_try >= Configuration.NET_MAX_DOWNLOAD_TRIES - 2){
+					UIManager.log("Error while downloading : "+url+" (Try "+(nb_try + 1)+"/"+Configuration.NET_MAX_DOWNLOAD_TRIES+")");
+				}
 				nb_try ++;
 				if(nb_try == Configuration.NET_MAX_DOWNLOAD_TRIES){
 					e.printStackTrace();

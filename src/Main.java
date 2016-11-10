@@ -4,7 +4,6 @@ import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.util.Scanner;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -12,20 +11,15 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-
 import configuration.Configuration;
-
-
 import manager.AccessManager;
 import Parser.*;
 import Bdd.Bdd;
-
 import excel.*;
 import io.Net;
 import manager.ThreadManager;
 import tree.*;
 import ui.UIManager;
-
 public class Main {
 	
 	public static void main(String[] args) throws Exception 
@@ -36,19 +30,23 @@ public class Main {
 		//mitochondrie et une séquence de type General vide
 		Scanner scanneur = Net.getUrl("file:///home/micka/Bureau/BioInfo/sequence2.gb");
 		Parser parseur = new Parser(base,scanneur);
-		parseur.parse();
+		parseur.parse("Chromosome_NC_2516354");
 		//chloroplastes
 		scanneur = Net.getUrl("file:///home/micka/Bureau/BioInfo/sequence1.gb");
 		parseur = new Parser(base,scanneur);
-		parseur.parse();
+		parseur.parse("Chromosome_NC_2516355");
 		//chromosome1
 		scanneur = Net.getUrl("file:///home/micka/Bureau/BioInfo/sequence0.gb");
 		parseur = new Parser(base,scanneur);
-		parseur.parse();
+		parseur.parse("Mitochondrion_NC_6846");
 		//chromosome2
 		scanneur = Net.getUrl("file:///home/micka/Bureau/BioInfo/sequence4.gb");
 		parseur = new Parser(base,scanneur);
-		parseur.parse();
+		parseur.parse("Chloroplast_NC_56464");
+		//chromosome2
+		scanneur = Net.getUrl("file:///home/micka/Bureau/BioInfo/sequence4.gb");
+		parseur = new Parser(base,scanneur);
+		parseur.parse("DNA_NC_skeutuveuu");
 		
 		//affichage du contenus de la bdd
 		//System.out.println(base.get_tableauxnucleotides_string());
@@ -66,10 +64,9 @@ public class Main {
 		chemin[3]="Organisme";
 		
 		ExcelWriter.writer("Results/patate/patate2/sous-grp/plop/plop", chemin, base);
-		//ExcelWriter.writer("Results/patate/patate2/sous-grp/plop2/plop2", chemin, base);
+		ExcelWriter.writer("Results/patate/patate2/sous-grp/plop2/plop2", chemin, base);
 		
 		//ExcelManager.fusionExcels("Results");
 		
 	}
-
 }

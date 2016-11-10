@@ -42,10 +42,11 @@ public class IdFetcher {
 				NodeList nl = doc.getElementsByTagName("Id");
 				for(int i = 0 ; i < nl.getLength(); i++){
 					int value = Integer.parseInt(nl.item(i).getTextContent());
-					if(! list.contains(value)){
-						list.add(value);
-					}
+					list.add(value);
 				}
+				
+				tries = 0;
+				
 				if(retstart + Configuration.IDS_PER_PAGE < count){
 					retstart += Configuration.IDS_PER_PAGE;
 				} else {
@@ -53,7 +54,9 @@ public class IdFetcher {
 				}
 			}catch(Exception e){
 				tries ++;
-				UIManager.log("[IdFetcher] ERREUR : "+e.getMessage()+" ("+tries+"/"+Configuration.IDS_MAX_TRIES+")");
+				if(tries >= Configuration.IDS_MAX_TRIES - 2){
+					UIManager.log("[IdFetcher] ERREUR : "+e.getMessage()+" ("+tries+"/"+Configuration.IDS_MAX_TRIES+")");
+				}
 				if(tries == Configuration.IDS_MAX_TRIES){
 					e.printStackTrace();
 				}

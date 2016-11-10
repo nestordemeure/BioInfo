@@ -40,6 +40,8 @@ public class Bdd
 	private int tampon_tableautrinucleotides[][][][]; //tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3]
 	private int tampon_tableaudinucleotides[][][]; //tableaudinucleotides[phase][nucleotide1][nucleotide2]
 	private String tampon_cleft;
+	private String tampon_accession;
+	private String tampon_organism;
 	
 	boolean empty_tamp;
 	
@@ -74,8 +76,10 @@ public class Bdd
 		{
 			e.printStackTrace(); //base mal écrite : improbable
 		}
-
-		inputstream.close();	
+		try{
+			inputstream.close();
+			chan.close();
+		}catch(Exception e){}
 		AccessManager.doneWithFile(adresse); //mutex
 		
 		tampon_tableautrinucleotides = new int[3][4][4][4];
@@ -85,24 +89,43 @@ public class Bdd
 	
 //incrementeurs
 
-	//TODO
-	/*
-	public void incr_nb_CDS (String cleft)
-	{
-		contenus.get(cleft).nb_CDS++;
-	}
-	*/
-	//TODO
-	public void incr_nb_CDS_non_traites (String cleft)
+	public void incr_nb_CDS_non_traites (String cleft, String accession, String organism)
 	{
 		content contenus_cleft = contenus.get(cleft);
+		
 		if (contenus_cleft == null)
 		{
-			contenus_cleft = new content();
-			contenus.put(tampon_cleft,contenus_cleft);
+			contenus_cleft = new content(accession, organism);
+			contenus.put(cleft,contenus_cleft);
 		}
 		
 		contenus_cleft.nb_CDS_non_traites++;
+	}
+	
+	public void incr_mult_nb_CDS_non_traites (String cleft, String accession, String organism, long nbr)
+	{
+		content contenus_cleft = contenus.get(cleft);
+		
+		if (contenus_cleft == null)
+		{
+			contenus_cleft = new content(accession, organism);
+			contenus.put(cleft,contenus_cleft);
+		}
+		
+		contenus_cleft.nb_CDS_non_traites+=nbr;
+	}
+	
+	public void incr_mult_nb_CDS_traites (String cleft, String accession, String organism, long nbr)
+	{
+		content contenus_cleft = contenus.get(cleft);
+		
+		if (contenus_cleft == null)
+		{
+			contenus_cleft = new content(accession, organism);
+			contenus.put(cleft,contenus_cleft);
+		}
+		
+		contenus_cleft.nb_CDS+=nbr;
 	}
 
 	//tampon
@@ -119,10 +142,22 @@ public class Bdd
 		tampon_tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3]++;
 	}
 	
+	//ajoute plusieurs tri nucleotides a la phase indiquée
+	public void ajoute_mult_nucleotides (int phase, int nucleotide1, int nucleotide2, int nucleotide3, long nbr) throws CharInvalideException
+	{
+		tampon_tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3]+=nbr;
+	}
+	
 	//ajoute un dinucleotide à la phase indiquée
 	public void ajoute_nucleotides (int phase, int nucleotide1, int nucleotide2) throws CharInvalideException
 	{
 		tampon_tableaudinucleotides[phase][nucleotide1][nucleotide2]++;
+	}
+	
+	//ajoute plusieurs dinucleotides à la phase indiquée
+	public void ajoute_mult_nucleotides (int phase, int nucleotide1, int nucleotide2, long nbr) throws CharInvalideException
+	{
+			tampon_tableaudinucleotides[phase][nucleotide1][nucleotide2]+=nbr;
 	}
 	
 	//retire un dinucleotide à la phase indiquée
@@ -136,15 +171,17 @@ public class Bdd
 	//déplace le contenus du tampon dans la mémoire
 		public void close_tampon()
 		{
-			//TODO on apelle le contenus associé a la cleft si elle existe
+			//on apelle le contenus associé a la cleft si elle existe
 			content contenus_cleft = contenus.get(tampon_cleft);
 			if (contenus_cleft == null)
 			{
-				contenus_cleft = new content();
+				contenus_cleft = new content(tampon_accession, tampon_organism);
 				contenus.put(tampon_cleft,contenus_cleft);
 			}
 			
 			long valeur_tampon;
+			long valeur_tampon1;
+			long valeur_tampon2;
 			for(int nucleotide1 = 0 ; nucleotide1<4 ; nucleotide1++)
 			{
 				for(int nucleotide2 = 0 ; nucleotide2<4 ; nucleotide2++)
@@ -163,27 +200,83 @@ public class Bdd
 					//trinucleotide
 					for(int nucleotide3 = 0 ; nucleotide3<4 ; nucleotide3++)
 					{
-						for(int phase = 0 ; phase<3 ; phase++)
+						//TODO handling for the phase pref
+						// phase 0
+						valeur_tampon = tampon_tableautrinucleotides[0][nucleotide1][nucleotide2][nucleotide3];
+						
+						contenus_cleft.nbTrinucleotidesParPhase[0]+=valeur_tampon;
+						contenus_cleft.tableautrinucleotides[0][nucleotide1][nucleotide2][nucleotide3]+=valeur_tampon;
+						
+						tampon_tableautrinucleotides[0][nucleotide1][nucleotide2][nucleotide3]=0; //clear
+						// phase 1
+						valeur_tampon1 = tampon_tableautrinucleotides[1][nucleotide1][nucleotide2][nucleotide3];
+						
+						contenus_cleft.nbTrinucleotidesParPhase[1]+=valeur_tampon1;
+						contenus_cleft.tableautrinucleotides[1][nucleotide1][nucleotide2][nucleotide3]+=valeur_tampon1;
+						
+						tampon_tableautrinucleotides[1][nucleotide1][nucleotide2][nucleotide3]=0; //clear
+						// phase 2
+						valeur_tampon2 = tampon_tableautrinucleotides[2][nucleotide1][nucleotide2][nucleotide3];
+						
+						contenus_cleft.nbTrinucleotidesParPhase[2]+=valeur_tampon2;
+						contenus_cleft.tableautrinucleotides[2][nucleotide1][nucleotide2][nucleotide3]+=valeur_tampon2;
+						
+						tampon_tableautrinucleotides[2][nucleotide1][nucleotide2][nucleotide3]=0; //clear
+						
+						// phase pref
+						if (valeur_tampon > valeur_tampon1)
 						{
-							valeur_tampon = tampon_tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3];
-							
-							contenus_cleft.nbTrinucleotidesParPhase[phase]+=valeur_tampon;
-							contenus_cleft.tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3]+=valeur_tampon;
-							
-							tampon_tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3]=0; //clear
+							if (valeur_tampon > valeur_tampon2)
+							{
+								contenus_cleft.tableauPhasePref[0][nucleotide1][nucleotide2][nucleotide3]++;
+							} else if (valeur_tampon == valeur_tampon2) 
+							{
+								contenus_cleft.tableauPhasePref[0][nucleotide1][nucleotide2][nucleotide3]++;
+								contenus_cleft.tableauPhasePref[2][nucleotide1][nucleotide2][nucleotide3]++;
+							} else // <
+							{
+								contenus_cleft.tableauPhasePref[2][nucleotide1][nucleotide2][nucleotide3]++;
+							}
+						} else if (valeur_tampon == valeur_tampon1) 
+						{
+							if (valeur_tampon > valeur_tampon2)
+							{
+								contenus_cleft.tableauPhasePref[0][nucleotide1][nucleotide2][nucleotide3]++;
+								contenus_cleft.tableauPhasePref[1][nucleotide1][nucleotide2][nucleotide3]++;							} else if (valeur_tampon == valeur_tampon2) 
+							{
+								contenus_cleft.tableauPhasePref[0][nucleotide1][nucleotide2][nucleotide3]++;
+								contenus_cleft.tableauPhasePref[1][nucleotide1][nucleotide2][nucleotide3]++;
+								contenus_cleft.tableauPhasePref[2][nucleotide1][nucleotide2][nucleotide3]++;
+							} else // <
+							{
+								contenus_cleft.tableauPhasePref[2][nucleotide1][nucleotide2][nucleotide3]++;
+							}
+						} else // <
+						{
+							if (valeur_tampon1 > valeur_tampon2)
+							{
+								contenus_cleft.tableauPhasePref[1][nucleotide1][nucleotide2][nucleotide3]++;
+							} else if (valeur_tampon1 == valeur_tampon2) 
+							{
+								contenus_cleft.tableauPhasePref[1][nucleotide1][nucleotide2][nucleotide3]++;
+								contenus_cleft.tableauPhasePref[2][nucleotide1][nucleotide2][nucleotide3]++;
+							} else // <
+							{
+								contenus_cleft.tableauPhasePref[2][nucleotide1][nucleotide2][nucleotide3]++;
+							}
 						}
 					}
 				}
 			}
 			
-			//TODO on suppose qu'on ne ferme le tampon que pour écrire un CDS : risque?
+			//on suppose qu'on ne ferme le tampon que pour écrire un CDS
 			contenus_cleft.nb_CDS++;
 			
 			empty_tamp=true;
 		}
 		
 		//s'assure que le tampon est vide pour avancer
-		public void open_tampon(String cleft)
+		public void open_tampon(String cleft, String accession, String organism)
 		{
 			if (empty_tamp)
 			{
@@ -195,6 +288,8 @@ public class Bdd
 			}
 			
 			tampon_cleft = cleft;
+			tampon_accession = accession;
+			tampon_organism = organism;
 		}
 	
 	//remet un tampon à 0
@@ -217,8 +312,7 @@ public class Bdd
 		}
 	}
 	
-	//ajoute le contenus de la base donnée en argument à la base actuelle
-	//TODO WARNING cette base pourrait garder des chromosomes issus de la base originale -> il faut creer une nouvelle base, vierge, si on veux éviter sa
+	// ajoute le contenus de la base donnée en argument à la base actuelle
 	public void fusionBase(Bdd base)
 	{
 		String cleft_foreign;
@@ -226,15 +320,8 @@ public class Bdd
 		
 		for (Entry<String, content> entry : base.contenus.entrySet())
 		{
-			contenus_cleft_foreign = entry.getValue();
-						
+			contenus_cleft_foreign = entry.getValue();		
 			cleft_foreign = entry.getKey();
-			//TODO ici il faut ajouter un test pour envoyer tout ce qui n'est pas mitochondrie/chloroplaste vers général
-			if ( cleft_foreign.startsWith("chromosome") )
-			{
-				cleft_foreign = "Général";
-			}
-			
 			content contenus_cleft_local = contenus.get(cleft_foreign);
 			
 			if (contenus_cleft_local == null)
@@ -256,7 +343,7 @@ public class Bdd
 	
 //affichage
 	
-	//TODO exporte une base à l'adresse donnée
+	//exporte une base à l'adresse donnée
 	public void exportBase(String file) throws IOException
 	{
 		String adresse = file+".bdd";
@@ -292,6 +379,7 @@ public class Bdd
 	}
 	
 	//sort un string qui représente le profil du tableau de trinucleotides
+	//TODO add phases pref
 	public String get_tableauxnucleotides_string ()
 	{
 		String str = "";
@@ -300,7 +388,6 @@ public class Bdd
 		
 		try
 		{
-			//TODO
 			for (Entry<String, content> entry : contenus.entrySet())
 			{
 				contenus_cleft = entry.getValue();
@@ -371,7 +458,12 @@ public class Bdd
 		private long tableautrinucleotides[][][][]; //tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3]
 		private long tableaudinucleotides[][][]; //tableaudinucleotides[phase][nucleotide1][nucleotide2]
 		
-		public content()
+		private long tableauPhasePref[][][][]; //tableauPhasePrefTrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3]
+		
+		private String accession;
+		private String organism;
+		
+		public content(String accessionArg, String organismArg)
 		{
 			nb_CDS = 0;
 			nb_CDS_non_traites = 0;
@@ -381,6 +473,11 @@ public class Bdd
 			
 			tableautrinucleotides = new long[3][4][4][4];
 			tableaudinucleotides = new long[2][4][4];
+			
+			tableauPhasePref = new long[3][4][4][4];
+			
+			accession = accessionArg;
+			organism = organismArg;
 		}
 		
 		//----------
@@ -428,6 +525,21 @@ public class Bdd
 			return tableaudinucleotides[phase][nucleotide1][nucleotide2];
 		}
 		
+		public long get_tableauPhasePref (int phase, int nucleotide1, int nucleotide2, int nucleotide3) throws CharInvalideException
+		{
+			return tableauPhasePref[phase][nucleotide1][nucleotide2][nucleotide3];
+		}
+		
+		public String get_accession ()
+		{
+			return accession;
+		}
+		
+		public String get_organism ()
+		{
+			return organism;
+		}
+		
 		//----------
 		
 		//un contenus a un autre
@@ -459,6 +571,9 @@ public class Bdd
 						{
 							tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3]+=
 									cont.tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3];
+							
+							tableauPhasePref[phase][nucleotide1][nucleotide2][nucleotide3]+=
+									cont.tableauPhasePref[phase][nucleotide1][nucleotide2][nucleotide3];
 						}
 					}
 				}
@@ -466,6 +581,14 @@ public class Bdd
 			
 			nb_CDS += cont.nb_CDS;
 			nb_CDS_non_traites += cont.nb_CDS_non_traites;
+			
+			// descripteurs
+			if (accession.equals("")) {
+				accession = cont.accession;
+			}
+			if (organism.equals("")) {
+				organism = cont.organism;
+			}
 		}
 		
 		//serialization
@@ -477,7 +600,10 @@ public class Bdd
 		   nbTrinucleotidesParPhase = (long[]) inputstream.readObject();
 		   nbDinucleotidesParPhase = (long[]) inputstream.readObject();
 		   tableautrinucleotides = (long[][][][]) inputstream.readObject();
-		   tableaudinucleotides = (long[][][]) inputstream.readObject();	
+		   tableaudinucleotides = (long[][][]) inputstream.readObject();
+		   tableauPhasePref = (long[][][][]) inputstream.readObject();
+		   accession = (String) inputstream.readObject();
+		   organism = (String) inputstream.readObject();
 	   }
 
 	   private void writeObject(ObjectOutputStream outputstream) throws IOException
@@ -488,6 +614,9 @@ public class Bdd
 			outputstream.writeObject(nbDinucleotidesParPhase);
 			outputstream.writeObject(tableautrinucleotides);
 			outputstream.writeObject(tableaudinucleotides);
+			outputstream.writeObject(tableauPhasePref);
+			outputstream.writeObject(accession);
+			outputstream.writeObject(organism);
 	  }
 	}
 }
