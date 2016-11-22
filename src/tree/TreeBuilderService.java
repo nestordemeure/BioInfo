@@ -3,7 +3,9 @@ package tree;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 import org.jsoup.Jsoup;
@@ -20,6 +22,8 @@ import com.google.common.io.Resources;
 import com.google.common.util.concurrent.AbstractExecutionThreadService;
 import com.google.common.util.concurrent.AbstractService;
 
+import ui.UIManager;
+
 public class TreeBuilderService extends AbstractExecutionThreadService {
 	
 	public static enum OrganismType {
@@ -27,24 +31,23 @@ public class TreeBuilderService extends AbstractExecutionThreadService {
 		PROKARYOTES,
 		VIRUSES,
 	}
-	public int count = 0;
-	public int oCount = 0;
+
 	private OrganismType type;
 	private String baseURL;
 	private int currentPage;
+	private List<Organism> organismList;
 	
-	private Retryer<Boolean> retryer;
+	private Retryer<List<Organism>> retryer;
 	
-	private Callable<Boolean> pageCallable = new Callable<Boolean>(){
-		public Boolean call() throws MalformedURLException, IOException{
+	private Callable<List<Organism>> pageCallable = new Callable<List<Organism>>(){
+		public List<Organism> call() throws MalformedURLException, IOException{
 			return parseCurrentPage();
 		}
 	};
 	
 	public TreeBuilderService(OrganismType type){
-		this.retryer = RetryerBuilder.<Boolean>newBuilder()
+		this.retryer = RetryerBuilder.<List<Organism>>newBuilder()
 				.retryIfExceptionOfType(IOException.class)
-				.retryIfResult(Predicates.<Boolean>isNull())
 				.retryIfRuntimeException()
 				.withStopStrategy(StopStrategies.stopAfterAttempt(3))
 				.withWaitStrategy(WaitStrategies.fibonacciWait())
@@ -61,6 +64,7 @@ public class TreeBuilderService extends AbstractExecutionThreadService {
 			this.baseURL = configuration.Configuration.TREE_VIRUSES_URL;
 		}
 		this.type = type;
+		this.organismList = new ArrayList<Organism>();
 	}
 	
 	public void readAllPages(){
@@ -68,26 +72,30 @@ public class TreeBuilderService extends AbstractExecutionThreadService {
 		boolean cont = true;
 		while(cont) {
 			try{
-				Boolean result = retryer.call(this.pageCallable);
-				if(result == false){
+				List<Organism> result = retryer.call(this.pageCallable);
+				if(result == null){
 					cont = false;
+				} else {
+					this.organismList.addAll(result);
 				}
 			}catch(Exception e){
 				e.printStackTrace();
 				System.exit(1);
 			}
-			System.out.println(this.type.toString()+ " page : "+this.currentPage);
-			System.out.println(this.type.toString() +" : "+ this.oCount + "/" + this.count);
+			UIManager.log(this.type.toString()+ " page : "+this.currentPage);
+			UIManager.addProgress(1);
 			currentPage ++;
 		}
 	}
 	
-	public boolean parseCurrentPage() throws MalformedURLException, IOException{
+	public List<Organism> parseCurrentPage() throws MalformedURLException, IOException{
 		String webPage = new String(Resources.toByteArray(new URL(this.baseURL+this.currentPage)));
 		
 		if(webPage.split("-->")[1].trim().length() == 0){
-			return false;
+			return null;
 		}
+		
+		List<Organism> organismsList = new ArrayList<Organism>();
 		
 		Document doc = Jsoup.parse("<table>"+webPage+"</table>");
 		
@@ -111,16 +119,12 @@ public class TreeBuilderService extends AbstractExecutionThreadService {
 				String organismBioProject = tdIterator.next().text();
 				String organismGroup = tdIterator.next().text();
 				String organismSubGroup = tdIterator.next().text();
+				
+				Organism currentOrganism = new Organism(type.name(), organismGroup, organismSubGroup, organismName, organismBioProject);
+
 
 				boolean validOrganism = false;
 				
-//				System.out.println("*************************");
-//				System.out.println("Name      : "+organismName);
-//				System.out.println("Project   : "+organismBioProject);
-//				System.out.println("Group     : "+organismGroup);
-//				System.out.println("SubGroup  : "+organismSubGroup);
-//				System.out.println("Replicons : ");
-//				 
 				Elements repliconsTDs = replicons.iterator().next().select("td");
 				for(Iterator<Element> it2 = repliconsTDs.iterator(); it2.hasNext();) {
 					Element replicon = it2.next();
@@ -150,25 +154,26 @@ public class TreeBuilderService extends AbstractExecutionThreadService {
 					}
 					if(validRepliconFound){
 						validOrganism = true;
-						count ++;
-						//System.out.println(" - "+repliconName+" : "+repliconID);
+						currentOrganism.addReplicon(repliconName, repliconID);
 					}
 				}
 				if(validOrganism){
-					oCount ++;
+					organismsList.add(currentOrganism);
 				}
-				//System.out.println("Valid : "+validOrganism);
 			}
 		}
-		return true;
+		return organismsList;
+	}
+	
+	public List<Organism> organisms(){
+		return this.organismList;
 	}
 	
 	@Override
 	protected void run() throws Exception {
-		System.out.println(this.type.toString()+ " Starting");
+		UIManager.log(this.type.toString()+ " Starting");
 		this.readAllPages();
-		System.out.println(this.type.toString() +" : "+ this.oCount + "/" + this.count);
-		System.out.println(this.type.toString() + "DONE !");
+		UIManager.log(this.type.toString() + " DONE !");
 		
 	}
 }

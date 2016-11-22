@@ -6,10 +6,12 @@ import java.util.List;
 import com.google.common.util.concurrent.ServiceManager;
 
 import tree.TreeBuilderService.OrganismType;
+import ui.UIManager;
 
 public class TreeManager {
 	
-	public static void construct(){
+	public static Tree construct(){
+		UIManager.setMaxProgress(37+72+60);
 		List<TreeBuilderService> services = new ArrayList<TreeBuilderService>();
 		TreeBuilderService eukaryotes = new TreeBuilderService(OrganismType.EUKARYOTES);
 		TreeBuilderService prokaryotes = new TreeBuilderService(OrganismType.PROKARYOTES);
@@ -20,18 +22,23 @@ public class TreeManager {
 		
 		ServiceManager sm = new ServiceManager(services);
 		sm.startAsync();
-		System.out.println("Tree builder services launched");
+		UIManager.log("Tree builder services launched");
 		sm.awaitStopped();
-		System.out.println("End of tree build !");
 		
-		int ocount = eukaryotes.oCount;
-		ocount += prokaryotes.oCount;
-		ocount += viruses.oCount;
+		UIManager.log("End of tree fetch !");
+		UIManager.log("Starting tree build.");
+		List<Organism> organisms = new ArrayList<Organism>();
+		organisms.addAll(eukaryotes.organisms());
+		organisms.addAll(prokaryotes.organisms());
+		organisms.addAll(viruses.organisms());
 		
-		int count = eukaryotes.count;
-		count += prokaryotes.count;
-		count += viruses.count;
+		Tree mainTree = new Tree<Tree>();
 		
-		System.out.println("FINAL : "+count+"/"+ocount);
+		for(Organism o : organisms){
+			o.updateTree(mainTree);
+		}
+		
+		UIManager.log("End of tree build !");
+		return mainTree;
 	}
 }

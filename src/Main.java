@@ -1,18 +1,3 @@
-import java.util.ArrayList;
-import java.util.List;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URL;
-import java.nio.ByteBuffer;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
-import java.util.Scanner;
-import java.util.concurrent.Callable;
-import java.util.concurrent.TimeUnit;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -21,61 +6,21 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import com.github.rholder.retry.Retryer;
-import com.github.rholder.retry.RetryerBuilder;
-import com.github.rholder.retry.StopStrategies;
-import com.github.rholder.retry.WaitStrategies;
-import com.google.common.io.Resources;
-
 import configuration.Configuration;
 
 
-import manager.AccessManager;
-import Parser.*;
-import Bdd.Bdd;
-
-import excel.*;
-import io.Net;
-import manager.ThreadManager;
 import tree.*;
 import ui.UIManager;
 
 public class Main {
 
 	public static void main(String[] args) throws Exception {
-		TreeManager.construct();
-//		Callable<Boolean> callable =  new Callable<Boolean>(){
-//			public Boolean call() throws Exception{
-//				Scanner sc = new Scanner(Resources.asByteSource(new URL("https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=NC_011594.1&rettype=gb")).openBufferedStream());
-//				sc.useDelimiter("\n");
-//				Bdd db = new Bdd();
-//				Parser p = new Parser(db, sc);
-//				p.parse("lol",1);
-//				db.exportBase("/tmp/lol2");
-//				System.out.println("********");
-//				System.out.println(db.get_tableauxnucleotides_string());
-//				System.out.println(db.getContenus().iterator().hasNext());
-//				long a = db.getContenus().iterator().next().getValue().get_nb_CDS();
-//				System.out.println(a);
-//				return true;
-//				
-//			}
-//		};
-//		
-//		Retryer<Boolean> retryer = RetryerBuilder.<Boolean>newBuilder()
-//		        .retryIfExceptionOfType(IOException.class)
-//		        .retryIfRuntimeException()
-//		        .withWaitStrategy(WaitStrategies.fibonacciWait(100, 2, TimeUnit.MINUTES))
-//		        .withStopStrategy(StopStrategies.stopAfterAttempt(2))
-//		        .build();
-//		retryer.call(callable);
+		parseArgs(args);
+
+		UIManager.startPreloading();
+		Tree mainTree = TreeManager.construct();
 		
-//		parseArgs(args);
-//
-//		UIManager.startPreloading();
-//		Tree plop = new Tree();
-//		plop=TreeManager.constree();
-//		UIManager.startMainProcess(plop);
+		UIManager.startMainProcess(mainTree);
 	}
 	
 	public static void parseArgs(String[] args){
