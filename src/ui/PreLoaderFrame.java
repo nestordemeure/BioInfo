@@ -23,7 +23,6 @@ public class PreLoaderFrame extends Frame{
 		info.setText("Chargement ...");
 		
 		progress = new JProgressBar();
-		progress.setIndeterminate(true);
 		progress.setDoubleBuffered(true);
 
 		this.add(progress,BorderLayout.PAGE_START);
@@ -37,5 +36,9 @@ public class PreLoaderFrame extends Frame{
 	
 	public void log(String s){
 		this.info.setText(s);
+	}
+	
+	public void setProgress(double n, int cur, int max) {
+		this.progress.setValue((int) n);
 	}
 }

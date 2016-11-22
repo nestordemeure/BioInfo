@@ -18,6 +18,8 @@ public class Parser
 	private ArrayList<CDS> CDS_list;
 	private ReservationTable table_des_reservations;
 	String cleft;
+	String accession;
+	String organism;
 	
 	public Parser (Bdd base, Scanner scan)
 	{
@@ -26,14 +28,15 @@ public class Parser
 	}
 
 	//fonction qui fait tourner le parseur
-	public void parse() throws ScannerNullException
+	public void parse(String key) throws ScannerNullException
 	{
 		while ( scanner.hasNext() )
 		{
 			//on réinitialise le systhème de réservation
 			CDS_list = new ArrayList<CDS>();
 			table_des_reservations = new ReservationTable();
-			cleft = "Général";
+			cleft = key;
+			accession = "";
 			
 			try 
 			{
@@ -41,13 +44,13 @@ public class Parser
 				parser_genome();
 			} 
 			catch (NoOriginException eorig) 
-			{ 
+			{
 				/*en l'absence d'origine dans un fichier, on n'en fait rien*/
 			}
 		}
 	}
 	
-	public void parse(int filenum /* nombre de fichiers aglomérées*/ ) throws ScannerNullException
+	public void parse(String key, int filenum /* nombre de fichiers aglomérées*/ ) throws ScannerNullException
 	{
 		for ( int i=1 ; i <= filenum ; i++ )
 		{
@@ -56,7 +59,8 @@ public class Parser
 				//on réinitialise le systhème de réservation
 				CDS_list = new ArrayList<CDS>();
 				table_des_reservations = new ReservationTable();
-				cleft = "Général";
+				cleft = key;
+				accession = "";
 				
 				try 
 				{
@@ -78,6 +82,28 @@ public class Parser
 	{
 		try
 		{
+			//TODO find and parse the locus or any info (organism, accession)
+			/*
+			trouverPrefix("LOCUS");
+			String locus = ligne_actuelle.substring(12);
+			if(locus.contains(" ")){
+			   locus = locus.substring(0, locus.indexOf(" ")); 
+			}
+			*/
+			
+			//on va parser l'accession
+			trouverPrefix("ACCESSION");
+			accession = ligne_actuelle.substring(12);
+			//TODO transmettre à la base
+			
+			//on va parser l'organisme
+			trouverPrefix("  ORGANISM");
+			organism = ligne_actuelle.substring(12) + "; ";
+			while (organism.charAt(organism.length()-1) != '.') {
+				importAndCheckNull();
+				organism += ligne_actuelle.substring(12);
+			}
+
 			//on se place dans la catégorie features
 			trouverPrefix("FEATURES");
 			
@@ -104,33 +130,6 @@ public class Parser
 				{
 					parser_descripteur_CDS();
 				}
-				else if (ligne_actuelle.startsWith("organelle=",22))
-				{
-					if (ligne_actuelle.startsWith("mitochondrion",33))
-					{
-						cleft = "Mitochondrie";
-					}
-					else if (ligne_actuelle.startsWith("plastid",33))
-					{
-						if (ligne_actuelle.startsWith("chloroplast",41))
-						{
-							cleft = "Chloroplaste";
-						}
-						else
-						{
-							cleft = "Plaste";
-						}
-					}
-				}
-				else if (ligne_actuelle.startsWith("plasmid=",22))
-				{
-					cleft = "Plasmide";
-				}
-				else if (ligne_actuelle.startsWith("chromosome=",22))
-				{
-					//'chromosome="11"' par exemple
-					cleft = ligne_actuelle.substring(22);
-				}
 			}
 		}
 		catch (NoSuchElementException e)
@@ -142,7 +141,7 @@ public class Parser
 	//prend une ligne contenant un CDS en entrée et l'ajoute à la liste de CDS en le parsant
 	void parser_descripteur_CDS() throws ScannerNullException
 	{		
-		CDS cds = new CDS(base_de_donnees,cleft);
+		CDS cds = new CDS(base_de_donnees,cleft,accession,organism);
 		try 
 		{
 			table_des_reservations.open(); //on indique qu'on va passer de nouvelles réservations
@@ -152,7 +151,7 @@ public class Parser
 		} 
 		catch (CDSInvalideException e) 
 		{
-			base_de_donnees.incr_nb_CDS_non_traites(cleft); //TODO
+			base_de_donnees.incr_nb_CDS_non_traites(cleft,accession,organism);
 		}
 	}
 	

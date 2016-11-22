@@ -1,10 +1,3 @@
-import java.util.ArrayList;
-import java.io.IOException;
-import java.net.URL;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
-import java.util.Scanner;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -16,13 +9,6 @@ import org.apache.commons.cli.ParseException;
 import configuration.Configuration;
 
 
-import manager.AccessManager;
-import Parser.*;
-import Bdd.Bdd;
-
-import excel.*;
-import io.Net;
-import manager.ThreadManager;
 import tree.*;
 import ui.UIManager;
 
@@ -32,9 +18,9 @@ public class Main {
 		parseArgs(args);
 
 		UIManager.startPreloading();
-		Tree plop = new Tree();
-		plop=TreeManager.constree();
-		UIManager.startMainProcess(plop);
+		Tree mainTree = TreeManager.construct();
+		
+		UIManager.startMainProcess(mainTree);
 	}
 	
 	public static void parseArgs(String[] args){
@@ -92,5 +78,4 @@ public class Main {
 		}
 		
 	}
-
 }
