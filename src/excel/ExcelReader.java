@@ -15,7 +15,7 @@ import Bdd.Bdd;
 import configuration.Configuration;
 import exceptions.CharInvalideException;
 
-//Transforme plusieurs fichiers excels dans les sous dossiers, et les transforme en une Bdd
+//Transforme plusieurs fichiers bdd dans les sous dossiers, et les transforme en une Bdd
 public class ExcelReader {
 	public static Bdd reader(String folder){
 		Bdd base = new Bdd();

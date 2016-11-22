@@ -1,5 +1,6 @@
 package excel;
 
+import java.awt.Color;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -11,13 +12,21 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFDataFormat;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.AreaReference;
+import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFDataFormat;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFTable;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTable;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableColumn;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableColumns;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableStyleInfo;
+import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.ss.usermodel.CellStyle;
 
 import exceptions.CharInvalideException;
@@ -25,15 +34,21 @@ import Parser.*;
 import Bdd.*;
 import Bdd.Bdd.content;
 
-
-
-
 public class ExcelWriter {
+	
+	public static byte[] hexStringToByteArray(String s) {
+	    int len = s.length();
+	    byte[] data = new byte[len / 2];
+	    for (int i = 0; i < len; i += 2) {
+	        data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
+	                             + Character.digit(s.charAt(i+1), 16));
+	    }
+	    return data;
+	}
 	
 	
 	public static void writer(String filepath, String[] chemin, Bdd base) {
 		try {
-			
 			
 			Pattern regex1 = Pattern.compile(".*/");
 			Matcher m = regex1.matcher(filepath);
@@ -43,222 +58,29 @@ public class ExcelWriter {
 				folders.mkdirs();
 			}
 			
-			String xlsfile = filepath+".xls";
+			String xlsfile = filepath+".xlsx";
 			
 			FileOutputStream fileOut = new FileOutputStream(xlsfile);
-			HSSFWorkbook workbook = new HSSFWorkbook();
+			Workbook workbook = new XSSFWorkbook();
 			
 			
 
 			String cleft;
 			content contenus;
+			Bdd baseSum = new Bdd();
 			
 			for (Entry<String, content> entry : base.getContenus())
 			{
 				cleft = entry.getKey(); //"mitochondrie", "chloroplaste", "general"
+				
+				
 				contenus = entry.getValue(); //un objet content équipé de toute les fonction que vous appliquiez a la base avant
 				
-				HSSFSheet worksheet = workbook.createSheet(cleft);
-	
-				List<HSSFRow> rowlist = new ArrayList<HSSFRow>();
-				
-				
-				for (int i = 0; i <80; i++){
-					rowlist.add(worksheet.createRow(i));
-					
-					for(int j = 0; j<20; j++){
-						rowlist.get(i).createCell(j);
-					}
-				}
-				
-				HSSFDataFormat dataFormat = workbook.createDataFormat();
-				
-				CellStyle intStyle = workbook.createCellStyle();
-				intStyle.setDataFormat(dataFormat.getBuiltinFormat("0"));
-				
-				CellStyle floatStyle = workbook.createCellStyle();
-				floatStyle.setDataFormat(dataFormat.getBuiltinFormat("0.00"));
-				
-				
-				
-				// ligne 1 
-				rowlist.get(0).getCell(0).setCellValue("Nom");
-				String filename = "";
-				if (chemin[3] != null && chemin[3] != "" ) {
-					filename = chemin[3];
-				}
-				else if (chemin[2] != null && chemin[2] != "" ) {
-					filename = chemin[2];
-				}
-				else if (chemin[1] != null && chemin[1] != "") {
-					filename = chemin[1];
-				}
-				else {
-					filename = chemin[0];
-				}
-				
-				
-				rowlist.get(0).getCell(1).setCellValue(filename);
-				
-				
-				
-				//ligne 2
-				rowlist.get(1).getCell(0).setCellValue("Chemin");			
-				rowlist.get(1).getCell(1).setCellValue(chemin[0]);			
-				rowlist.get(1).getCell(2).setCellValue(chemin[1]);
-				rowlist.get(1).getCell(3).setCellValue(chemin[2]);
-				rowlist.get(1).getCell(4).setCellValue(chemin[3]);
-				
-				//ligne 3
-				rowlist.get(2).getCell(0).setCellValue("Nb CDS");
-				rowlist.get(2).getCell(1).setCellStyle(intStyle);
-				rowlist.get(2).getCell(1).setCellValue(contenus.get_nb_CDS());
-				
-				
-				
-				//ligne 4
-				rowlist.get(3).getCell(0).setCellValue("Nb trinucleotides");
-				rowlist.get(3).getCell(1).setCellStyle(intStyle);
-				rowlist.get(3).getCell(1).setCellValue(contenus.get_nb_trinucleotides()/3);
-				rowlist.get(3).getCell(8).setCellValue("Nb dinucleotides");
-				rowlist.get(3).getCell(9).setCellStyle(intStyle);
-				rowlist.get(3).getCell(9).setCellValue(contenus.get_nb_dinucleotides()/2);
-			
-				
-				//ligne 5
-				rowlist.get(4).getCell(0).setCellValue("Nb CDS non traités");
-				rowlist.get(4).getCell(1).setCellStyle(intStyle);
-				rowlist.get(4).getCell(1).setCellValue(contenus.get_nb_CDS_non_traites());
-				
-	
-				
-				//ligne 7
-				rowlist.get(6).getCell(0).setCellValue("Trinucléotides");			
-				rowlist.get(6).getCell(1).setCellValue("Nb Ph0");			
-				rowlist.get(6).getCell(2).setCellValue("Pb Ph0");		
-				rowlist.get(6).getCell(3).setCellValue("Nb Ph1");		
-				rowlist.get(6).getCell(4).setCellValue("Pb Ph1");			
-				rowlist.get(6).getCell(5).setCellValue("Nb Ph2");			
-				rowlist.get(6).getCell(6).setCellValue("Pb Ph2");			
-				rowlist.get(6).getCell(8).setCellValue("Dinucléotides");			
-				rowlist.get(6).getCell(9).setCellValue("Nb Ph0");			
-				rowlist.get(6).getCell(10).setCellValue("Pb Ph0");			
-				rowlist.get(6).getCell(11).setCellValue("Nb Ph1");
-				rowlist.get(6).getCell(12).setCellValue("Pb Ph1");
-				
-				rowlist.get(71).getCell(0).setCellValue("Total");
-				
-				
-				//on remplit les phases nombres des trinucléotides
-				StringBuilder triplet = new StringBuilder("---");
-				for (int j=0; j< 4; j++){
-					triplet.setCharAt(0, Bdd.charOfNucleotideInt(j));
-					for (int k=0; k< 4; k++){
-						triplet.setCharAt(1, Bdd.charOfNucleotideInt(k));
-						for (int l=0; l< 4; l++){
-							int trinucleotide = l+4*k+16*j+7;
-							triplet.setCharAt(2, Bdd.charOfNucleotideInt(l));
-							rowlist.get(trinucleotide).getCell(0).setCellValue(triplet.toString()); //on remplit le nom des trinucléotides
-							for (int i = 0; i<3; i++){
-								rowlist.get(trinucleotide).getCell(1+2*i).setCellStyle(intStyle);
-								rowlist.get(trinucleotide).getCell(1+2*i).setCellValue((double)(contenus.get_tableautrinucleotides(i,j,k,l)));
-							}
-						}
-					}
-				}
-				
-				//on remplit les phases nombres  des dinucléotides
-				StringBuilder couple = new StringBuilder("--");
-				for (int j=0; j< 4; j++){
-					couple.setCharAt(0, Bdd.charOfNucleotideInt(j));
-					for (int k=0; k< 4; k++){
-						couple.setCharAt(1, Bdd.charOfNucleotideInt(k));
-						int dinucleotide = k+4*j+7;
-						rowlist.get(dinucleotide).getCell(8).setCellValue(couple.toString()); //on remplit le nom des dinucléotides
-						for (int i = 0; i<2; i++){
-							rowlist.get(dinucleotide).getCell(9+2*i).setCellStyle(intStyle);
-							rowlist.get(dinucleotide).getCell(9+2*i).setCellValue((double)(contenus.get_tableaudinucleotides(i,j,k)));
-						}
-					}
-				}
-				
-				//on remplit les totaux entiers
-				//trinucleotides
-				for(int i = 0; i<3;i++){
-					double tmp = 0;
-					for (int j = 0; j<64;j++){
-						tmp = tmp + (rowlist.get(j+7).getCell(1+2*i).getNumericCellValue());	
-					}
-					rowlist.get(71).getCell(1+2*i).setCellStyle(intStyle);
-					rowlist.get(71).getCell(1+2*i).setCellValue(tmp);
-					
-				}
-				//dinucleotides
-				for(int i = 0; i<2;i++){
-					double tmp = 0;
-					for (int j = 0; j<16;j++){
-						tmp = tmp + (rowlist.get(j+7).getCell(9+2*i).getNumericCellValue());	
-					}
-					rowlist.get(23).getCell(9+2*i).setCellStyle(intStyle);
-					rowlist.get(23).getCell(9+2*i).setCellValue(tmp);
-					
-				}
-				
-				
-				//on remplit les phases probabilités
-				//trinucleotides
-				for (int i =0; i<3; i++){
-					double total = rowlist.get(71).getCell(1+2*i).getNumericCellValue();
-					if (total != 0){
-						for (int j = 0; j<64; j++){
-							rowlist.get(j+7).getCell(2+2*i).setCellStyle(floatStyle);
-							double tmp = rowlist.get(j+7).getCell(1+2*i).getNumericCellValue();
-							rowlist.get(j+7).getCell(2+2*i).setCellValue(100*tmp/total);
-						}
-					}
-				}
-				//dinucleotides
-				for (int i =0; i<2; i++){
-					double total = rowlist.get(23).getCell(9+2*i).getNumericCellValue();
-					if (total != 0){
-						for (int j = 0; j<16; j++){
-							rowlist.get(j+7).getCell(10+2*i).setCellStyle(floatStyle);
-							double tmp = rowlist.get(j+7).getCell(9+2*i).getNumericCellValue();
-							rowlist.get(j+7).getCell(10+2*i).setCellValue(100*tmp/total);
-						}
-					}
-				}
-				
-				//on remplit les totaux flottants
-				//trinucleotides
-				for(int i = 0; i<3;i++){
-					double tmp = 0;
-					for (int j = 0; j<64;j++){
-						tmp = tmp + (rowlist.get(j+7).getCell(2+2*i).getNumericCellValue());	
-					}
-					rowlist.get(71).getCell(2+2*i).setCellStyle(intStyle);
-					rowlist.get(71).getCell(2+2*i).setCellValue(tmp);
-					
-				}
-				//dinucleotides
-				for(int i = 0; i<2;i++){
-					double tmp = 0;
-					for (int j = 0; j<16;j++){
-						tmp = tmp + (rowlist.get(j+7).getCell(10+2*i).getNumericCellValue());	
-					}
-					rowlist.get(23).getCell(10+2*i).setCellStyle(intStyle);
-					rowlist.get(23).getCell(10+2*i).setCellValue(tmp);
-					
-				}
-				
-				//autosize column 
-				for (int i = 0; i<73; i++){
-					for (int j = 0; j < rowlist.get(i).getLastCellNum();j++) {
-						worksheet.autoSizeColumn(j);
-					}
-				}
+				writeTab(cleft, contenus, baseSum, workbook, chemin);
 			
 			}
+			
+		
 			
 			
 			
@@ -273,9 +95,376 @@ public class ExcelWriter {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
-		} catch (CharInvalideException e) {
-			e.printStackTrace();
 		}
 
 	}
+
+	private static void writeTab(String cleft, content contenus, Bdd baseSum, Workbook wb, String[] chemin){
+		try {
+			
+			switch (cleft.split("_")[0]){
+			case "Chromosome" : 
+				baseSum.open_tampon("Sum_Chromosome", "", "");
+				break;
+			case "Chloroplast" : 
+				baseSum.open_tampon("Sum_Chloroplast", "", "");
+				break;
+			case "Mitochondrion" : 
+				baseSum.open_tampon("Sum_Mitochondrion", "", "");
+				break;
+			case "DNA" : 
+				baseSum.open_tampon("Sum_DNA", "", "");
+				break;
+			}
+			
+			XSSFSheet worksheet = (XSSFSheet) wb.createSheet(cleft);
+	
+			List<XSSFRow> rowlist = new ArrayList<XSSFRow>();
+			
+			
+			for (int i = 0; i <90; i++){
+				rowlist.add(worksheet.createRow(i));
+				
+				for(int j = 0; j<40; j++){
+					rowlist.get(i).createCell(j);
+				}
+			}
+			
+			XSSFDataFormat dataFormat = (XSSFDataFormat) wb.createDataFormat();
+			
+			for(int i = 0; i<90;i++)
+			{
+				for (int j = 0; j<40; j++)
+				{
+					rowlist.get(i).getCell(j).setCellStyle(getCellStyle(i,j,wb));
+				}
+			}
+			
+			
+			//En-tête
+			// Name
+			String filename = "";
+			if (chemin[3] != null && chemin[3] != "" ) {
+				filename = chemin[3];
+				rowlist.get(2).getCell(11).setCellValue("Organism Name");
+			}
+			else if (chemin[2] != null && chemin[2] != "" ) {
+				filename = chemin[2];
+				rowlist.get(2).getCell(11).setCellValue("SubGroup Name");
+			}
+			else if (chemin[1] != null && chemin[1] != "") {
+				filename = chemin[1];
+				rowlist.get(2).getCell(11).setCellValue("Group Name");
+			}
+			else {
+				filename = chemin[0];
+				rowlist.get(2).getCell(11).setCellValue("Kingdom Name");
+			}
+			rowlist.get(2).getCell(11).setCellStyle(getCellStyle(2,11,wb));
+			
+			rowlist.get(2).getCell(12).setCellValue(filename);
+			rowlist.get(2).getCell(12).setCellStyle(getCellStyle(2,11,wb));
+			
+			
+	//		//Inutile
+	//		rowlist.get(1).getCell(0).setCellValue("Chemin");			
+	//		rowlist.get(1).getCell(1).setCellValue(chemin[0]);			
+	//		rowlist.get(1).getCell(2).setCellValue(chemin[1]);
+	//		rowlist.get(1).getCell(3).setCellValue(chemin[2]);
+	//		rowlist.get(1).getCell(4).setCellValue(chemin[3]);
+			
+			
+			//Nb Nucléotides
+			rowlist.get(4).getCell(11).setCellValue("Number of nucleotides");
+			rowlist.get(4).getCell(11).setCellStyle(getCellStyle(4,12,wb));
+			rowlist.get(4).getCell(12).setCellValue(contenus.get_nb_trinucleotides());
+			rowlist.get(4).getCell(12).setCellStyle(getCellStyle(2,11,wb));
+	//		rowlist.get(3).getCell(8).setCellValue("Nb dinucleotides");
+	//		rowlist.get(3).getCell(9).setCellStyle(intStyle);
+	//		rowlist.get(3).getCell(9).setCellValue(contenus.get_nb_dinucleotides()/2);
+		
+			//Nb CDS
+			rowlist.get(6).getCell(11).setCellStyle(getCellStyle(2,11,wb));
+			rowlist.get(6).getCell(11).setCellValue("Number of cds sequences");
+			rowlist.get(6).getCell(12).setCellStyle(getCellStyle(6,12,wb));
+			rowlist.get(6).getCell(12).setCellValue(contenus.get_nb_CDS());
+			baseSum.incr_mult_nb_CDS_traites(cleft, "", "", contenus.get_nb_CDS());
+			
+			
+			//Invalid CDS
+			rowlist.get(8).getCell(11).setCellValue("Number of invalid cds");
+			rowlist.get(8).getCell(11).setCellStyle(getCellStyle(2,11,wb));
+			rowlist.get(8).getCell(12).setCellStyle(getCellStyle(8,12,wb));
+			rowlist.get(8).getCell(12).setCellValue(contenus.get_nb_CDS_non_traites());
+			baseSum.incr_mult_nb_CDS_non_traites(cleft, "", "", contenus.get_nb_CDS_non_traites());
+			
+			
+	
+			
+			//Ligne 1
+			rowlist.get(0).getCell(0).setCellValue("Trinucléotides");			
+			rowlist.get(0).getCell(1).setCellValue("Phase 0");			
+			rowlist.get(0).getCell(2).setCellValue("Freq. Phase 0");		
+			rowlist.get(0).getCell(3).setCellValue("Phase 1");		
+			rowlist.get(0).getCell(4).setCellValue("Freq. Phase 1");			
+			rowlist.get(0).getCell(5).setCellValue("Phase 2");			
+			rowlist.get(0).getCell(6).setCellValue("Freq. Phase 2");
+			rowlist.get(0).getCell(7).setCellValue("Pref. Phase 0");
+			rowlist.get(0).getCell(8).setCellValue("Pref. Phase 1");
+			rowlist.get(0).getCell(9).setCellValue("Pref. Phase 3");
+			
+			rowlist.get(67).getCell(0).setCellValue("Dinucléotides");			
+			rowlist.get(67).getCell(1).setCellValue("Phase 0");			
+			rowlist.get(67).getCell(2).setCellValue("Freq. Phase 0");			
+			rowlist.get(67).getCell(3).setCellValue("Phase 1");
+			rowlist.get(67).getCell(4).setCellValue("Freq. Phase 1");
+			rowlist.get(67).getCell(5).setCellValue("Pref. Phase 0");
+			rowlist.get(67).getCell(6).setCellValue("Pref. Phase 1");
+			
+			rowlist.get(65).getCell(0).setCellValue("Total");
+			rowlist.get(84).getCell(0).setCellValue("Total");
+			
+			
+			//on remplit les phases nombres des trinucléotides
+			StringBuilder triplet = new StringBuilder("---");
+			for (int j=0; j< 4; j++){
+				triplet.setCharAt(0, Bdd.charOfNucleotideInt(j));
+				for (int k=0; k< 4; k++){
+					triplet.setCharAt(1, Bdd.charOfNucleotideInt(k));
+					for (int l=0; l< 4; l++){
+						int trinucleotide = l+4*k+16*j+1;
+						triplet.setCharAt(2, Bdd.charOfNucleotideInt(l));
+						rowlist.get(trinucleotide).getCell(0).setCellValue(triplet.toString()); //on remplit le nom des trinucléotides
+						for (int i = 0; i<3; i++){
+							rowlist.get(trinucleotide).getCell(1+2*i).setCellStyle(getCellStyle(trinucleotide,1+2*i,wb));
+							rowlist.get(trinucleotide).getCell(1+2*i).setCellValue((double)(contenus.get_tableautrinucleotides(i,j,k,l)));
+							baseSum.ajoute_mult_nucleotides(i, j, k, l, contenus.get_tableautrinucleotides(i,j,k,l));	
+						}
+					}
+				}
+			}
+			
+			//on remplit les phases nombres  des dinucléotides
+			StringBuilder couple = new StringBuilder("--");
+			for (int j=0; j< 4; j++){
+				couple.setCharAt(0, Bdd.charOfNucleotideInt(j));
+				for (int k=0; k< 4; k++){
+					couple.setCharAt(1, Bdd.charOfNucleotideInt(k));
+					int dinucleotide = k+4*j+68;
+					rowlist.get(dinucleotide).getCell(0).setCellValue(couple.toString()); //on remplit le nom des dinucléotides
+					for (int i = 0; i<2; i++){
+						rowlist.get(dinucleotide).getCell(1+2*i).setCellStyle(getCellStyle(dinucleotide,1+2*i,wb));
+						rowlist.get(dinucleotide).getCell(1+2*i).setCellValue((double)(contenus.get_tableaudinucleotides(i,j,k)));
+						baseSum.ajoute_mult_nucleotides(i, j, k,  contenus.get_tableaudinucleotides(i,j,k));
+					}
+				}
+			}
+			
+			//on remplit les totaux entiers
+			//trinucleotides
+			for(int i = 0; i<3;i++){
+				double tmp = 0;
+				for (int j = 0; j<64;j++){
+					tmp = tmp + (rowlist.get(j+1).getCell(1+2*i).getNumericCellValue());	
+				}
+				rowlist.get(65).getCell(1+2*i).setCellStyle(getCellStyle(65,1+2*i,wb));
+				rowlist.get(65).getCell(1+2*i).setCellValue(tmp);
+				
+			}
+			//dinucleotides
+			for(int i = 0; i<2;i++){
+				double tmp = 0;
+				for (int j = 0; j<16;j++){
+					tmp = tmp + (rowlist.get(j+68).getCell(1+2*i).getNumericCellValue());	
+				}
+				rowlist.get(84).getCell(1+2*i).setCellStyle(getCellStyle(84,1+2*i,wb));
+				rowlist.get(84).getCell(1+2*i).setCellValue(tmp);
+				
+			}
+			
+			
+			//on remplit les phases probabilités
+			//trinucleotides
+			for (int i =0; i<3; i++){
+				double total = rowlist.get(65).getCell(1+2*i).getNumericCellValue();
+				if (total != 0){
+					for (int j = 0; j<64; j++){
+						rowlist.get(j+1).getCell(2+2*i).setCellStyle(getCellStyle(j+1,2+2*i,wb));
+						double tmp = rowlist.get(j+1).getCell(1+2*i).getNumericCellValue();
+						rowlist.get(j+1).getCell(2+2*i).setCellValue(100*tmp/total);
+					}
+				}
+			}
+			//dinucleotides
+			for (int i =0; i<2; i++){
+				double total = rowlist.get(84).getCell(1+2*i).getNumericCellValue();
+				if (total != 0){
+					for (int j = 0; j<16; j++){
+						rowlist.get(j+68).getCell(2+2*i).setCellStyle(getCellStyle(j+68,2+2*i,wb));
+						double tmp = rowlist.get(j+68).getCell(1+2*i).getNumericCellValue();
+						rowlist.get(j+68).getCell(2+2*i).setCellValue(100*tmp/total);
+					}
+				}
+			}
+			
+			//on remplit les totaux flottants
+			//trinucleotides
+			for(int i = 0; i<3;i++){
+				double tmp = 0;
+				for (int j = 0; j<64;j++){
+					tmp = tmp + (rowlist.get(j+1).getCell(2+2*i).getNumericCellValue());	
+				}
+				rowlist.get(65).getCell(2+2*i).setCellStyle(getCellStyle(65,2+2*i,wb));
+				rowlist.get(65).getCell(2+2*i).setCellValue(tmp);
+				
+			}
+			//dinucleotides
+			for(int i = 0; i<2;i++){
+				double tmp = 0;
+				for (int j = 0; j<16;j++){
+					tmp = tmp + (rowlist.get(j+68).getCell(2+2*i).getNumericCellValue());	
+				}
+				rowlist.get(84).getCell(2+2*i).setCellStyle(getCellStyle(84,2+2*i,wb));
+				rowlist.get(84).getCell(2+2*i).setCellValue(tmp);
+				
+			}
+			
+			//autosize column 
+			for (int i = 0; i<89; i++){
+				for (int j = 0; j < rowlist.get(i).getLastCellNum();j++) {
+					worksheet.autoSizeColumn(j);
+				}
+			}
+			
+			
+			
+			
+			baseSum.close_tampon();
+			
+		} catch (CharInvalideException e) {
+			e.printStackTrace();
+		}
+		
+	}
+		
+	private static XSSFCellStyle getCellStyle(int i, int j, Workbook wb){
+		
+		XSSFDataFormat dataFormat = (XSSFDataFormat) wb.createDataFormat();
+		
+		byte[] LIGHT_BLUE = hexStringToByteArray("a7c8fd");
+		XSSFColor light_blue = new XSSFColor(LIGHT_BLUE);
+		
+		byte[] DARK_BLUE = hexStringToByteArray("3686ca");
+		XSSFColor dark_blue = new XSSFColor(DARK_BLUE);
+		
+		byte[] LIGHT_GRAY = hexStringToByteArray("e6e6e6");
+		XSSFColor light_gray = new XSSFColor(LIGHT_GRAY);
+		
+		byte[] GRAY = hexStringToByteArray("cecece");
+		XSSFColor gray = new XSSFColor(GRAY);
+		
+		XSSFCellStyle res = (XSSFCellStyle) wb.createCellStyle();
+		
+		if (i == 0 && j == 0){
+			//Couleur foncée chelou
+			res.setFillForegroundColor(dark_blue);
+			res.setFillPattern(CellStyle.SOLID_FOREGROUND);
+		}
+		//Couleur et style pour trinucléotides et dinucléotides et entête
+		else if (i%2 == 0 && i < 68){
+			//trinucléotides sans pref phase ou première ligne
+			if ((j<7)|| (i==0 && j<10)){
+				//Couleur foncée
+				res.setFillForegroundColor(gray);
+				res.setFillPattern(CellStyle.SOLID_FOREGROUND);
+			}
+			//pref phase trinucléotides
+			else if (j<10){
+				//Couleur Claire
+				res.setFillForegroundColor(light_gray);
+				res.setFillPattern(CellStyle.SOLID_FOREGROUND);
+			}
+			//dinuclotides sans pref phase
+			else if (i<17 && ((j>10 && j <16)||(i==0 && j<18))){
+				//Couleur foncée
+				res.setFillForegroundColor(gray);
+				res.setFillPattern(CellStyle.SOLID_FOREGROUND);
+			}
+			//dinucléotides pref de phase
+			else if (i<17 && j<18){
+				//Couleur Claire
+				res.setFillForegroundColor(light_gray);
+				res.setFillPattern(CellStyle.SOLID_FOREGROUND);
+			}
+			
+			//Entête
+			else if(i<17 && j>19){
+				if (i>1 && i<17){
+					if (j==18){
+						//Très CLair
+						res.setFillForegroundColor(light_blue);
+						res.setFillPattern(CellStyle.SOLID_FOREGROUND);
+					}
+					else if(j==19){
+						//Intermédiaire
+						res.setFillForegroundColor(light_gray);
+						res.setFillPattern(CellStyle.SOLID_FOREGROUND);
+					}
+				}
+			}
+		}
+		
+		//Style de chiffres
+		if (i>0 && i<68){
+			//trinucléotides sans pref de phase
+			if (j%2==1 && j<6){
+				res.setDataFormat(dataFormat.getFormat("0"));
+			}
+			else if(j%2==0 && j<7 && j>0){
+				res.setDataFormat(dataFormat.getFormat("0.00"));
+			}
+			//tri. pref de phase
+			else if(j>6 && j<10){
+				res.setDataFormat(dataFormat.getFormat("0"));
+			}
+			
+			//dinculéotides sans pref de phase
+			else if (i<17 && j%2==1 && j<16){
+				res.setDataFormat(dataFormat.getFormat("0"));
+			}
+			else if(i<17 && j%2==0 && j<16){
+				res.setDataFormat(dataFormat.getFormat("0.00"));
+			}
+			//dinucléotides pref de phase
+			else if(i<17 && j>15 && j<18){
+				res.setDataFormat(dataFormat.getFormat("0"));
+			}
+		}
+		
+		
+
+		//XSSFColor plop = new XSSFColor(new java.awt.Color(128, 0, 128));
+		
+		//peinturefmt
+//		for (int i = 0; i<31; i++){
+//			for (int j = 0; j < 10;j++) {
+//				XSSFCellStyle tmp = (XSSFCellStyle) rowlist.get(2*i+2).getCell(j).getCellStyle();
+//				
+//				if (j<7){
+//					tmp.setFillForegroundColor(gray);
+//				}
+//				else{
+//					tmp.setFillForegroundColor(light_gray);
+//				}
+//				tmp.setFillPattern(CellStyle.SOLID_FOREGROUND);
+//				rowlist.get(2*i+2).getCell(j).setCellStyle(tmp);
+//			}
+//		}
+		
+		
+		return res;
+	}
+
 }
+
+	

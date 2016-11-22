@@ -5,13 +5,11 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-
 import configuration.Configuration;
 
 
 import tree.*;
 import ui.UIManager;
-
 public class Main {
 
 	public static void main(String[] args) throws Exception {

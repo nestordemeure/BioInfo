@@ -101,6 +101,32 @@ public class Bdd
 		
 		contenus_cleft.nb_CDS_non_traites++;
 	}
+	
+	public void incr_mult_nb_CDS_non_traites (String cleft, String accession, String organism, long nbr)
+	{
+		content contenus_cleft = contenus.get(cleft);
+		
+		if (contenus_cleft == null)
+		{
+			contenus_cleft = new content(accession, organism);
+			contenus.put(cleft,contenus_cleft);
+		}
+		
+		contenus_cleft.nb_CDS_non_traites+=nbr;
+	}
+	
+	public void incr_mult_nb_CDS_traites (String cleft, String accession, String organism, long nbr)
+	{
+		content contenus_cleft = contenus.get(cleft);
+		
+		if (contenus_cleft == null)
+		{
+			contenus_cleft = new content(accession, organism);
+			contenus.put(cleft,contenus_cleft);
+		}
+		
+		contenus_cleft.nb_CDS+=nbr;
+	}
 
 	//tampon
 	//ajoute un dinucleotide et un tri nucleotides au phases indiquées
@@ -116,10 +142,22 @@ public class Bdd
 		tampon_tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3]++;
 	}
 	
+	//ajoute plusieurs tri nucleotides a la phase indiquée
+	public void ajoute_mult_nucleotides (int phase, int nucleotide1, int nucleotide2, int nucleotide3, long nbr) throws CharInvalideException
+	{
+		tampon_tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3]+=nbr;
+	}
+	
 	//ajoute un dinucleotide à la phase indiquée
 	public void ajoute_nucleotides (int phase, int nucleotide1, int nucleotide2) throws CharInvalideException
 	{
 		tampon_tableaudinucleotides[phase][nucleotide1][nucleotide2]++;
+	}
+	
+	//ajoute plusieurs dinucleotides à la phase indiquée
+	public void ajoute_mult_nucleotides (int phase, int nucleotide1, int nucleotide2, long nbr) throws CharInvalideException
+	{
+			tampon_tableaudinucleotides[phase][nucleotide1][nucleotide2]+=nbr;
 	}
 	
 	//retire un dinucleotide à la phase indiquée
