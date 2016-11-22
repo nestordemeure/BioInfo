@@ -43,32 +43,32 @@ import ui.UIManager;
 public class Main {
 
 	public static void main(String[] args) throws Exception {
-		
-		Callable<Boolean> callable =  new Callable<Boolean>(){
-			public Boolean call() throws Exception{
-				Scanner sc = new Scanner(Resources.asByteSource(new URL("https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=NC_011594.1&rettype=gb")).openBufferedStream());
-				sc.useDelimiter("\n");
-				Bdd db = new Bdd();
-				Parser p = new Parser(db, sc);
-				p.parse("lol",1);
-				db.exportBase("/tmp/lol2");
-				System.out.println("********");
-				System.out.println(db.get_tableauxnucleotides_string());
-				System.out.println(db.getContenus().iterator().hasNext());
-				long a = db.getContenus().iterator().next().getValue().get_nb_CDS();
-				System.out.println(a);
-				return true;
-				
-			}
-		};
-		
-		Retryer<Boolean> retryer = RetryerBuilder.<Boolean>newBuilder()
-		        .retryIfExceptionOfType(IOException.class)
-		        .retryIfRuntimeException()
-		        .withWaitStrategy(WaitStrategies.fibonacciWait(100, 2, TimeUnit.MINUTES))
-		        .withStopStrategy(StopStrategies.stopAfterAttempt(2))
-		        .build();
-		retryer.call(callable);
+		TreeManager.construct();
+//		Callable<Boolean> callable =  new Callable<Boolean>(){
+//			public Boolean call() throws Exception{
+//				Scanner sc = new Scanner(Resources.asByteSource(new URL("https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=NC_011594.1&rettype=gb")).openBufferedStream());
+//				sc.useDelimiter("\n");
+//				Bdd db = new Bdd();
+//				Parser p = new Parser(db, sc);
+//				p.parse("lol",1);
+//				db.exportBase("/tmp/lol2");
+//				System.out.println("********");
+//				System.out.println(db.get_tableauxnucleotides_string());
+//				System.out.println(db.getContenus().iterator().hasNext());
+//				long a = db.getContenus().iterator().next().getValue().get_nb_CDS();
+//				System.out.println(a);
+//				return true;
+//				
+//			}
+//		};
+//		
+//		Retryer<Boolean> retryer = RetryerBuilder.<Boolean>newBuilder()
+//		        .retryIfExceptionOfType(IOException.class)
+//		        .retryIfRuntimeException()
+//		        .withWaitStrategy(WaitStrategies.fibonacciWait(100, 2, TimeUnit.MINUTES))
+//		        .withStopStrategy(StopStrategies.stopAfterAttempt(2))
+//		        .build();
+//		retryer.call(callable);
 		
 //		parseArgs(args);
 //
