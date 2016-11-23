@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,7 +48,10 @@ public class Main {
 		
 		Callable<Boolean> callable =  new Callable<Boolean>(){
 			public Boolean call() throws Exception{
-				Scanner sc = new Scanner(Resources.asByteSource(new URL("https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=NC_011594.1&rettype=gb")).openBufferedStream());
+				//Scanner sc = new Scanner(Resources.asByteSource(new URL("https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=NC_011594.1&rettype=gb")).openBufferedStream());
+				
+				URL url = new File("/home/nestor/Cours/2A/bioinformatique/sequence2.gb").toURI().toURL();
+				Scanner sc = new Scanner(Resources.asByteSource(url).openBufferedStream());
 				sc.useDelimiter("\n");
 				Bdd db = new Bdd();
 				Parser p = new Parser(db, sc);

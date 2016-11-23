@@ -115,12 +115,7 @@ public class Bdd
 		tampon_tableautrinucleotides[phase3][nucleotide1][nucleotide2][nucleotide3]++;
 		tampon_tableaudinucleotides[phase2][nucleotide1][nucleotide2]++;
 		//TODO incrémente toStream pour le streamer
-		if(phase3==0)
-		{
-			ecrit_nucleotideToStream(nucleotide1);
-			ecrit_nucleotideToStream(nucleotide2);
-			ecrit_nucleotideToStream(nucleotide3);
-		}
+		ecrit_nucleotideToStream(nucleotide1);
 	}
 	
 	//ajoute un tri nucleotides a la phase indiquée
@@ -128,12 +123,7 @@ public class Bdd
 	{
 		tampon_tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3]++;
 		//TODO incrémente toStream pour le streamer
-		if(phase==0)
-		{
-			ecrit_nucleotideToStream(nucleotide1);
-			ecrit_nucleotideToStream(nucleotide2);
-			ecrit_nucleotideToStream(nucleotide3);
-		}
+		ecrit_nucleotideToStream(nucleotide1);
 	}
 	
 	//ajoute un dinucleotide à la phase indiquée
@@ -149,7 +139,7 @@ public class Bdd
 	}
 
 	// TODO ajoute un nucleotide au stringbuilder qu'on feedera au streamer
-	private void ecrit_nucleotideToStream(int nucleotide)
+	public void ecrit_nucleotideToStream(int nucleotide)
 	{
 		if(tampon_streamer!=null){
 			char c;
@@ -225,45 +215,48 @@ public class Bdd
 						tampon_tableautrinucleotides[2][nucleotide1][nucleotide2][nucleotide3]=0; //clear
 						
 						// phase pref
-						if (valeur_tampon > valeur_tampon1)
+						if(valeur_tampon!=0 || valeur_tampon1!=0 || valeur_tampon2!=0) //TODO set to 0 if there is no data
 						{
-							if (valeur_tampon > valeur_tampon2)
+							if (valeur_tampon > valeur_tampon1)
 							{
-								contenus_cleft.tableauPhasePref[0][nucleotide1][nucleotide2][nucleotide3]++;
-							} else if (valeur_tampon == valeur_tampon2) 
+								if (valeur_tampon > valeur_tampon2)
+								{
+									contenus_cleft.tableauPhasePref[0][nucleotide1][nucleotide2][nucleotide3]++;
+								} else if (valeur_tampon == valeur_tampon2) 
+								{
+									contenus_cleft.tableauPhasePref[0][nucleotide1][nucleotide2][nucleotide3]++;
+									contenus_cleft.tableauPhasePref[2][nucleotide1][nucleotide2][nucleotide3]++;
+								} else // <
+								{
+									contenus_cleft.tableauPhasePref[2][nucleotide1][nucleotide2][nucleotide3]++;
+								}
+							} else if (valeur_tampon == valeur_tampon1) 
 							{
-								contenus_cleft.tableauPhasePref[0][nucleotide1][nucleotide2][nucleotide3]++;
-								contenus_cleft.tableauPhasePref[2][nucleotide1][nucleotide2][nucleotide3]++;
+								if (valeur_tampon > valeur_tampon2)
+								{
+									contenus_cleft.tableauPhasePref[0][nucleotide1][nucleotide2][nucleotide3]++;
+									contenus_cleft.tableauPhasePref[1][nucleotide1][nucleotide2][nucleotide3]++;							} else if (valeur_tampon == valeur_tampon2) 
+								{
+									contenus_cleft.tableauPhasePref[0][nucleotide1][nucleotide2][nucleotide3]++;
+									contenus_cleft.tableauPhasePref[1][nucleotide1][nucleotide2][nucleotide3]++;
+									contenus_cleft.tableauPhasePref[2][nucleotide1][nucleotide2][nucleotide3]++;
+								} else // <
+								{
+									contenus_cleft.tableauPhasePref[2][nucleotide1][nucleotide2][nucleotide3]++;
+								}
 							} else // <
 							{
-								contenus_cleft.tableauPhasePref[2][nucleotide1][nucleotide2][nucleotide3]++;
-							}
-						} else if (valeur_tampon == valeur_tampon1) 
-						{
-							if (valeur_tampon > valeur_tampon2)
-							{
-								contenus_cleft.tableauPhasePref[0][nucleotide1][nucleotide2][nucleotide3]++;
-								contenus_cleft.tableauPhasePref[1][nucleotide1][nucleotide2][nucleotide3]++;							} else if (valeur_tampon == valeur_tampon2) 
-							{
-								contenus_cleft.tableauPhasePref[0][nucleotide1][nucleotide2][nucleotide3]++;
-								contenus_cleft.tableauPhasePref[1][nucleotide1][nucleotide2][nucleotide3]++;
-								contenus_cleft.tableauPhasePref[2][nucleotide1][nucleotide2][nucleotide3]++;
-							} else // <
-							{
-								contenus_cleft.tableauPhasePref[2][nucleotide1][nucleotide2][nucleotide3]++;
-							}
-						} else // <
-						{
-							if (valeur_tampon1 > valeur_tampon2)
-							{
-								contenus_cleft.tableauPhasePref[1][nucleotide1][nucleotide2][nucleotide3]++;
-							} else if (valeur_tampon1 == valeur_tampon2) 
-							{
-								contenus_cleft.tableauPhasePref[1][nucleotide1][nucleotide2][nucleotide3]++;
-								contenus_cleft.tableauPhasePref[2][nucleotide1][nucleotide2][nucleotide3]++;
-							} else // <
-							{
-								contenus_cleft.tableauPhasePref[2][nucleotide1][nucleotide2][nucleotide3]++;
+								if (valeur_tampon1 > valeur_tampon2)
+								{
+									contenus_cleft.tableauPhasePref[1][nucleotide1][nucleotide2][nucleotide3]++;
+								} else if (valeur_tampon1 == valeur_tampon2) 
+								{
+									contenus_cleft.tableauPhasePref[1][nucleotide1][nucleotide2][nucleotide3]++;
+									contenus_cleft.tableauPhasePref[2][nucleotide1][nucleotide2][nucleotide3]++;
+								} else // <
+								{
+									contenus_cleft.tableauPhasePref[2][nucleotide1][nucleotide2][nucleotide3]++;
+								}
 							}
 						}
 					}
@@ -395,7 +388,7 @@ public class Bdd
 				contenus_cleft = entry.getValue();
 				
 				str += entry.getKey() + " :\n";
-				str += "trinucleotide	phase1	phase2	phase3\n";
+				str += "trinucleotide	phase0	phase1	phase2\n";
 				for (int nucleotide1=0 ; nucleotide1<4 ; nucleotide1++)
 				{
 					triplet.setCharAt(0, charOfNucleotideInt(nucleotide1));
@@ -421,7 +414,7 @@ public class Bdd
 				}
 
 				
-				str += "dinucleotide	phase1	phase2\n";
+				str += "dinucleotide	phase0	phase1\n";
 				
 				triplet.setCharAt(2, ' ');
 				for (int nucleotide1=0 ; nucleotide1<4 ; nucleotide1++)
@@ -439,6 +432,31 @@ public class Bdd
 						}
 						
 						str+="\n";
+					}
+				}
+				
+				str += "trinucleotide	pref0	pref1	pref2\n";
+				for (int nucleotide1=0 ; nucleotide1<4 ; nucleotide1++)
+				{
+					triplet.setCharAt(0, charOfNucleotideInt(nucleotide1));
+					
+					for (int nucleotide2=0 ; nucleotide2<4 ; nucleotide2++)
+					{
+						triplet.setCharAt(1, charOfNucleotideInt(nucleotide2));
+						
+						for (int nucleotide3=0 ; nucleotide3<4 ; nucleotide3++)
+						{
+							triplet.setCharAt(2, charOfNucleotideInt(nucleotide3));
+
+							str+="	"+triplet+" :";
+							
+							for (int phase=0 ; phase<3 ; phase++)
+							{
+								str+="	"+contenus_cleft.tableauPhasePref[phase][nucleotide1][nucleotide2][nucleotide3];
+							}
+							
+							str+="\n";
+						}
 					}
 				}
 			}
@@ -460,7 +478,7 @@ public class Bdd
 		private long tableautrinucleotides[][][][]; //tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3]
 		private long tableaudinucleotides[][][]; //tableaudinucleotides[phase][nucleotide1][nucleotide2]
 		
-		private long tableauPhasePref[][][][]; //tableauPhasePrefTrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3]
+		private long tableauPhasePref[][][][]; //tableauPhasePref[phase][nucleotide1][nucleotide2][nucleotide3]
 		
 		private String accession;
 		private String organism;
