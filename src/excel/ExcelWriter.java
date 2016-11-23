@@ -26,13 +26,17 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableColumn;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableColumns;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableStyleInfo;
+
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.ss.usermodel.CellStyle;
 
 import exceptions.CharInvalideException;
 import Parser.*;
+import configuration.Configuration;
 import Bdd.*;
 import Bdd.Bdd.content;
+import configuration.Configuration;
+
 
 public class ExcelWriter {
 	
@@ -50,10 +54,13 @@ public class ExcelWriter {
 	public static void writer(String filepath, String[] chemin, Bdd base) {
 		try {
 			
+			Boolean is_leaf = filepath.length() - filepath.replace(Configuration.FOLDER_SEPARATOR, "").length()==5;
+			
 			Pattern regex1 = Pattern.compile(".*/");
 			Matcher m = regex1.matcher(filepath);
+			String folderpath ="";
 			if (m.find()){
-				String folderpath = m.group(0);
+				folderpath = m.group(0);
 				File folders = new File(folderpath);
 				folders.mkdirs();
 			}
@@ -62,8 +69,6 @@ public class ExcelWriter {
 			
 			FileOutputStream fileOut = new FileOutputStream(xlsfile);
 			Workbook workbook = new XSSFWorkbook();
-			
-			
 
 			String cleft;
 			content contenus;
@@ -73,14 +78,33 @@ public class ExcelWriter {
 			{
 				cleft = entry.getKey(); //"mitochondrie", "chloroplaste", "general"
 				
-				
 				contenus = entry.getValue(); //un objet content équipé de toute les fonction que vous appliquiez a la base avant
 				
-				writeTab(cleft, contenus, baseSum, workbook, chemin);
-			
+				//System.out.println(":"+cleft+":");
+				
+				if (!cleft.equals("")){
+					writeTab(cleft, contenus, baseSum, workbook, chemin);
+				}
 			}
 			
-		
+			if (is_leaf){
+				baseSum.exportBase(folderpath+"Sums");
+				
+				Bdd empty = new Bdd();
+				
+				for (Entry<String, content> entry : baseSum.getContenus())
+				{
+					cleft = entry.getKey(); //"Sum_Chromosomes", "Sum..."
+					
+					contenus = entry.getValue();
+					
+					//System.out.println(":"+cleft+":");
+					
+					if (!cleft.equals("")){
+						writeTab(cleft, contenus, empty, workbook, chemin);
+					}
+				}
+			}
 			
 			
 			
@@ -89,8 +113,9 @@ public class ExcelWriter {
 			fileOut.flush();
 			fileOut.close();
 
-			
-			base.exportBase(filepath);
+			if (!is_leaf){
+				base.exportBase(folderpath+"Sums");
+			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -102,18 +127,26 @@ public class ExcelWriter {
 	private static void writeTab(String cleft, content contenus, Bdd baseSum, Workbook wb, String[] chemin){
 		try {
 			
+			String accession = contenus.get_accession();
+			String organism = contenus.get_organism();
+			String new_cleft = "";
+			
 			switch (cleft.split("_")[0]){
 			case "Chromosome" : 
-				baseSum.open_tampon("Sum_Chromosome", "", "");
+				//baseSum.open_tampon("Sum_Chromosome", "", "");
+				new_cleft="Sum_Chromosome";
 				break;
 			case "Chloroplast" : 
-				baseSum.open_tampon("Sum_Chloroplast", "", "");
+				//baseSum.open_tampon("Sum_Chloroplast", "", "");
+				new_cleft="Sum_Chloroplast";
 				break;
 			case "Mitochondrion" : 
-				baseSum.open_tampon("Sum_Mitochondrion", "", "");
+				//baseSum.open_tampon("Sum_Mitochondrion", "", "");
+				new_cleft="Sum_Mitochondrion";
 				break;
 			case "DNA" : 
-				baseSum.open_tampon("Sum_DNA", "", "");
+				//baseSum.open_tampon("Sum_DNA", "", "");
+				new_cleft="Sum_DNA";
 				break;
 			}
 			
@@ -141,29 +174,27 @@ public class ExcelWriter {
 			}
 			
 			
-			//En-tête
+			//En-tête TODO : ajouter accession et taxonomy (organism)
 			// Name
 			String filename = "";
 			if (chemin[3] != null && chemin[3] != "" ) {
 				filename = chemin[3];
-				rowlist.get(2).getCell(11).setCellValue("Organism Name");
+				rowlist.get(2).getCell(17).setCellValue("Organism Name");
 			}
 			else if (chemin[2] != null && chemin[2] != "" ) {
 				filename = chemin[2];
-				rowlist.get(2).getCell(11).setCellValue("SubGroup Name");
+				rowlist.get(2).getCell(17).setCellValue("SubGroup Name");
 			}
 			else if (chemin[1] != null && chemin[1] != "") {
 				filename = chemin[1];
-				rowlist.get(2).getCell(11).setCellValue("Group Name");
+				rowlist.get(2).getCell(17).setCellValue("Group Name");
 			}
 			else {
 				filename = chemin[0];
-				rowlist.get(2).getCell(11).setCellValue("Kingdom Name");
+				rowlist.get(2).getCell(17).setCellValue("Kingdom Name");
 			}
-			rowlist.get(2).getCell(11).setCellStyle(getCellStyle(2,11,wb));
 			
-			rowlist.get(2).getCell(12).setCellValue(filename);
-			rowlist.get(2).getCell(12).setCellStyle(getCellStyle(2,11,wb));
+			rowlist.get(2).getCell(18).setCellValue(filename);
 			
 			
 	//		//Inutile
@@ -175,30 +206,33 @@ public class ExcelWriter {
 			
 			
 			//Nb Nucléotides
-			rowlist.get(4).getCell(11).setCellValue("Number of nucleotides");
-			rowlist.get(4).getCell(11).setCellStyle(getCellStyle(4,12,wb));
-			rowlist.get(4).getCell(12).setCellValue(contenus.get_nb_trinucleotides());
-			rowlist.get(4).getCell(12).setCellStyle(getCellStyle(2,11,wb));
+			rowlist.get(4).getCell(17).setCellValue("Number of nucleotides");
+			rowlist.get(4).getCell(18).setCellValue(contenus.get_nb_trinucleotides());
 	//		rowlist.get(3).getCell(8).setCellValue("Nb dinucleotides");
 	//		rowlist.get(3).getCell(9).setCellStyle(intStyle);
 	//		rowlist.get(3).getCell(9).setCellValue(contenus.get_nb_dinucleotides()/2);
 		
 			//Nb CDS
-			rowlist.get(6).getCell(11).setCellStyle(getCellStyle(2,11,wb));
-			rowlist.get(6).getCell(11).setCellValue("Number of cds sequences");
-			rowlist.get(6).getCell(12).setCellStyle(getCellStyle(6,12,wb));
-			rowlist.get(6).getCell(12).setCellValue(contenus.get_nb_CDS());
-			baseSum.incr_mult_nb_CDS_traites(cleft, "", "", contenus.get_nb_CDS());
+			rowlist.get(6).getCell(17).setCellValue("Number of cds sequences");
+			rowlist.get(6).getCell(18).setCellValue(contenus.get_nb_CDS());
+			baseSum.incr_mult_nb_CDS_traites(new_cleft, "", "", contenus.get_nb_CDS());
 			
 			
 			//Invalid CDS
-			rowlist.get(8).getCell(11).setCellValue("Number of invalid cds");
-			rowlist.get(8).getCell(11).setCellStyle(getCellStyle(2,11,wb));
-			rowlist.get(8).getCell(12).setCellStyle(getCellStyle(8,12,wb));
-			rowlist.get(8).getCell(12).setCellValue(contenus.get_nb_CDS_non_traites());
-			baseSum.incr_mult_nb_CDS_non_traites(cleft, "", "", contenus.get_nb_CDS_non_traites());
+			rowlist.get(8).getCell(17).setCellValue("Number of invalid cds");
+			rowlist.get(8).getCell(18).setCellValue(contenus.get_nb_CDS_non_traites());
+			baseSum.incr_mult_nb_CDS_non_traites(new_cleft, "", "", contenus.get_nb_CDS_non_traites());
 			
+			//Modification date
+			rowlist.get(10).getCell(17).setCellValue("Modification Date");
 			
+			//Accession
+			rowlist.get(12).getCell(17).setCellValue("Accession");
+			rowlist.get(12).getCell(18).setCellValue(accession);
+			
+			//Taxonomy
+			rowlist.get(14).getCell(17).setCellValue("Taxonomy");
+			rowlist.get(14).getCell(18).setCellValue(organism);
 	
 			
 			//Ligne 1
@@ -213,16 +247,14 @@ public class ExcelWriter {
 			rowlist.get(0).getCell(8).setCellValue("Pref. Phase 1");
 			rowlist.get(0).getCell(9).setCellValue("Pref. Phase 3");
 			
-			rowlist.get(67).getCell(0).setCellValue("Dinucléotides");			
-			rowlist.get(67).getCell(1).setCellValue("Phase 0");			
-			rowlist.get(67).getCell(2).setCellValue("Freq. Phase 0");			
-			rowlist.get(67).getCell(3).setCellValue("Phase 1");
-			rowlist.get(67).getCell(4).setCellValue("Freq. Phase 1");
-			rowlist.get(67).getCell(5).setCellValue("Pref. Phase 0");
-			rowlist.get(67).getCell(6).setCellValue("Pref. Phase 1");
+			rowlist.get(0).getCell(11).setCellValue("Dinucléotides");			
+			rowlist.get(0).getCell(12).setCellValue("Phase 0");			
+			rowlist.get(0).getCell(13).setCellValue("Freq. Phase 0");			
+			rowlist.get(0).getCell(14).setCellValue("Phase 1");
+			rowlist.get(0).getCell(15).setCellValue("Freq. Phase 1");
 			
-			rowlist.get(65).getCell(0).setCellValue("Total");
-			rowlist.get(84).getCell(0).setCellValue("Total");
+			rowlist.get(66).getCell(0).setCellValue("Total");
+			rowlist.get(18).getCell(11).setCellValue("Total");
 			
 			
 			//on remplit les phases nombres des trinucléotides
@@ -236,13 +268,16 @@ public class ExcelWriter {
 						triplet.setCharAt(2, Bdd.charOfNucleotideInt(l));
 						rowlist.get(trinucleotide).getCell(0).setCellValue(triplet.toString()); //on remplit le nom des trinucléotides
 						for (int i = 0; i<3; i++){
-							rowlist.get(trinucleotide).getCell(1+2*i).setCellStyle(getCellStyle(trinucleotide,1+2*i,wb));
 							rowlist.get(trinucleotide).getCell(1+2*i).setCellValue((double)(contenus.get_tableautrinucleotides(i,j,k,l)));
-							baseSum.ajoute_mult_nucleotides(i, j, k, l, contenus.get_tableautrinucleotides(i,j,k,l));	
+							rowlist.get(trinucleotide).getCell(7+i).setCellValue((double)(contenus.get_tableauPhasePref(i,j,k,l)));
+							baseSum.get_contenu(new_cleft, "", filename).ajoute_mult_nucleotides(i, j, k, l, contenus.get_tableautrinucleotides(i,j,k,l),new_cleft);
+							baseSum.get_contenu(new_cleft, "", filename).ajout_mult_PhasePref(i, j, k, l, contenus.get_tableauPhasePref(i,j,k,l),new_cleft);
+							//System.out.println(baseSum.get_contenu(new_cleft, "", filename));;
 						}
 					}
 				}
 			}
+			
 			
 			//on remplit les phases nombres  des dinucléotides
 			StringBuilder couple = new StringBuilder("--");
@@ -250,12 +285,11 @@ public class ExcelWriter {
 				couple.setCharAt(0, Bdd.charOfNucleotideInt(j));
 				for (int k=0; k< 4; k++){
 					couple.setCharAt(1, Bdd.charOfNucleotideInt(k));
-					int dinucleotide = k+4*j+68;
-					rowlist.get(dinucleotide).getCell(0).setCellValue(couple.toString()); //on remplit le nom des dinucléotides
+					int dinucleotide = k+4*j+1;
+					rowlist.get(dinucleotide).getCell(11).setCellValue(couple.toString()); //on remplit le nom des dinucléotides
 					for (int i = 0; i<2; i++){
-						rowlist.get(dinucleotide).getCell(1+2*i).setCellStyle(getCellStyle(dinucleotide,1+2*i,wb));
-						rowlist.get(dinucleotide).getCell(1+2*i).setCellValue((double)(contenus.get_tableaudinucleotides(i,j,k)));
-						baseSum.ajoute_mult_nucleotides(i, j, k,  contenus.get_tableaudinucleotides(i,j,k));
+						rowlist.get(dinucleotide).getCell(12+2*i).setCellValue((double)(contenus.get_tableaudinucleotides(i,j,k)));
+						baseSum.get_contenu(new_cleft, "", filename).ajoute_mult_nucleotides(i, j, k,  contenus.get_tableaudinucleotides(i,j,k));
 					}
 				}
 			}
@@ -267,18 +301,16 @@ public class ExcelWriter {
 				for (int j = 0; j<64;j++){
 					tmp = tmp + (rowlist.get(j+1).getCell(1+2*i).getNumericCellValue());	
 				}
-				rowlist.get(65).getCell(1+2*i).setCellStyle(getCellStyle(65,1+2*i,wb));
-				rowlist.get(65).getCell(1+2*i).setCellValue(tmp);
+				rowlist.get(66).getCell(1+2*i).setCellValue(tmp);
 				
 			}
 			//dinucleotides
 			for(int i = 0; i<2;i++){
 				double tmp = 0;
 				for (int j = 0; j<16;j++){
-					tmp = tmp + (rowlist.get(j+68).getCell(1+2*i).getNumericCellValue());	
+					tmp = tmp + (rowlist.get(j+1).getCell(12+2*i).getNumericCellValue());	
 				}
-				rowlist.get(84).getCell(1+2*i).setCellStyle(getCellStyle(84,1+2*i,wb));
-				rowlist.get(84).getCell(1+2*i).setCellValue(tmp);
+				rowlist.get(18).getCell(12+2*i).setCellValue(tmp);
 				
 			}
 			
@@ -286,10 +318,9 @@ public class ExcelWriter {
 			//on remplit les phases probabilités
 			//trinucleotides
 			for (int i =0; i<3; i++){
-				double total = rowlist.get(65).getCell(1+2*i).getNumericCellValue();
+				double total = rowlist.get(66).getCell(1+2*i).getNumericCellValue();
 				if (total != 0){
 					for (int j = 0; j<64; j++){
-						rowlist.get(j+1).getCell(2+2*i).setCellStyle(getCellStyle(j+1,2+2*i,wb));
 						double tmp = rowlist.get(j+1).getCell(1+2*i).getNumericCellValue();
 						rowlist.get(j+1).getCell(2+2*i).setCellValue(100*tmp/total);
 					}
@@ -297,12 +328,11 @@ public class ExcelWriter {
 			}
 			//dinucleotides
 			for (int i =0; i<2; i++){
-				double total = rowlist.get(84).getCell(1+2*i).getNumericCellValue();
+				double total = rowlist.get(18).getCell(12+2*i).getNumericCellValue();
 				if (total != 0){
 					for (int j = 0; j<16; j++){
-						rowlist.get(j+68).getCell(2+2*i).setCellStyle(getCellStyle(j+68,2+2*i,wb));
-						double tmp = rowlist.get(j+68).getCell(1+2*i).getNumericCellValue();
-						rowlist.get(j+68).getCell(2+2*i).setCellValue(100*tmp/total);
+						double tmp = rowlist.get(j+1).getCell(12+2*i).getNumericCellValue();
+						rowlist.get(j+1).getCell(13+2*i).setCellValue(100*tmp/total);
 					}
 				}
 			}
@@ -314,18 +344,16 @@ public class ExcelWriter {
 				for (int j = 0; j<64;j++){
 					tmp = tmp + (rowlist.get(j+1).getCell(2+2*i).getNumericCellValue());	
 				}
-				rowlist.get(65).getCell(2+2*i).setCellStyle(getCellStyle(65,2+2*i,wb));
-				rowlist.get(65).getCell(2+2*i).setCellValue(tmp);
+				rowlist.get(66).getCell(2+2*i).setCellValue(tmp);
 				
 			}
 			//dinucleotides
 			for(int i = 0; i<2;i++){
 				double tmp = 0;
 				for (int j = 0; j<16;j++){
-					tmp = tmp + (rowlist.get(j+68).getCell(2+2*i).getNumericCellValue());	
+					tmp = tmp + (rowlist.get(j+1).getCell(13+2*i).getNumericCellValue());	
 				}
-				rowlist.get(84).getCell(2+2*i).setCellStyle(getCellStyle(84,2+2*i,wb));
-				rowlist.get(84).getCell(2+2*i).setCellValue(tmp);
+				rowlist.get(18).getCell(13+2*i).setCellValue(tmp);
 				
 			}
 			
@@ -336,10 +364,7 @@ public class ExcelWriter {
 				}
 			}
 			
-			
-			
-			
-			baseSum.close_tampon();
+			//baseSum.close_tampon();
 			
 		} catch (CharInvalideException e) {
 			e.printStackTrace();
@@ -385,15 +410,9 @@ public class ExcelWriter {
 				res.setFillPattern(CellStyle.SOLID_FOREGROUND);
 			}
 			//dinuclotides sans pref phase
-			else if (i<17 && ((j>10 && j <16)||(i==0 && j<18))){
+			else if (i<19 && ((j>10 && j <16)||(i==0 && j<16 && j>10))){
 				//Couleur foncée
 				res.setFillForegroundColor(gray);
-				res.setFillPattern(CellStyle.SOLID_FOREGROUND);
-			}
-			//dinucléotides pref de phase
-			else if (i<17 && j<18){
-				//Couleur Claire
-				res.setFillForegroundColor(light_gray);
 				res.setFillPattern(CellStyle.SOLID_FOREGROUND);
 			}
 			
@@ -429,15 +448,11 @@ public class ExcelWriter {
 			}
 			
 			//dinculéotides sans pref de phase
-			else if (i<17 && j%2==1 && j<16){
+			else if (i<19 && j%2==0 && j<16){
 				res.setDataFormat(dataFormat.getFormat("0"));
 			}
-			else if(i<17 && j%2==0 && j<16){
+			else if(i<19 && j%2==1 && j<16){
 				res.setDataFormat(dataFormat.getFormat("0.00"));
-			}
-			//dinucléotides pref de phase
-			else if(i<17 && j>15 && j<18){
-				res.setDataFormat(dataFormat.getFormat("0"));
 			}
 		}
 		

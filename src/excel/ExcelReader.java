@@ -28,11 +28,23 @@ public class ExcelReader {
 			File tmp = new File(folder+Configuration.FOLDER_SEPARATOR+listeFichiers[i]);
 			if (tmp.isDirectory() == true){
 				String[] listeSousFichiers = tmp.list();
+//				Boolean isleaf=true;
+//				int k=0;
+//				while ( k < listeSousFichiers.length && isleaf){
+//					if (listeSousFichiers[k].endsWith(".bdd")){
+//						if (!listeSousFichiers[k].equalsIgnoreCase("Sums.bdd")) {
+//							isleaf=false;
+//						}
+//					}
+//				}
 				for (int j = 0; j< listeSousFichiers.length; j++ ){
-					if (listeSousFichiers[j].endsWith(".bdd")) {
+					//System.out.println(listeSousFichiers[j]);
+					
+					if (listeSousFichiers[j].equalsIgnoreCase("Sums.bdd")) {
 						listebdd.add(folder+Configuration.FOLDER_SEPARATOR+listeFichiers[i]+Configuration.FOLDER_SEPARATOR+listeSousFichiers[j]);
 					}
 				}
+				//System.out.println(listebdd.size());
 			}
 		}
 		

@@ -142,22 +142,23 @@ public class Bdd
 		tampon_tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3]++;
 	}
 	
-	//ajoute plusieurs tri nucleotides a la phase indiquée
-	public void ajoute_mult_nucleotides (int phase, int nucleotide1, int nucleotide2, int nucleotide3, long nbr) throws CharInvalideException
-	{
-		tampon_tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3]+=nbr;
+	public content get_contenu(String cleft, String accession, String organism){
+		
+		content contenus_cleft = contenus.get(cleft);
+		if (contenus_cleft == null)
+		{
+			contenus_cleft = new content(accession, organism);
+			contenus.put(cleft,contenus_cleft);
+			
+		}
+		//System.out.println(contenus_cleft.tableautrinucleotides[0][0][0][0]);
+		return contenus_cleft;
 	}
 	
 	//ajoute un dinucleotide à la phase indiquée
 	public void ajoute_nucleotides (int phase, int nucleotide1, int nucleotide2) throws CharInvalideException
 	{
 		tampon_tableaudinucleotides[phase][nucleotide1][nucleotide2]++;
-	}
-	
-	//ajoute plusieurs dinucleotides à la phase indiquée
-	public void ajoute_mult_nucleotides (int phase, int nucleotide1, int nucleotide2, long nbr) throws CharInvalideException
-	{
-			tampon_tableaudinucleotides[phase][nucleotide1][nucleotide2]+=nbr;
 	}
 	
 	//retire un dinucleotide à la phase indiquée
@@ -462,6 +463,7 @@ public class Bdd
 		
 		private String accession;
 		private String organism;
+		private long nb_items;
 		
 		public content(String accessionArg, String organismArg)
 		{
@@ -478,6 +480,7 @@ public class Bdd
 			
 			accession = accessionArg;
 			organism = organismArg;
+			nb_items=1;
 		}
 		
 		//----------
@@ -528,6 +531,24 @@ public class Bdd
 		public long get_tableauPhasePref (int phase, int nucleotide1, int nucleotide2, int nucleotide3) throws CharInvalideException
 		{
 			return tableauPhasePref[phase][nucleotide1][nucleotide2][nucleotide3];
+		}
+		
+		public void ajout_mult_PhasePref (int phase, int nucleotide1, int nucleotide2, int nucleotide3, long nbr, String cleft){
+			content contenus_cleft = contenus.get(cleft);
+			contenus_cleft.tableauPhasePref[phase][nucleotide1][nucleotide2][nucleotide3]+=nbr;
+		}
+		
+		//ajoute plusieurs tri nucleotides a la phase indiquée
+		public void ajoute_mult_nucleotides (int phase, int nucleotide1, int nucleotide2, int nucleotide3, long nbr,String cleft) throws CharInvalideException
+		{
+			content contenus_cleft = contenus.get(cleft);
+			contenus_cleft.tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3]+=nbr;
+		}
+		
+		//ajoute plusieurs dinucleotides à la phase indiquée
+		public void ajoute_mult_nucleotides (int phase, int nucleotide1, int nucleotide2, long nbr) throws CharInvalideException
+		{
+				tableaudinucleotides[phase][nucleotide1][nucleotide2]+=nbr;
 		}
 		
 		public String get_accession ()
@@ -589,6 +610,7 @@ public class Bdd
 			if (organism.equals("")) {
 				organism = cont.organism;
 			}
+			nb_items += cont.nb_items;
 		}
 		
 		//serialization
@@ -604,6 +626,7 @@ public class Bdd
 		   tableauPhasePref = (long[][][][]) inputstream.readObject();
 		   accession = (String) inputstream.readObject();
 		   organism = (String) inputstream.readObject();
+		   nb_items = inputstream.readLong();
 	   }
 
 	   private void writeObject(ObjectOutputStream outputstream) throws IOException
@@ -617,6 +640,7 @@ public class Bdd
 			outputstream.writeObject(tableauPhasePref);
 			outputstream.writeObject(accession);
 			outputstream.writeObject(organism);
+			outputstream.writeLong(nb_items);
 	  }
 	}
 }

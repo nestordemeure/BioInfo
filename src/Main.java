@@ -66,7 +66,7 @@ public class Main {
 		ExcelWriter.writer("Results/patate/patate2/sous-grp/plop/plop", chemin, base);
 		ExcelWriter.writer("Results/patate/patate2/sous-grp/plop2/plop2", chemin, base);
 		
-		//ExcelManager.fusionExcels("Results");
+		ExcelManager.fusionExcels("Results");
 		
 	}
 }
