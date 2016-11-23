@@ -115,9 +115,12 @@ public class Bdd
 		tampon_tableautrinucleotides[phase3][nucleotide1][nucleotide2][nucleotide3]++;
 		tampon_tableaudinucleotides[phase2][nucleotide1][nucleotide2]++;
 		//TODO incrémente toStream pour le streamer
-		ecrit_nucleotideToStream(nucleotide1);
-		ecrit_nucleotideToStream(nucleotide2);
-		ecrit_nucleotideToStream(nucleotide3);
+		if(phase3==0)
+		{
+			ecrit_nucleotideToStream(nucleotide1);
+			ecrit_nucleotideToStream(nucleotide2);
+			ecrit_nucleotideToStream(nucleotide3);
+		}
 	}
 	
 	//ajoute un tri nucleotides a la phase indiquée
@@ -125,9 +128,12 @@ public class Bdd
 	{
 		tampon_tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3]++;
 		//TODO incrémente toStream pour le streamer
-		ecrit_nucleotideToStream(nucleotide1);
-		ecrit_nucleotideToStream(nucleotide2);
-		ecrit_nucleotideToStream(nucleotide3);
+		if(phase==0)
+		{
+			ecrit_nucleotideToStream(nucleotide1);
+			ecrit_nucleotideToStream(nucleotide2);
+			ecrit_nucleotideToStream(nucleotide3);
+		}
 	}
 	
 	//ajoute un dinucleotide à la phase indiquée
@@ -161,7 +167,7 @@ public class Bdd
 			//TODO streamer le texte si le streamer est non-null
 			if(tampon_streamer!=null)
 			{
-				byte[] bytes = tampon_toStream.toString().getBytes();
+				byte[] bytes = tampon_toStream.append('\n').toString().getBytes();
 				try { tampon_streamer.write(bytes); } 
 				catch (IOException e) { /* Auto-generated catch block */ }
 				tampon_toStream = null;
