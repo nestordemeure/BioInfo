@@ -1,4 +1,5 @@
 package Parser;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
@@ -21,17 +22,41 @@ public class Parser
 	String accession;
 	String organism;
 	
+	OutputStream streamer;
+	
 	public Parser (Bdd base, Scanner scan)
 	{
 		base_de_donnees = base;
 		scanner = scan;
 	}
 
+	public void parse(String key, OutputStream stream) throws ScannerNullException
+	{
+		streamer = stream;
+
+		//on réinitialise le systhème de réservation
+		CDS_list = new ArrayList<CDS>();
+		table_des_reservations = new ReservationTable();
+		cleft = key;
+		accession = "";
+		
+		try 
+		{
+			parser_entete();
+			parser_genome();
+		} 
+		catch (NoOriginException eorig) 
+		{
+			/*en l'absence d'origine dans un fichier, on n'en fait rien*/
+		}
+	}
+	
 	//fonction qui fait tourner le parseur
 	public void parse(String key) throws ScannerNullException
 	{
-		while ( scanner.hasNext() )
-		{
+		streamer = null;
+		//while ( scanner.hasNext() )
+		//{
 			//on réinitialise le systhème de réservation
 			CDS_list = new ArrayList<CDS>();
 			table_des_reservations = new ReservationTable();
@@ -47,11 +72,12 @@ public class Parser
 			{
 				/*en l'absence d'origine dans un fichier, on n'en fait rien*/
 			}
-		}
+		//}
 	}
 	
 	public void parse(String key, int filenum /* nombre de fichiers aglomérées*/ ) throws ScannerNullException
 	{
+		streamer = null;		
 		for ( int i=1 ; i <= filenum ; i++ )
 		{
 			if (scanner.hasNext())
@@ -82,7 +108,6 @@ public class Parser
 	{
 		try
 		{
-			//TODO find and parse the locus or any info (organism, accession)
 			/*
 			trouverPrefix("LOCUS");
 			String locus = ligne_actuelle.substring(12);
@@ -94,7 +119,6 @@ public class Parser
 			//on va parser l'accession
 			trouverPrefix("ACCESSION");
 			accession = ligne_actuelle.substring(12);
-			//TODO transmettre à la base
 			
 			//on va parser l'organisme
 			trouverPrefix("  ORGANISM");
@@ -141,7 +165,7 @@ public class Parser
 	//prend une ligne contenant un CDS en entrée et l'ajoute à la liste de CDS en le parsant
 	void parser_descripteur_CDS() throws ScannerNullException
 	{		
-		CDS cds = new CDS(base_de_donnees,cleft,accession,organism);
+		CDS cds = new CDS(base_de_donnees,cleft,accession,organism,streamer);
 		try 
 		{
 			table_des_reservations.open(); //on indique qu'on va passer de nouvelles réservations

@@ -4,7 +4,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.io.Serializable;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -43,6 +46,9 @@ public class Bdd
 	private String tampon_accession;
 	private String tampon_organism;
 	
+	private OutputStream tampon_streamer;
+	private StringBuilder tampon_toStream; //TODO
+	
 	boolean empty_tamp;
 	
 //-----------------------------------------------------------------------------	
@@ -56,7 +62,7 @@ public class Bdd
 		
 		tampon_tableautrinucleotides = new int[3][4][4][4];
 		tampon_tableaudinucleotides = new int[2][4][4];
-		
+
 		empty_tamp=true;
 	}
 	
@@ -70,7 +76,7 @@ public class Bdd
 		
 		try 
 		{
-			contenus = (TreeMap<String,content>) inputstream.readObject(); //TODO a tester
+			contenus = (TreeMap<String,content>) inputstream.readObject();
 		} 
 		catch (ClassNotFoundException e) 
 		{
@@ -108,12 +114,20 @@ public class Bdd
 	{
 		tampon_tableautrinucleotides[phase3][nucleotide1][nucleotide2][nucleotide3]++;
 		tampon_tableaudinucleotides[phase2][nucleotide1][nucleotide2]++;
+		//TODO incrémente toStream pour le streamer
+		ecrit_nucleotideToStream(nucleotide1);
+		ecrit_nucleotideToStream(nucleotide2);
+		ecrit_nucleotideToStream(nucleotide3);
 	}
 	
 	//ajoute un tri nucleotides a la phase indiquée
 	public void ajoute_nucleotides (int phase, int nucleotide1, int nucleotide2, int nucleotide3) throws CharInvalideException
 	{
 		tampon_tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3]++;
+		//TODO incrémente toStream pour le streamer
+		ecrit_nucleotideToStream(nucleotide1);
+		ecrit_nucleotideToStream(nucleotide2);
+		ecrit_nucleotideToStream(nucleotide3);
 	}
 	
 	//ajoute un dinucleotide à la phase indiquée
@@ -128,11 +142,29 @@ public class Bdd
 		tampon_tableaudinucleotides[phase][nucleotide1][nucleotide2]--;
 	}
 
+	// TODO ajoute un nucleotide au stringbuilder qu'on feedera au streamer
+	private void ecrit_nucleotideToStream(int nucleotide)
+	{
+		char c;
+		try { c = charOfNucleotideInt(nucleotide); } 
+		catch (CharInvalideException e) { c='?'; }
+		tampon_toStream.append(c);
+	}
+	
 //tampon
 
 	//déplace le contenus du tampon dans la mémoire
 		public void close_tampon()
 		{
+			//TODO streamer le texte si le streamer est non-null
+			if(tampon_streamer!=null)
+			{
+				byte[] bytes = tampon_toStream.toString().getBytes();
+				try { tampon_streamer.write(bytes); } 
+				catch (IOException e) { /* Auto-generated catch block */ }
+				tampon_toStream = null;
+			}
+			
 			//on apelle le contenus associé a la cleft si elle existe
 			content contenus_cleft = contenus.get(tampon_cleft);
 			if (contenus_cleft == null)
@@ -162,7 +194,6 @@ public class Bdd
 					//trinucleotide
 					for(int nucleotide3 = 0 ; nucleotide3<4 ; nucleotide3++)
 					{
-						//TODO handling for the phase pref
 						// phase 0
 						valeur_tampon = tampon_tableautrinucleotides[0][nucleotide1][nucleotide2][nucleotide3];
 						
@@ -238,7 +269,7 @@ public class Bdd
 		}
 		
 		//s'assure que le tampon est vide pour avancer
-		public void open_tampon(String cleft, String accession, String organism)
+		public void open_tampon(String cleft, String accession, String organism, OutputStream streamer)
 		{
 			if (empty_tamp)
 			{
@@ -252,6 +283,7 @@ public class Bdd
 			tampon_cleft = cleft;
 			tampon_accession = accession;
 			tampon_organism = organism;
+			tampon_streamer = streamer; //TODO
 		}
 	
 	//remet un tampon à 0
@@ -272,6 +304,8 @@ public class Bdd
 				}
 			}
 		}
+		tampon_streamer = null;
+		tampon_toStream = new StringBuilder(); //TODO
 	}
 	
 	// ajoute le contenus de la base donnée en argument à la base actuelle
