@@ -109,12 +109,29 @@ public class Parser
 		try
 		{
 			/*
-			trouverPrefix("LOCUS");
+			
 			String locus = ligne_actuelle.substring(12);
 			if(locus.contains(" ")){
 			   locus = locus.substring(0, locus.indexOf(" ")); 
 			}
 			*/
+			//TODO get key if needed
+			if(cleft==null)
+			{
+				trouverPrefix("LOCUS");
+				if(ligne_actuelle.contains("DNA"))
+				{
+					cleft="DNA"; 
+				}
+				else if(ligne_actuelle.contains("RNA"))
+				{
+					cleft="RNA"; 
+				}
+				else
+				{
+					throw new NoOriginException("no key");
+				}
+			}
 			
 			//on va parser l'accession
 			trouverPrefix("ACCESSION");
