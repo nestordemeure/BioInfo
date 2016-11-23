@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -50,7 +51,9 @@ public class Main {
 				sc.useDelimiter("\n");
 				Bdd db = new Bdd();
 				Parser p = new Parser(db, sc);
-				p.parse("lol",1);
+				ByteArrayOutputStream stream = new ByteArrayOutputStream(); //TODO
+				p.parse("lol",stream); //TODO
+				System.out.println(stream.toString());
 				db.exportBase("/tmp/lol2");
 				System.out.println("********");
 				System.out.println(db.get_tableauxnucleotides_string());

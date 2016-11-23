@@ -145,10 +145,12 @@ public class Bdd
 	// TODO ajoute un nucleotide au stringbuilder qu'on feedera au streamer
 	private void ecrit_nucleotideToStream(int nucleotide)
 	{
-		char c;
-		try { c = charOfNucleotideInt(nucleotide); } 
-		catch (CharInvalideException e) { c='?'; }
-		tampon_toStream.append(c);
+		if(tampon_streamer!=null){
+			char c;
+			try { c = charOfNucleotideInt(nucleotide); } 
+			catch (CharInvalideException e) { c='?'; }
+			tampon_toStream.append(c);
+		}
 	}
 	
 //tampon
@@ -261,7 +263,6 @@ public class Bdd
 					}
 				}
 			}
-			
 			//on suppose qu'on ne ferme le tampon que pour écrire un CDS
 			contenus_cleft.nb_CDS++;
 			
@@ -284,6 +285,7 @@ public class Bdd
 			tampon_accession = accession;
 			tampon_organism = organism;
 			tampon_streamer = streamer; //TODO
+			tampon_toStream = new StringBuilder(); //TODO
 		}
 	
 	//remet un tampon à 0
@@ -304,8 +306,6 @@ public class Bdd
 				}
 			}
 		}
-		tampon_streamer = null;
-		tampon_toStream = new StringBuilder(); //TODO
 	}
 	
 	// ajoute le contenus de la base donnée en argument à la base actuelle
