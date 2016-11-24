@@ -148,6 +148,7 @@ public class Bdd
 		if (contenus_cleft == null)
 		{
 			contenus_cleft = new content(accession, organism);
+			contenus_cleft.nb_items=0;
 			contenus.put(cleft,contenus_cleft);
 			
 		}
@@ -502,6 +503,11 @@ public class Bdd
 			return nbTrinucleotidesParPhase[phase];
 		}
 		
+		public void add_nb_trinucleotides (int phase, long nbr)
+		{
+			nbTrinucleotidesParPhase[phase]+=nbr;
+		}
+		
 		//toute phases confondues
 		public long get_nb_dinucleotides ()
 		{
@@ -559,6 +565,16 @@ public class Bdd
 		public String get_organism ()
 		{
 			return organism;
+		}
+		
+		public long get_nb_items()
+		{
+			return nb_items;
+		}
+		
+		public void add_nb_items(int nbr)
+		{
+			nb_items+=nbr;
 		}
 		
 		//----------
