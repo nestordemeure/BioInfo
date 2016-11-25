@@ -117,6 +117,9 @@ public class ExcelWriter {
 			if (!is_leaf){
 				base.exportBase(folderpath+"Sums");
 			}
+			else{
+				base.exportBase(filepath);
+			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -201,19 +204,19 @@ public class ExcelWriter {
 			//Modification date
 			rowlist.get(10).getCell(17).setCellValue("Modification Date");
 			
-			if (!accession.equals("")){
+			if (accession!=null){
 				//Accession
 				rowlist.get(12).getCell(17).setCellValue("Accession");
 				rowlist.get(12).getCell(18).setCellValue(accession);
 			}
 			
-			if (!taxonomy.equals("")){
+			if (taxonomy!=null){
 				//Taxonomy
 				rowlist.get(14).getCell(17).setCellValue("Taxonomy");
 				rowlist.get(14).getCell(18).setCellValue(taxonomy);
 			}
 			
-			if (!bioproject.equals("")){
+			if (taxonomy!=null){
 				rowlist.get(16).getCell(17).setCellValue("Bioproject");
 				rowlist.get(16).getCell(18).setCellValue(bioproject);
 			}

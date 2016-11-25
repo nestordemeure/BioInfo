@@ -51,24 +51,24 @@ public class Main {
 		Bdd base = new Bdd();
 		
 		//mitochondrie et une séquence de type General vide
-		Scanner scanneur = Net.getUrl("file:///home/micka/Bureau/BioInfo/sequence2.gb");
+		Scanner scanneur = Net.getUrl("file:///home/adrien/Bureau/BioInfo/sequence2.gb");
 		Parser parseur = new Parser(base,scanneur);
 		Organism test=new Organism("Kingdom", "Group", "Subgroup", "Organism", "BP_Project");
 		parseur.parse("Chromosome_NC_2516354",test,null);
 		//chloroplastes
-		scanneur = Net.getUrl("file:///home/micka/Bureau/BioInfo/sequence1.gb");
+		scanneur = Net.getUrl("file:///home/adrien/Bureau/BioInfo/sequence1.gb");
 		parseur = new Parser(base,scanneur);
 		parseur.parse("Chromosome_NC_2516355",test,null);
 		//chromosome1
-		scanneur = Net.getUrl("file:///home/micka/Bureau/BioInfo/sequence0.gb");
+		scanneur = Net.getUrl("file:///home/adrien/Bureau/BioInfo/sequence0.gb");
 		parseur = new Parser(base,scanneur);
 		parseur.parse("Mitochondrion_NC_6846",test,null);
 		//chromosome2
-		scanneur = Net.getUrl("file:///home/micka/Bureau/BioInfo/sequence4.gb");
+		scanneur = Net.getUrl("file:///home/adrien/Bureau/BioInfo/sequence4.gb");
 		parseur = new Parser(base,scanneur);
 		parseur.parse("Chloroplast_NC_56464",test,null);
 		//chromosome2
-		scanneur = Net.getUrl("file:///home/micka/Bureau/BioInfo/sequence4.gb");
+		scanneur = Net.getUrl("file:///home/adrien/Bureau/BioInfo/sequence4.gb");
 		parseur = new Parser(base,scanneur);
 		parseur.parse("DNA_NC_skeutuveuu",test,null);
 		
