@@ -167,7 +167,9 @@ public class ParserManager implements Runnable{
 		Scanner sc = Net.getUrl(url);
 		try{
 			Parser p = new Parser(this.db, Net.getUrl(url));
-			p.parse("",length);
+
+			p.parse("lol", length);
+			
 			if(sc != null){
 				sc.close();
 			}

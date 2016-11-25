@@ -1,9 +1,11 @@
 package Parser;
 
+import java.io.OutputStream;
 import java.util.ArrayList;
 import Bdd.Bdd;
 import exceptions.CDSInvalideException;
 import exceptions.DeadCDSException;
+import tree.Organism;
 
 //un CDS est une liste de séquences
 public class CDS 
@@ -12,17 +14,17 @@ public class CDS
 	private Bdd base_de_donnees;
 	int expected_ligne_number;
 	String cleft;
-	String accession;
-	String organism;
+	Organism organism;
+	OutputStream streamer;
 	
-	CDS(Bdd base, String clef, String accessionArg, String organismArg)
+	CDS(Bdd base, String clef, Organism organismArg, OutputStream stream)
 	{
 		sequence_list = new ArrayList<sequence>();
 		expected_ligne_number=0;
 		base_de_donnees=base;
 		cleft = clef;
-		accession = accessionArg;
 		organism = organismArg;
+		streamer = stream;
 	}
 
 	//on coupe les ponts vers les séquences et on envois une exception pour signaler que ce cds ne sert plus
@@ -58,7 +60,7 @@ public class CDS
 			try
 			{
 				//on s'assure que le tampon est vide avant d'attaquer
-				base_de_donnees.open_tampon(cleft,accession,organism); //TODO mettre la vrai cleft parsée
+				base_de_donnees.open_tampon(cleft,organism,streamer); //TODO
 				
 				//l'automate qui va parcourir cette séquence, dans le sens directe par défaut
 				automateLecteurDeGenes auto = new automateLecteurDeGenes(base_de_donnees);
@@ -73,12 +75,11 @@ public class CDS
 			
 				//on test le codon stop et la taille du CDS
 				auto.test_CDS();
-				
 				base_de_donnees.close_tampon();
 			}
 			catch (CDSInvalideException e)
 			{
-				base_de_donnees.incr_nb_CDS_non_traites(cleft,accession,organism);  //TODO mettre la vrai cleft parsée
+				base_de_donnees.incr_nb_CDS_non_traites(cleft,organism);
 			}
 			
 			//ce CDS ne sert plus
