@@ -15,6 +15,7 @@ import java.util.TreeMap;
 
 import exceptions.CharInvalideException;
 import manager.AccessManager;
+import tree.Organism;
 
 public class Bdd 
 {
@@ -43,8 +44,7 @@ public class Bdd
 	private int tampon_tableautrinucleotides[][][][]; //tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3]
 	private int tampon_tableaudinucleotides[][][]; //tableaudinucleotides[phase][nucleotide1][nucleotide2]
 	private String tampon_cleft;
-	private String tampon_accession;
-	private String tampon_organism;
+	private Organism tampon_organism;
 	
 	private OutputStream tampon_streamer;
 	private StringBuilder tampon_toStream; //TODO
@@ -95,13 +95,13 @@ public class Bdd
 	
 //incrementeurs
 
-	public void incr_nb_CDS_non_traites (String cleft, String accession, String organism)
+	public void incr_nb_CDS_non_traites (String cleft, Organism organism)
 	{
 		content contenus_cleft = contenus.get(cleft);
 		
 		if (contenus_cleft == null)
 		{
-			contenus_cleft = new content(accession, organism);
+			contenus_cleft = new content(organism);
 			contenus.put(cleft,contenus_cleft);
 		}
 		
@@ -167,7 +167,7 @@ public class Bdd
 			content contenus_cleft = contenus.get(tampon_cleft);
 			if (contenus_cleft == null)
 			{
-				contenus_cleft = new content(tampon_accession, tampon_organism);
+				contenus_cleft = new content(tampon_organism);
 				contenus.put(tampon_cleft,contenus_cleft);
 			}
 			
@@ -269,7 +269,7 @@ public class Bdd
 		}
 		
 		//s'assure que le tampon est vide pour avancer
-		public void open_tampon(String cleft, String accession, String organism, OutputStream streamer)
+		public void open_tampon(String cleft, Organism organism, OutputStream streamer)
 		{
 			if (empty_tamp)
 			{
@@ -281,7 +281,6 @@ public class Bdd
 			}
 			
 			tampon_cleft = cleft;
-			tampon_accession = accession;
 			tampon_organism = organism;
 			tampon_streamer = streamer; //TODO
 			tampon_toStream = new StringBuilder(); //TODO
@@ -480,10 +479,9 @@ public class Bdd
 		
 		private long tableauPhasePref[][][][]; //tableauPhasePref[phase][nucleotide1][nucleotide2][nucleotide3]
 		
-		private String accession;
-		private String organism;
+		private Organism organism;
 		
-		public content(String accessionArg, String organismArg)
+		public content(Organism organismArg)
 		{
 			nb_CDS = 0;
 			nb_CDS_non_traites = 0;
@@ -496,7 +494,6 @@ public class Bdd
 			
 			tableauPhasePref = new long[3][4][4][4];
 			
-			accession = accessionArg;
 			organism = organismArg;
 		}
 		
@@ -550,12 +547,7 @@ public class Bdd
 			return tableauPhasePref[phase][nucleotide1][nucleotide2][nucleotide3];
 		}
 		
-		public String get_accession ()
-		{
-			return accession;
-		}
-		
-		public String get_organism ()
+		public Organism get_organism ()
 		{
 			return organism;
 		}
@@ -601,14 +593,7 @@ public class Bdd
 			
 			nb_CDS += cont.nb_CDS;
 			nb_CDS_non_traites += cont.nb_CDS_non_traites;
-			
-			// descripteurs
-			if (accession.equals("")) {
-				accession = cont.accession;
-			}
-			if (organism.equals("")) {
-				organism = cont.organism;
-			}
+			// TODO no fusion for the organisms
 		}
 		
 		//serialization
@@ -622,8 +607,7 @@ public class Bdd
 		   tableautrinucleotides = (long[][][][]) inputstream.readObject();
 		   tableaudinucleotides = (long[][][]) inputstream.readObject();
 		   tableauPhasePref = (long[][][][]) inputstream.readObject();
-		   accession = (String) inputstream.readObject();
-		   organism = (String) inputstream.readObject();
+		   organism = (Organism) inputstream.readObject();
 	   }
 
 	   private void writeObject(ObjectOutputStream outputstream) throws IOException
@@ -635,7 +619,6 @@ public class Bdd
 			outputstream.writeObject(tableautrinucleotides);
 			outputstream.writeObject(tableaudinucleotides);
 			outputstream.writeObject(tableauPhasePref);
-			outputstream.writeObject(accession);
 			outputstream.writeObject(organism);
 	  }
 	}

@@ -11,6 +11,8 @@ import exceptions.CDSInvalideException;
 import exceptions.DeadCDSException;
 import exceptions.NoOriginException;
 import exceptions.ScannerNullException;
+import tree.Organism;
+import tree.TreeBuilderService;
 
 public class Parser 
 {
@@ -19,9 +21,8 @@ public class Parser
 	private ArrayList<CDS> CDS_list;
 	private ReservationTable table_des_reservations;
 	String cleft;
-	String accession;
-	String organism;
-	
+	String cleftComplement;
+	Organism organism; //TODO
 	OutputStream streamer;
 	
 	public Parser (Bdd base, Scanner scan)
@@ -30,15 +31,26 @@ public class Parser
 		scanner = scan;
 	}
 
-	public void parse(String key, OutputStream stream) throws ScannerNullException
+	public void parse(String key, Organism organismArg, OutputStream stream) throws ScannerNullException
 	{
+		// TODO on initialise l'identification de l'organism
 		streamer = stream;
+		organism = organismArg;
+		if (organismArg.getKingdom().equals(TreeBuilderService.OrganismType.VIRUSES.toString())) 
+		{
+			// virus, the key is in fact the complement of the key
+			cleft = null;
+			cleftComplement = key;
+		}
+		else 
+		{
+			// not a virus, genuine key
+			cleft = key;
+		}
 
 		//on réinitialise le systhème de réservation
 		CDS_list = new ArrayList<CDS>();
 		table_des_reservations = new ReservationTable();
-		cleft = key;
-		accession = "";
 		
 		try 
 		{
@@ -48,56 +60,6 @@ public class Parser
 		catch (NoOriginException eorig) 
 		{
 			/*en l'absence d'origine dans un fichier, on n'en fait rien*/
-		}
-	}
-	
-	//fonction qui fait tourner le parseur
-	public void parse(String key) throws ScannerNullException
-	{
-		streamer = null;
-		//while ( scanner.hasNext() )
-		//{
-			//on réinitialise le systhème de réservation
-			CDS_list = new ArrayList<CDS>();
-			table_des_reservations = new ReservationTable();
-			cleft = key;
-			accession = "";
-			
-			try 
-			{
-				parser_entete();
-				parser_genome();
-			} 
-			catch (NoOriginException eorig) 
-			{
-				/*en l'absence d'origine dans un fichier, on n'en fait rien*/
-			}
-		//}
-	}
-	
-	public void parse(String key, int filenum /* nombre de fichiers aglomérées*/ ) throws ScannerNullException
-	{
-		streamer = null;		
-		for ( int i=1 ; i <= filenum ; i++ )
-		{
-			if (scanner.hasNext())
-			{
-				//on réinitialise le systhème de réservation
-				CDS_list = new ArrayList<CDS>();
-				table_des_reservations = new ReservationTable();
-				cleft = key;
-				accession = "";
-				
-				try 
-				{
-					parser_entete();
-					parser_genome();
-				} 
-				catch (NoOriginException eorig) 
-				{ 
-					/*en l'absence d'origine dans un fichier, on n'en fait rien*/
-				}
-			}
 		}
 	}
 
@@ -121,11 +83,11 @@ public class Parser
 				trouverPrefix("LOCUS");
 				if(ligne_actuelle.contains("DNA"))
 				{
-					cleft="DNA"; 
+					cleft="DNA_"+cleftComplement; //TODO
 				}
 				else if(ligne_actuelle.contains("RNA"))
 				{
-					cleft="RNA"; 
+					cleft="RNA_"+cleftComplement; //TODO
 				}
 				else
 				{
@@ -135,16 +97,17 @@ public class Parser
 			
 			//on va parser l'accession
 			trouverPrefix("ACCESSION");
-			accession = ligne_actuelle.substring(12);
+			organism.setAccession(ligne_actuelle.substring(12));
 			
 			//on va parser l'organisme
 			trouverPrefix("  ORGANISM");
-			organism = ligne_actuelle.substring(12) + "; ";
-			while (organism.charAt(organism.length()-1) != '.') {
+			String taxonomy = ligne_actuelle.substring(12) + "; ";
+			while (taxonomy.charAt(taxonomy.length()-1) != '.') {
 				importAndCheckNull();
-				organism += ligne_actuelle.substring(12);
+				taxonomy += ligne_actuelle.substring(12);
 			}
-
+			organism.setTaxonomy(taxonomy); // TODO
+			
 			//on se place dans la catégorie features
 			trouverPrefix("FEATURES");
 			
@@ -182,7 +145,7 @@ public class Parser
 	//prend une ligne contenant un CDS en entrée et l'ajoute à la liste de CDS en le parsant
 	void parser_descripteur_CDS() throws ScannerNullException
 	{		
-		CDS cds = new CDS(base_de_donnees,cleft,accession,organism,streamer);
+		CDS cds = new CDS(base_de_donnees,cleft,organism,streamer);
 		try 
 		{
 			table_des_reservations.open(); //on indique qu'on va passer de nouvelles réservations
@@ -192,7 +155,7 @@ public class Parser
 		} 
 		catch (CDSInvalideException e) 
 		{
-			base_de_donnees.incr_nb_CDS_non_traites(cleft,accession,organism);
+			base_de_donnees.incr_nb_CDS_non_traites(cleft,organism);
 		}
 	}
 	
