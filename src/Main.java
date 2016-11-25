@@ -14,7 +14,6 @@ import java.nio.channels.ReadableByteChannel;
 import java.util.Scanner;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -29,23 +28,17 @@ import com.github.rholder.retry.StopStrategies;
 import com.github.rholder.retry.WaitStrategies;
 import com.google.common.io.Resources;
 
+import Bdd.Bdd;
+import Parser.Parser;
 import configuration.Configuration;
 
 
-import manager.AccessManager;
-import Parser.*;
-import Bdd.Bdd;
-
-import excel.*;
-import io.Net;
-import manager.ThreadManager;
 import tree.*;
 import ui.UIManager;
 
 public class Main {
 
 	public static void main(String[] args) throws Exception {
-		
 		Callable<Boolean> callable =  new Callable<Boolean>(){
 			public Boolean call() throws Exception{
 				//Scanner sc = new Scanner(Resources.asByteSource(new URL("https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=NC_011594.1&rettype=gb")).openBufferedStream());
