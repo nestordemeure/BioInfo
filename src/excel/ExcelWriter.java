@@ -31,6 +31,7 @@ import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.ss.usermodel.CellStyle;
 
 import exceptions.CharInvalideException;
+import tree.Organism;
 import Parser.*;
 import configuration.Configuration;
 import Bdd.*;
@@ -127,9 +128,13 @@ public class ExcelWriter {
 	private static void writeTab(String cleft, content contenus, Bdd baseSum, Workbook wb, String[] chemin){
 		try {
 			
-			String accession = contenus.get_accession();
-			String organism = contenus.get_organism();
+			String accession = contenus.get_organism().getAccession();
+			String taxonomy = contenus.get_organism().getTaxonomy();
+			String bioproject = contenus.get_organism().getBioproject();
+			
 			String new_cleft="Sum_"+cleft.split("_")[0];
+			
+			Organism empty_org=new Organism("","","","","");
 			
 			XSSFSheet worksheet = (XSSFSheet) wb.createSheet(cleft);
 	
@@ -178,20 +183,10 @@ public class ExcelWriter {
 			rowlist.get(2).getCell(18).setCellValue(filename);
 			
 			
-	//		//Inutile
-	//		rowlist.get(1).getCell(0).setCellValue("Chemin");			
-	//		rowlist.get(1).getCell(1).setCellValue(chemin[0]);			
-	//		rowlist.get(1).getCell(2).setCellValue(chemin[1]);
-	//		rowlist.get(1).getCell(3).setCellValue(chemin[2]);
-	//		rowlist.get(1).getCell(4).setCellValue(chemin[3]);
-			
 			
 			//Nb Nucléotides
 			rowlist.get(4).getCell(17).setCellValue("Number of nucleotides");
 			rowlist.get(4).getCell(18).setCellValue(contenus.get_nb_trinucleotides());
-	//		rowlist.get(3).getCell(8).setCellValue("Nb dinucleotides");
-	//		rowlist.get(3).getCell(9).setCellStyle(intStyle);
-	//		rowlist.get(3).getCell(9).setCellValue(contenus.get_nb_dinucleotides()/2);
 		
 			//Nb CDS
 			rowlist.get(6).getCell(17).setCellValue("Number of valid cds sequences");
@@ -212,21 +207,26 @@ public class ExcelWriter {
 				rowlist.get(12).getCell(18).setCellValue(accession);
 			}
 			
-			if (!organism.equals("")){
+			if (!taxonomy.equals("")){
 				//Taxonomy
 				rowlist.get(14).getCell(17).setCellValue("Taxonomy");
-				rowlist.get(14).getCell(18).setCellValue(organism);
+				rowlist.get(14).getCell(18).setCellValue(taxonomy);
+			}
+			
+			if (!bioproject.equals("")){
+				rowlist.get(16).getCell(17).setCellValue("Bioproject");
+				rowlist.get(16).getCell(18).setCellValue(bioproject);
 			}
 			
 			//Nombre de Chromosomes, DNA, Mitochondrion, etc...
 			if (cleft.split("_")[0].equals("Sum")){
-				rowlist.get(16).getCell(17).setCellValue("Nb of "+cleft.split("_")[1]);
+				rowlist.get(18).getCell(17).setCellValue("Nb of "+cleft.split("_")[1]);
 			}
 			else {
-				rowlist.get(16).getCell(17).setCellValue("Nb of "+cleft.split("_")[0]);
+				rowlist.get(18).getCell(17).setCellValue("Nb of "+cleft.split("_")[0]);
 			}
 			
-			rowlist.get(16).getCell(18).setCellValue(contenus.get_nb_items());
+			rowlist.get(18).getCell(18).setCellValue(contenus.get_nb_items());
 			
 			//Ligne 1
 			rowlist.get(0).getCell(0).setCellValue("Trinucléotides");			
@@ -263,8 +263,8 @@ public class ExcelWriter {
 						for (int i = 0; i<3; i++){
 							rowlist.get(trinucleotide).getCell(1+2*i).setCellValue((double)(contenus.get_tableautrinucleotides(i,j,k,l)));
 							rowlist.get(trinucleotide).getCell(7+i).setCellValue((double)(contenus.get_tableauPhasePref(i,j,k,l)));
-							baseSum.get_contenu(new_cleft, "", "").ajoute_mult_nucleotides(i, j, k, l, contenus.get_tableautrinucleotides(i,j,k,l),new_cleft);
-							baseSum.get_contenu(new_cleft, "", "").ajout_mult_PhasePref(i, j, k, l, contenus.get_tableauPhasePref(i,j,k,l),new_cleft);
+							baseSum.get_contenu(new_cleft, empty_org).ajoute_mult_nucleotides(i, j, k, l, contenus.get_tableautrinucleotides(i,j,k,l),new_cleft);
+							baseSum.get_contenu(new_cleft, empty_org).ajout_mult_PhasePref(i, j, k, l, contenus.get_tableauPhasePref(i,j,k,l),new_cleft);
 							//System.out.println(baseSum.get_contenu(new_cleft, "", filename));;
 						}
 					}
@@ -282,7 +282,7 @@ public class ExcelWriter {
 					rowlist.get(dinucleotide).getCell(11).setCellValue(couple.toString()); //on remplit le nom des dinucléotides
 					for (int i = 0; i<2; i++){
 						rowlist.get(dinucleotide).getCell(12+2*i).setCellValue((double)(contenus.get_tableaudinucleotides(i,j,k)));
-						baseSum.get_contenu(new_cleft, "", "").ajoute_mult_nucleotides(i, j, k,  contenus.get_tableaudinucleotides(i,j,k));
+						baseSum.get_contenu(new_cleft, empty_org).ajoute_mult_nucleotides(i, j, k,  contenus.get_tableaudinucleotides(i,j,k));
 					}
 				}
 			}
@@ -357,12 +357,12 @@ public class ExcelWriter {
 				}
 			}
 						
-			baseSum.incr_mult_nb_CDS_non_traites(new_cleft, "", "", contenus.get_nb_CDS_non_traites());
-			baseSum.incr_mult_nb_CDS_traites(new_cleft, "", "", contenus.get_nb_CDS());
-			baseSum.get_contenu(new_cleft, "", "").add_nb_trinucleotides(0, contenus.get_nb_trinucleotides(0));
-			baseSum.get_contenu(new_cleft, "", "").add_nb_trinucleotides(1, contenus.get_nb_trinucleotides(1));
-			baseSum.get_contenu(new_cleft, "", "").add_nb_trinucleotides(2, contenus.get_nb_trinucleotides(2));
-			baseSum.get_contenu(new_cleft, "", "").add_nb_items(1);
+			baseSum.incr_mult_nb_CDS_non_traites(new_cleft, empty_org, contenus.get_nb_CDS_non_traites());
+			baseSum.incr_mult_nb_CDS_traites(new_cleft, empty_org, contenus.get_nb_CDS());
+			baseSum.get_contenu(new_cleft, empty_org).add_nb_trinucleotides(0, contenus.get_nb_trinucleotides(0));
+			baseSum.get_contenu(new_cleft, empty_org).add_nb_trinucleotides(1, contenus.get_nb_trinucleotides(1));
+			baseSum.get_contenu(new_cleft, empty_org).add_nb_trinucleotides(2, contenus.get_nb_trinucleotides(2));
+			baseSum.get_contenu(new_cleft, empty_org).add_nb_items(1);
 			
 			//baseSum.close_tampon();
 			
