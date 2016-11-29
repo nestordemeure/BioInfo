@@ -684,8 +684,8 @@ public class Bdd
 		   tableautrinucleotides = (long[][][][]) inputstream.readObject();
 		   tableaudinucleotides = (long[][][]) inputstream.readObject();
 		   tableauPhasePref = (long[][][][]) inputstream.readObject();
-		   nb_items = inputstream.readLong();
 		   organism = (Organism) inputstream.readObject();
+		   nb_items = inputstream.readLong();
 	   }
 
 	   private void writeObject(ObjectOutputStream outputstream) throws IOException
