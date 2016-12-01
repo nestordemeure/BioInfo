@@ -41,6 +41,11 @@ public class automateLecteurDeGenes
 	//retire le dernier dinucleotide de la base si on l'a ajouté abusivement
 	void test_CDS() throws CDSInvalideException
 	{
+		// TODO write the codon stop
+		base_de_donnees.ecrit_nucleotideToStream(nucleotide1);
+		base_de_donnees.ecrit_nucleotideToStream(nucleotide2);
+		base_de_donnees.ecrit_nucleotideToStream(nucleotide3);
+		
 		if (phase3 != 0)
 		{
 			//taille
