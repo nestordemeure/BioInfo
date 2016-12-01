@@ -73,6 +73,7 @@ public class ExcelManager {
 								chemin [3] = "";
 								
 								String filepath = folder+Configuration.FOLDER_SEPARATOR+listeFichiers[i]+Configuration.FOLDER_SEPARATOR+listelvl1[j]+Configuration.FOLDER_SEPARATOR+listelvl2[k];
+								//System.out.println(filepath);
 								Bdd base = ExcelReader.reader(filepath);
 								ExcelWriter.writer(filepath+Configuration.FOLDER_SEPARATOR+listelvl2[k], chemin, base);
 							}

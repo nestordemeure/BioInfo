@@ -107,6 +107,32 @@ public class Bdd
 		
 		contenus_cleft.nb_CDS_non_traites++;
 	}
+	
+	public void incr_mult_nb_CDS_non_traites (String cleft, Organism organismArg, long nbr)
+	{
+		content contenus_cleft = contenus.get(cleft);
+		
+		if (contenus_cleft == null)
+		{
+			contenus_cleft = new content(organismArg);
+			contenus.put(cleft,contenus_cleft);
+		}
+		
+		contenus_cleft.nb_CDS_non_traites+=nbr;
+	}
+	
+	public void incr_mult_nb_CDS_traites (String cleft, Organism organismArg, long nbr)
+	{
+		content contenus_cleft = contenus.get(cleft);
+		
+		if (contenus_cleft == null)
+		{
+			contenus_cleft = new content(organismArg);
+			contenus.put(cleft,contenus_cleft);
+		}
+		
+		contenus_cleft.nb_CDS+=nbr;
+	}
 
 	//tampon
 	//ajoute un dinucleotide et un tri nucleotides au phases indiquées
@@ -124,6 +150,20 @@ public class Bdd
 		tampon_tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3]++;
 		//TODO incrémente toStream pour le streamer
 		ecrit_nucleotideToStream(nucleotide1);
+	}
+	
+	public content get_contenu(String cleft, Organism organismArg){
+		
+		content contenus_cleft = contenus.get(cleft);
+		if (contenus_cleft == null)
+		{
+			contenus_cleft = new content(organismArg);
+			contenus_cleft.nb_items=0;
+			contenus.put(cleft,contenus_cleft);
+			
+		}
+		//System.out.println(contenus_cleft.tableautrinucleotides[0][0][0][0]);
+		return contenus_cleft;
 	}
 	
 	//ajoute un dinucleotide à la phase indiquée
@@ -479,6 +519,7 @@ public class Bdd
 		
 		private long tableauPhasePref[][][][]; //tableauPhasePref[phase][nucleotide1][nucleotide2][nucleotide3]
 		
+		private long nb_items;
 		private Organism organism;
 		
 		public content(Organism organismArg)
@@ -495,6 +536,7 @@ public class Bdd
 			tableauPhasePref = new long[3][4][4][4];
 			
 			organism = organismArg;
+			nb_items=1;
 		}
 		
 		//----------
@@ -514,6 +556,11 @@ public class Bdd
 		public long get_nb_trinucleotides (int phase)
 		{
 			return nbTrinucleotidesParPhase[phase];
+		}
+		
+		public void add_nb_trinucleotides (int phase, long nbr)
+		{
+			nbTrinucleotidesParPhase[phase]+=nbr;
 		}
 		
 		//toute phases confondues
@@ -547,9 +594,38 @@ public class Bdd
 			return tableauPhasePref[phase][nucleotide1][nucleotide2][nucleotide3];
 		}
 		
+		public void ajout_mult_PhasePref (int phase, int nucleotide1, int nucleotide2, int nucleotide3, long nbr, String cleft){
+			content contenus_cleft = contenus.get(cleft);
+			contenus_cleft.tableauPhasePref[phase][nucleotide1][nucleotide2][nucleotide3]+=nbr;
+		}
+		
+		//ajoute plusieurs tri nucleotides a la phase indiquée
+		public void ajoute_mult_nucleotides (int phase, int nucleotide1, int nucleotide2, int nucleotide3, long nbr,String cleft) throws CharInvalideException
+		{
+			content contenus_cleft = contenus.get(cleft);
+			contenus_cleft.tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3]+=nbr;
+		}
+		
+		//ajoute plusieurs dinucleotides à la phase indiquée
+		public void ajoute_mult_nucleotides (int phase, int nucleotide1, int nucleotide2, long nbr) throws CharInvalideException
+		{
+				tableaudinucleotides[phase][nucleotide1][nucleotide2]+=nbr;
+		}
+		
+		
 		public Organism get_organism ()
 		{
 			return organism;
+		}
+		
+		public long get_nb_items()
+		{
+			return nb_items;
+		}
+		
+		public void add_nb_items(int nbr)
+		{
+			nb_items+=nbr;
 		}
 		
 		//----------
@@ -593,6 +669,7 @@ public class Bdd
 			
 			nb_CDS += cont.nb_CDS;
 			nb_CDS_non_traites += cont.nb_CDS_non_traites;
+
 			// TODO no fusion for the organisms
 		}
 		
@@ -608,6 +685,7 @@ public class Bdd
 		   tableaudinucleotides = (long[][][]) inputstream.readObject();
 		   tableauPhasePref = (long[][][][]) inputstream.readObject();
 		   organism = (Organism) inputstream.readObject();
+		   nb_items = inputstream.readLong();
 	   }
 
 	   private void writeObject(ObjectOutputStream outputstream) throws IOException
@@ -620,6 +698,7 @@ public class Bdd
 			outputstream.writeObject(tableaudinucleotides);
 			outputstream.writeObject(tableauPhasePref);
 			outputstream.writeObject(organism);
+			outputstream.writeLong(nb_items);
 	  }
 	}
 }
