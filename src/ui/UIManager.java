@@ -63,6 +63,7 @@ public class UIManager {
 	}
 	
 	public static void startMainProcess(Tree t){
+		UIManager.current_progress = 0;
 		if(Configuration.USE_GUI){
 			UIManager.check();
 			UIManager.graphics.startMainProcess(t);

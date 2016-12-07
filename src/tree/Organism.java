@@ -1,11 +1,16 @@
 package tree;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import configuration.Configuration;
+import manager.AccessManager;
 
 public class Organism implements Serializable {
 	private static final long serialVersionUID = -2867789287775171672L;
@@ -16,19 +21,29 @@ public class Organism implements Serializable {
 	private String bioproject;
 	private String taxonomy;
 	private String accession;
+	private String creation_date;
+	private String modification_date;
+	private boolean activated;
 	private Map<String, String> replicons;
+	private ArrayList<String> processed_replicons;
 	
-	public Organism(String kingdom, String group, String subgroup, String name, String bioproject){
+	public Organism(String kingdom, String group, String subgroup, String name, String bioproject, String creation_date, String modification_date){
 		this.kingdom = kingdom;
 		this.group = group;
 		this.subgroup = subgroup;
 		this.name = name;
 		this.bioproject = bioproject;
+		this.creation_date = creation_date;
+		this.modification_date = modification_date;
 		this.replicons = new HashMap<String, String>();
+		this.processed_replicons = new ArrayList<String>();
+		this.activated = true;
 	}
 	
 	public Organism(){
 		this.replicons = new HashMap<String, String>();
+		this.processed_replicons = new ArrayList<String>();
+		this.activated = true;
 	}
 	
 	public boolean addReplicon(String name, String id){
@@ -88,7 +103,10 @@ public class Organism implements Serializable {
 		bioproject = (String) inputstream.readObject();
 		accession = (String) inputstream.readObject();
 		taxonomy = (String) inputstream.readObject();
-		replicons = (HashMap<String,String>)inputstream.readObject();
+		creation_date = (String) inputstream.readObject();
+		modification_date = (String) inputstream.readObject();
+		replicons = (HashMap<String,String>) inputstream.readObject();
+		processed_replicons = (ArrayList<String>) inputstream.readObject();
 	}
 
 	private void writeObject(ObjectOutputStream outputstream) throws IOException
@@ -100,7 +118,10 @@ public class Organism implements Serializable {
 		outputstream.writeObject(bioproject);
 		outputstream.writeObject(accession);
 		outputstream.writeObject(taxonomy);
+		outputstream.writeObject(creation_date);
+		outputstream.writeObject(modification_date);
 		outputstream.writeObject(replicons);
+		outputstream.writeObject(processed_replicons);
 	}
 
 	public String getKingdom() {
@@ -159,11 +180,83 @@ public class Organism implements Serializable {
 		this.accession = accession;
 	}
 
+	public String getCreationDate() {
+		return creation_date;
+	}
+
+	public void setCreationDate(String creation_date) {
+		this.creation_date = creation_date;
+	}
+
+	public String getModificationDate() {
+		return modification_date;
+	}
+
+	public void setModificationDate(String modification_date) {
+		this.modification_date = modification_date;
+	}
+
 	public Map<String, String> getReplicons() {
 		return replicons;
 	}
 
 	public void setReplicons(Map<String, String> replicons) {
 		this.replicons = replicons;
+	}
+	
+	public void setActivated(boolean a){
+		this.activated = a;
+	}
+	
+	public boolean getActivated(){
+		return this.activated;
+	}
+	
+	public int size(){
+		return this.activated ? this.replicons.size() : 0;
+	}
+	
+	public void addProcessedReplicon(String replicon){
+		this.processed_replicons.add(replicon);
+	}
+	
+	public ArrayList<String> getProcessedReplicons(){
+		return this.processed_replicons;
+	}
+	
+	public void removeReplicons(ArrayList<String> replicons){
+		for(String replicon : replicons){
+			this.replicons.remove(replicon);
+		}
+	}
+	
+	// Creation du dossier sur le système de fichiers local
+	public String getPath(){
+		// Construction de la chaine de charactere
+		String cur = Configuration.BASE_FOLDER;
+		cur += Configuration.FOLDER_SEPARATOR+this.getKingdom();
+		cur += Configuration.FOLDER_SEPARATOR+this.getGroup();
+		cur += Configuration.FOLDER_SEPARATOR+this.getSubgroup();
+		
+		return cur;
+	}
+	
+	public boolean createPath(){
+		String path = this.getPath();
+		// Création du dossier
+		
+		AccessManager.accessFile(path);
+		File p = new File(path);
+		
+		if(p.exists() && p.isDirectory()) {
+			// Si le dossier existe déjà
+			AccessManager.doneWithFile(path);
+			return true;
+		}else{
+			// Si le fichier n'existe pas
+			boolean ok = p.mkdirs();
+			AccessManager.doneWithFile(path);
+			return ok;
+		}
 	}
 }

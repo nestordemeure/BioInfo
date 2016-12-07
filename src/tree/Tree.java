@@ -58,7 +58,8 @@ public class Tree<T> {
 		for(Object a : this.nodes()){
 			String node = (String)a;
 			if(this.isLeaf(node)){
-				size ++;
+				Organism o = (Organism)this.get(node);
+				size += o.size();
 			} else {
 				Tree t = (Tree)this.get(node);
 				size += t.size();
