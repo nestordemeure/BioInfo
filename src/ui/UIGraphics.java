@@ -2,6 +2,7 @@ package ui;
 import java.util.ArrayList;
 
 import manager.ThreadManager;
+import manager.TreeWalkerManager;
 import configuration.Configuration;
 import excel.ExcelManager;
 import tree.Tree;
@@ -53,12 +54,11 @@ public class UIGraphics {
 	public void launchProcess(final ArrayList<InfoNode> nodes){
 		Thread thread = new Thread(){
 			public void run(){
-				UIManager.setMaxProgress(ThreadManager.getNodesCount(tree, new ArrayList<String>(), nodes));
-				ThreadManager.start(tree, nodes);
-
+				UIManager.setMaxProgress(tree.size());
+				TreeWalkerManager.start(tree);
 				// Merge excels files
 				UIManager.log("Creating excel files...");
-				ExcelManager.fusionExcels(Configuration.BASE_FOLDER);
+				//ExcelManager.fusionExcels(Configuration.BASE_FOLDER);
 				UIManager.log("Done !");
 				UIGraphics.this.setDone();
 			}

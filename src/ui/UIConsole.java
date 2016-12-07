@@ -4,6 +4,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import manager.ThreadManager;
+import manager.TreeWalkerManager;
 import tree.Tree;
 import tree.TreeManager;
 import configuration.Configuration;
@@ -35,7 +36,9 @@ public class UIConsole {
 	public void launchProcess(Tree t){
 		// Creating species statistics
 		UIManager.setMaxProgress(t.size());
-		ThreadManager.start(t);
+		
+		TreeWalkerManager.start(t);
+		//ThreadManager.start(t);
 		
 		// Merge excels files
 		UIManager.log("Creating excel files...");

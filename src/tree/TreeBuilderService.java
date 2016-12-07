@@ -85,6 +85,7 @@ public class TreeBuilderService extends AbstractExecutionThreadService {
 			UIManager.log(this.type.toString()+ " page : "+this.currentPage);
 			UIManager.addProgress(1);
 			currentPage ++;
+			cont = false;
 		}
 	}
 	
@@ -119,9 +120,16 @@ public class TreeBuilderService extends AbstractExecutionThreadService {
 				String organismBioProject = tdIterator.next().text();
 				String organismGroup = tdIterator.next().text();
 				String organismSubGroup = tdIterator.next().text();
+				String creationDate =  "";
+				String modificationDate = "";
+				String buffer = "";
+				while(tdIterator.hasNext()){
+					creationDate = modificationDate;
+					modificationDate = buffer;
+					buffer = tdIterator.next().text();
+				}
 				
-				Organism currentOrganism = new Organism(type.name(), organismGroup, organismSubGroup, organismName, organismBioProject);
-
+				Organism currentOrganism = new Organism(type.name(), organismGroup, organismSubGroup, organismName, organismBioProject, creationDate, modificationDate);
 
 				boolean validOrganism = false;
 				
@@ -134,10 +142,8 @@ public class TreeBuilderService extends AbstractExecutionThreadService {
 						continue;
 					}
 					String repliconName = "";
-					if(type == OrganismType.VIRUSES) {
-						repliconName = replicon.text().split(":")[0];
-					} else {
-						repliconName = replicon.select("b").text();
+					if(type != OrganismType.VIRUSES) {
+						repliconName = replicon.text().split("/")[0].replace(" ", "_").replace(":", "_");
 					}
 					String[] repliconIDs = replicon.select("a").text().split(" ");
 					String repliconID = "";
@@ -154,6 +160,9 @@ public class TreeBuilderService extends AbstractExecutionThreadService {
 					}
 					if(validRepliconFound){
 						validOrganism = true;
+						if(type ==OrganismType.VIRUSES){
+							repliconName = repliconID;
+						}
 						currentOrganism.addReplicon(repliconName, repliconID);
 					}
 				}
