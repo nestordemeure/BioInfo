@@ -36,7 +36,7 @@ public class TreeWalkerManager {
 	}
 	
 	public void startWalker(Tree t){
-		Object[] nodes = t.nodes();
+		Object[] nodes = t.activatedNodes();
 		for(Object o : nodes){
 			String node = (String)o;
 			if(t.isLeaf(node)){

@@ -137,7 +137,7 @@ public class ExcelWriter {
 			
 			String new_cleft="Sum_"+cleft.split("_")[0];
 			
-			Organism empty_org=new Organism("","","","","");
+			Organism empty_org=new Organism("","","","","","","");
 			
 			XSSFSheet worksheet = (XSSFSheet) wb.createSheet(cleft);
 	

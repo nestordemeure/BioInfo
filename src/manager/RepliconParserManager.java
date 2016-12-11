@@ -1,7 +1,9 @@
 package manager;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Scanner;
@@ -38,8 +40,20 @@ public class RepliconParserManager extends AbstractExecutionThreadService {
 			try{
 				url = Configuration.GEN_DOWNLOAD_URL.replaceAll("<ID>", organism.getReplicons().get(replicon));
 				Scanner sc = new Scanner(Resources.asByteSource(new URL(url)).openBufferedStream());
+				sc.useDelimiter("\n");
 				Parser parser = new Parser(db, sc);
-				parser.parse(replicon, organism, null);
+				if (Configuration.STORE_DATA) {
+					File f = new File(organism.getPath());
+					if (f.isDirectory()) {
+						parser.parse(replicon, organism, new FileOutputStream(organism.getPath()+Configuration.FOLDER_SEPARATOR+organism.getName()+"_"+replicon));
+					}
+					else {
+						parser.parse(replicon, organism, null);
+					}				
+				}
+				else {
+					parser.parse(replicon, organism, null);
+				}
 			}catch(Exception e){
 				System.out.println(url);
 				e.printStackTrace();

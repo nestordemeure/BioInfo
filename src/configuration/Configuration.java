@@ -8,6 +8,7 @@ public class Configuration {
 	public static String FOLDER_SEPARATOR = File.separator; // Separateur pour les dossiers (/ sous linux et \ sous windows)
 	public static String BASE_FOLDER = "/tmp/results/"; // Dossier de base pour le stockage de nos résultats
 	public static boolean USE_GUI = true; // Permet de switcher entre le mode graphique et console.
+	public static boolean STORE_DATA = false; // Permet de stocker les fichiers
 	
 	// --- Net configuration ---
 	public static int NET_MAX_DOWNLOAD_TRIES = 10; // Nombre d'essais pour télécharger un fichier.

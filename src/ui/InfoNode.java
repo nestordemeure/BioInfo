@@ -3,12 +3,14 @@ package ui;
 import java.util.ArrayList;
 
 import configuration.Configuration;
+import tree.Organism;
 
 public class InfoNode {
 	private String name;
 	private ArrayList<String> path = new ArrayList<String>();
 	private String rootPath = Configuration.BASE_FOLDER;
 	private String separator = Configuration.FOLDER_SEPARATOR;
+	private Organism organism = null;
 	private boolean selected;
 	
 	public InfoNode(String n, ArrayList<String> p) {
@@ -17,6 +19,13 @@ public class InfoNode {
 		selected = true;
 	}
 	
+	public InfoNode(String n, ArrayList<String> p, Organism org) {
+		name = n;
+		path = p;
+		organism = org;
+		selected = true;
+	}
+
 	public ArrayList<String> getPath() {
 		return path;
 	}
@@ -49,6 +58,9 @@ public class InfoNode {
 	}
 	
 	public void setSelected(boolean selected){
+		if (this.organism != null) {
+			this.organism.setActivated(selected);
+		}
 		this.selected = selected;
 	}
 	
