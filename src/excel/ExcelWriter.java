@@ -137,7 +137,7 @@ public class ExcelWriter {
 			
 			String new_cleft="Sum_"+cleft.split("_")[0];
 			
-			Organism empty_org=new Organism("","","","","");
+			Organism empty_org=new Organism("","","","","","","");
 			
 			XSSFSheet worksheet = (XSSFSheet) wb.createSheet(cleft);
 	
@@ -202,34 +202,45 @@ public class ExcelWriter {
 			rowlist.get(8).getCell(18).setCellValue(contenus.get_nb_CDS_non_traites());
 			
 			//Modification date
-			rowlist.get(10).getCell(17).setCellValue("Modification Date");
+			String mod_date=contenus.get_organism().getModificationDate();
+			if(mod_date!=null && !mod_date.isEmpty()){
+				rowlist.get(10).getCell(17).setCellValue("Modification Date");
+				rowlist.get(10).getCell(18).setCellValue(mod_date);
+			}
 			
-			if (accession!=null){
+			if (accession!=null && !accession.isEmpty()){
 				//Accession
 				rowlist.get(12).getCell(17).setCellValue("Accession");
 				rowlist.get(12).getCell(18).setCellValue(accession);
 			}
 			
-			if (taxonomy!=null){
+			if (taxonomy!=null && !taxonomy.isEmpty()){
 				//Taxonomy
 				rowlist.get(14).getCell(17).setCellValue("Taxonomy");
 				rowlist.get(14).getCell(18).setCellValue(taxonomy);
 			}
 			
-			if (taxonomy!=null){
+			if (bioproject!=null && !bioproject.isEmpty()){
 				rowlist.get(16).getCell(17).setCellValue("Bioproject");
 				rowlist.get(16).getCell(18).setCellValue(bioproject);
 			}
 			
 			//Nombre de Chromosomes, DNA, Mitochondrion, etc...
-			if (cleft.split("_")[0].equals("Sum")){
-				rowlist.get(18).getCell(17).setCellValue("Nb of "+cleft.split("_")[1]);
-			}
-			else {
-				rowlist.get(18).getCell(17).setCellValue("Nb of "+cleft.split("_")[0]);
+			Integer tmp_i=18;
+			Integer tmp_j=17;
+			
+			if ((bioproject==null || bioproject.isEmpty()) && (accession==null || accession.isEmpty()) && (taxonomy==null || taxonomy.isEmpty()) && (mod_date==null || mod_date.isEmpty())){
+				tmp_i=10;
 			}
 			
-			rowlist.get(18).getCell(18).setCellValue(contenus.get_nb_items());
+			if (cleft.split("_")[0].equals("Sum")){
+				rowlist.get(tmp_i).getCell(tmp_j).setCellValue("Nb of "+cleft.split("_")[1]);
+			}
+			else {
+				rowlist.get(tmp_i).getCell(tmp_j).setCellValue("Nb of "+cleft.split("_")[0]);
+			}
+			
+			rowlist.get(tmp_i).getCell(tmp_j+1).setCellValue(contenus.get_nb_items());
 			
 			//Ligne 1
 			rowlist.get(0).getCell(0).setCellValue("Trinucléotides");			
@@ -407,7 +418,7 @@ public class ExcelWriter {
 				res.setFillPattern(CellStyle.SOLID_FOREGROUND);
 			}
 			//pref phase trinucléotides
-			else if (j<10){
+			else if (j<10 || ((j==17 || j==18) && i>0 && i<19)){
 				//Couleur Claire
 				res.setFillForegroundColor(light_gray);
 				res.setFillPattern(CellStyle.SOLID_FOREGROUND);
