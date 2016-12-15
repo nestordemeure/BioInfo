@@ -8,6 +8,7 @@ public class Configuration {
 	public static String FOLDER_SEPARATOR = File.separator; // Separateur pour les dossiers (/ sous linux et \ sous windows)
 	public static String BASE_FOLDER = "/tmp/results/"; // Dossier de base pour le stockage de nos résultats
 	public static boolean USE_GUI = true; // Permet de switcher entre le mode graphique et console.
+	public static boolean STORE_DATA = false; // Permet de stocker les fichiers
 	
 	// --- Net configuration ---
 	public static int NET_MAX_DOWNLOAD_TRIES = 10; // Nombre d'essais pour télécharger un fichier.
@@ -21,10 +22,10 @@ public class Configuration {
 
 	// --- ParserManager Configuration ---	
 	public static int GEN_PER_DOWNLOAD = 10;
-	public static String GEN_DOWNLOAD_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=<ID>&rettype=gb"; // URL a utiliser pour télécharger les genes
+	public static String GEN_DOWNLOAD_URL = "https://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?tool=portal&save=file&log$=seqview&db=nuccore&report=gbwithparts&sort=&from=begin&to=end&maxplex=3&id=<ID>"; // URL a utiliser pour télécharger les genes
 	
 	// --- ThreadManager Configuration ---
-	public static int THREADS_NUMBER = 40; // Nombre de threads a lancer pour la récupération des fichiers de genes.
+	public static int THREADS_NUMBER = 10; // Nombre de threads a lancer pour la récupération des fichiers de genes.
 	
 	// --- TreeManager Configuration ---
 	public static String TREE_URL = "http://www.ncbi.nlm.nih.gov/genomes/Genome2BE/genome2srv.cgi?action=GetGenomeList4Grid&filterText=%7CAll&page=";
