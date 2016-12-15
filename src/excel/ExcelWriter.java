@@ -251,7 +251,7 @@ public class ExcelWriter {
 		
 			//Nb CDS
 			rowlist.get(6).getCell(17).setCellValue("Number of valid cds sequences");
-			rowlist.get(6).getCell(18).setCellValue(contenus.get_nb_CDS()-contenus.get_nb_CDS_non_traites());
+			rowlist.get(6).getCell(18).setCellValue(contenus.get_nb_CDS());
 			
 			
 			
