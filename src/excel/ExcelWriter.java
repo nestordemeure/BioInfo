@@ -52,10 +52,11 @@ public class ExcelWriter {
 	}
 	
 	
+	
 	public static void writer(String filepath, String[] chemin, Bdd base) {
 		try {
 			
-			Boolean is_leaf = filepath.length() - filepath.replace(Configuration.FOLDER_SEPARATOR, "").length()==5;
+			Boolean is_leaf = filepath.length() - filepath.replace(Configuration.FOLDER_SEPARATOR, "").length()==4;
 			
 			Pattern regex1 = Pattern.compile(".*/");
 			Matcher m = regex1.matcher(filepath);
@@ -70,6 +71,7 @@ public class ExcelWriter {
 			
 			FileOutputStream fileOut = new FileOutputStream(xlsfile);
 			Workbook workbook = new XSSFWorkbook();
+						
 
 			String cleft;
 			content contenus;
@@ -88,8 +90,8 @@ public class ExcelWriter {
 				}
 			}
 			
-			if (is_leaf){
-				baseSum.exportBase(folderpath+"Sums");
+			if (is_leaf && !chemin[3].isEmpty() && !chemin[3].equals("")){
+				baseSum.exportBase(folderpath+"Sums_"+chemin[3]);
 				
 				Bdd empty = new Bdd();
 				
@@ -114,7 +116,7 @@ public class ExcelWriter {
 			fileOut.flush();
 			fileOut.close();
 
-			if (!is_leaf){
+			if (!is_leaf || chemin[3].equals("") || chemin[3].isEmpty()){
 				base.exportBase(folderpath+"Sums");
 			}
 			else{
@@ -129,7 +131,63 @@ public class ExcelWriter {
 	}
 
 	private static void writeTab(String cleft, content contenus, Bdd baseSum, Workbook wb, String[] chemin){
+		
 		try {
+			
+			XSSFDataFormat dataFormat = (XSSFDataFormat) wb.createDataFormat();
+			
+			byte[] LIGHT_BLUE = hexStringToByteArray("a7c8fd");
+			XSSFColor light_blue = new XSSFColor(LIGHT_BLUE);
+			
+			byte[] DARK_BLUE = hexStringToByteArray("3686ca");
+			XSSFColor dark_blue = new XSSFColor(DARK_BLUE);
+			
+			byte[] LIGHT_GRAY = hexStringToByteArray("e6e6e6");
+			XSSFColor light_gray = new XSSFColor(LIGHT_GRAY);
+			
+			byte[] GRAY = hexStringToByteArray("cecece");
+			XSSFColor gray = new XSSFColor(GRAY);
+			
+			XSSFCellStyle lblue = (XSSFCellStyle) wb.createCellStyle();
+			lblue.setFillForegroundColor(light_blue);
+			lblue.setFillPattern(CellStyle.SOLID_FOREGROUND);
+			
+			XSSFCellStyle dblue = (XSSFCellStyle) wb.createCellStyle();
+			dblue.setFillForegroundColor(dark_blue);
+			dblue.setFillPattern(CellStyle.SOLID_FOREGROUND);
+			
+			XSSFCellStyle lgray = (XSSFCellStyle) wb.createCellStyle();
+			lgray.setFillForegroundColor(light_gray);
+			lgray.setFillPattern(CellStyle.SOLID_FOREGROUND);
+			
+			XSSFCellStyle ngray = (XSSFCellStyle) wb.createCellStyle();
+			ngray.setFillForegroundColor(gray);
+			ngray.setFillPattern(CellStyle.SOLID_FOREGROUND);
+			
+			XSSFCellStyle float_type = (XSSFCellStyle) wb.createCellStyle();
+			float_type.setDataFormat(dataFormat.getFormat("0.00"));
+			
+			XSSFCellStyle int_type = (XSSFCellStyle) wb.createCellStyle();
+			int_type.setDataFormat(dataFormat.getFormat("0"));
+			
+			
+			XSSFCellStyle ngray_float = (XSSFCellStyle) wb.createCellStyle();
+			ngray_float.setFillForegroundColor(gray);
+			ngray_float.setFillPattern(CellStyle.SOLID_FOREGROUND);
+			ngray_float.setDataFormat(dataFormat.getFormat("0.00"));
+			
+			XSSFCellStyle ngray_int = (XSSFCellStyle) wb.createCellStyle();
+			ngray_int.setFillForegroundColor(gray);
+			ngray_int.setFillPattern(CellStyle.SOLID_FOREGROUND);
+			ngray_int.setDataFormat(dataFormat.getFormat("0"));
+			
+			XSSFCellStyle lgray_int = (XSSFCellStyle) wb.createCellStyle();
+			lgray_int.setFillForegroundColor(light_gray);
+			lgray_int.setFillPattern(CellStyle.SOLID_FOREGROUND);
+			lgray_int.setDataFormat(dataFormat.getFormat("0"));
+			
+			XSSFCellStyle default_type = (XSSFCellStyle) wb.createCellStyle();
+			
 			
 			String accession = contenus.get_organism().getAccession();
 			String taxonomy = contenus.get_organism().getTaxonomy();
@@ -151,14 +209,12 @@ public class ExcelWriter {
 					rowlist.get(i).createCell(j);
 				}
 			}
-			
-			XSSFDataFormat dataFormat = (XSSFDataFormat) wb.createDataFormat();
-			
+						
 			for(int i = 0; i<90;i++)
 			{
 				for (int j = 0; j<40; j++)
 				{
-					rowlist.get(i).getCell(j).setCellStyle(getCellStyle(i,j,wb));
+					rowlist.get(i).getCell(j).setCellStyle(getCellStyle(i,j,wb,dblue, lblue, lgray, ngray, float_type, int_type, ngray_float, ngray_int, lgray_int, default_type));
 				}
 			}
 			
@@ -386,48 +442,101 @@ public class ExcelWriter {
 		
 	}
 		
-	private static XSSFCellStyle getCellStyle(int i, int j, Workbook wb){
+	private static XSSFCellStyle getCellStyle(int i, int j, Workbook wb, XSSFCellStyle dblue, XSSFCellStyle lblue, XSSFCellStyle lgray, XSSFCellStyle ngray, XSSFCellStyle float_type, XSSFCellStyle int_type, XSSFCellStyle ngray_float, XSSFCellStyle ngray_int, XSSFCellStyle lgray_int, XSSFCellStyle default_type){
 		
-		XSSFDataFormat dataFormat = (XSSFDataFormat) wb.createDataFormat();
-		
-		byte[] LIGHT_BLUE = hexStringToByteArray("a7c8fd");
-		XSSFColor light_blue = new XSSFColor(LIGHT_BLUE);
-		
-		byte[] DARK_BLUE = hexStringToByteArray("3686ca");
-		XSSFColor dark_blue = new XSSFColor(DARK_BLUE);
-		
-		byte[] LIGHT_GRAY = hexStringToByteArray("e6e6e6");
-		XSSFColor light_gray = new XSSFColor(LIGHT_GRAY);
-		
-		byte[] GRAY = hexStringToByteArray("cecece");
-		XSSFColor gray = new XSSFColor(GRAY);
-		
-		XSSFCellStyle res = (XSSFCellStyle) wb.createCellStyle();
 		
 		if (i == 0 && j == 0){
 			//Couleur foncée chelou
-			res.setFillForegroundColor(dark_blue);
-			res.setFillPattern(CellStyle.SOLID_FOREGROUND);
+			return dblue;
 		}
 		//Couleur et style pour trinucléotides et dinucléotides et entête
 		else if (i%2 == 0 && i < 68){
 			//trinucléotides sans pref phase ou première ligne
 			if ((j<7)|| (i==0 && j<10)){
 				//Couleur foncée
-				res.setFillForegroundColor(gray);
-				res.setFillPattern(CellStyle.SOLID_FOREGROUND);
+				//Style de chiffres
+				if (i>0 && i<68){
+					//trinucléotides sans pref de phase
+					if (j%2==1 && j<6){
+						return ngray_int;
+					}
+					else if(j%2==0 && j<7 && j>0){
+						return ngray_float;
+					}
+					//tri. pref de phase
+					else if(j>6 && j<10){
+						return ngray_int;
+					}
+					
+					//dinculéotides sans pref de phase
+					else if (i<19 && j%2==0 && j<16){
+						return ngray_int;
+					}
+					else if(i<19 && j%2==1 && j<16){
+						return ngray_float;
+					}
+					else{
+						return ngray;
+					}
+				}
+				else{
+					return ngray;
+				}
 			}
 			//pref phase trinucléotides
 			else if (j<10 || ((j==17 || j==18) && i>0 && i<19)){
 				//Couleur Claire
-				res.setFillForegroundColor(light_gray);
-				res.setFillPattern(CellStyle.SOLID_FOREGROUND);
+				//Style de chiffres
+				if (i>0 && i<68){
+					//trinucléotides sans pref de phase
+					if (j%2==1 && j<6){
+						return lgray_int;
+					}
+					//tri. pref de phase
+					else if(j>6 && j<10){
+						return lgray_int;
+					}
+					
+					//dinculéotides sans pref de phase
+					else if (i<19 && j%2==0 && j<16){
+						return lgray_int;
+					}
+					else{
+						return lgray;
+					}
+				}
 			}
 			//dinuclotides sans pref phase
 			else if (i<19 && ((j>10 && j <16)||(i==0 && j<16 && j>10))){
 				//Couleur foncée
-				res.setFillForegroundColor(gray);
-				res.setFillPattern(CellStyle.SOLID_FOREGROUND);
+				//Style de chiffres
+				if (i>0 && i<68){
+					//trinucléotides sans pref de phase
+					if (j%2==1 && j<6){
+						return ngray_int;
+					}
+					else if(j%2==0 && j<7 && j>0){
+						return ngray_float;
+					}
+					//tri. pref de phase
+					else if(j>6 && j<10){
+						return ngray_int;
+					}
+					
+					//dinculéotides sans pref de phase
+					else if (i<19 && j%2==0 && j<16){
+						return ngray_int;
+					}
+					else if(i<19 && j%2==1 && j<16){
+						return ngray_float;
+					}
+					else{
+						return ngray;
+					}
+				}
+				else{
+					return ngray;
+				}
 			}
 			
 			//Entête
@@ -435,13 +544,29 @@ public class ExcelWriter {
 				if (i>1 && i<17){
 					if (j==18){
 						//Très CLair
-						res.setFillForegroundColor(light_blue);
-						res.setFillPattern(CellStyle.SOLID_FOREGROUND);
+						return lblue;
 					}
 					else if(j==19){
 						//Intermédiaire
-						res.setFillForegroundColor(light_gray);
-						res.setFillPattern(CellStyle.SOLID_FOREGROUND);
+						//Style de chiffres
+						if (i>0 && i<68){
+							//trinucléotides sans pref de phase
+							if (j%2==1 && j<6){
+								return lgray_int;
+							}
+							//tri. pref de phase
+							else if(j>6 && j<10){
+								return lgray_int;
+							}
+							
+							//dinculéotides sans pref de phase
+							else if (i<19 && j%2==0 && j<16){
+								return lgray_int;
+							}
+							else{
+								return lgray;
+							}
+						}
 					}
 				}
 			}
@@ -451,47 +576,28 @@ public class ExcelWriter {
 		if (i>0 && i<68){
 			//trinucléotides sans pref de phase
 			if (j%2==1 && j<6){
-				res.setDataFormat(dataFormat.getFormat("0"));
+				return int_type;
 			}
 			else if(j%2==0 && j<7 && j>0){
-				res.setDataFormat(dataFormat.getFormat("0.00"));
+				return float_type;
 			}
 			//tri. pref de phase
 			else if(j>6 && j<10){
-				res.setDataFormat(dataFormat.getFormat("0"));
+				return int_type;
 			}
 			
 			//dinculéotides sans pref de phase
 			else if (i<19 && j%2==0 && j<16){
-				res.setDataFormat(dataFormat.getFormat("0"));
+				return int_type;
 			}
 			else if(i<19 && j%2==1 && j<16){
-				res.setDataFormat(dataFormat.getFormat("0.00"));
+				return float_type;
 			}
 		}
 		
 		
-
-		//XSSFColor plop = new XSSFColor(new java.awt.Color(128, 0, 128));
 		
-		//peinturefmt
-//		for (int i = 0; i<31; i++){
-//			for (int j = 0; j < 10;j++) {
-//				XSSFCellStyle tmp = (XSSFCellStyle) rowlist.get(2*i+2).getCell(j).getCellStyle();
-//				
-//				if (j<7){
-//					tmp.setFillForegroundColor(gray);
-//				}
-//				else{
-//					tmp.setFillForegroundColor(light_gray);
-//				}
-//				tmp.setFillPattern(CellStyle.SOLID_FOREGROUND);
-//				rowlist.get(2*i+2).getCell(j).setCellStyle(tmp);
-//			}
-//		}
-		
-		
-		return res;
+		return default_type;
 	}
 
 }
