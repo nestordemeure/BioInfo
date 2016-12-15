@@ -92,7 +92,6 @@ public class ExcelWriter {
 			}
 			
 			if (is_leaf){
-				System.out.println(folderpath+Configuration.FOLDER_SEPARATOR+"Sums_"+chemin[3]);
 				baseSum.exportBase(folderpath+Configuration.FOLDER_SEPARATOR+"Sums_"+chemin[3]);
 				
 				Bdd empty = new Bdd();
