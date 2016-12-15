@@ -12,6 +12,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.util.Scanner;
+import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
@@ -27,6 +28,7 @@ import configuration.Configuration;
 import manager.AccessManager;
 import Parser.*;
 import Bdd.Bdd;
+import Bdd.Bdd.content;
 import excel.*;
 import io.Net;
 import manager.ThreadManager;
@@ -49,6 +51,21 @@ public class Main {
 	{
 		//parsing
 		Bdd base = new Bdd();
+		//Bdd base = new Bdd("Homo_sapiens");
+		
+//		String cleft;
+//		content contenus;
+//		
+//		for (Entry<String, content> entry : base.getContenus())
+//		{
+//			cleft = entry.getKey(); //"mitochondrie", "chloroplaste", "general"
+//			
+//			contenus = entry.getValue(); //un objet content équipé de toute les fonction que vous appliquiez a la base avant
+//			
+//			System.out.println(contenus.get_nb_CDS());
+//			System.out.println(contenus.get_nb_trinucleotides());
+//			System.out.println(contenus.get_tableautrinucleotides(0, 0, 0, 0));
+//		}
 		
 		//mitochondrie et une séquence de type General vide
 		Scanner scanneur = Net.getUrl("file:///home/adrien/Bureau/BioInfo/sequence2.gb");
