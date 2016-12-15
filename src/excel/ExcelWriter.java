@@ -53,21 +53,20 @@ public class ExcelWriter {
 	
 	
 	
-	public static void writer(String filepath, String[] chemin, Bdd base, boolean is_leaf) {
+	public static void writer(String folderpath, String filepath, String[] chemin, Bdd base, boolean is_leaf) {
 		try {
 			
 			//Boolean is_leaf = filepath.length() - filepath.replace(Configuration.FOLDER_SEPARATOR, "").length()==4;
 			//Boolean is_leaf=!chemin[3].equals("");
 			
-			
-			Pattern regex1 = Pattern.compile(".*/");
-			Matcher m = regex1.matcher(filepath);
-			String folderpath ="";
-			if (m.find()){
-				folderpath = m.group(0);
-				File folders = new File(folderpath);
-				folders.mkdirs();
-			}
+//			Pattern regex1 = Pattern.compile(".*"+Configuration.FOLDER_SEPARATOR);
+//			Matcher m = regex1.matcher(filepath);
+//			String folderpath ="";
+//			if (m.find()){
+//				folderpath = m.group(0);
+//				File folders = new File(folderpath);
+//				folders.mkdirs();
+//			}
 			
 			String xlsfile = filepath+".xlsx";
 			
@@ -93,7 +92,8 @@ public class ExcelWriter {
 			}
 			
 			if (is_leaf){
-				baseSum.exportBase(folderpath+"Sums_"+chemin[3]);
+				System.out.println(folderpath+Configuration.FOLDER_SEPARATOR+"Sums_"+chemin[3]);
+				baseSum.exportBase(folderpath+Configuration.FOLDER_SEPARATOR+"Sums_"+chemin[3]);
 				
 				Bdd empty = new Bdd();
 				
@@ -119,7 +119,7 @@ public class ExcelWriter {
 			fileOut.close();
 
 			if (!is_leaf){
-				base.exportBase(folderpath+"Sums");
+				base.exportBase(folderpath+Configuration.FOLDER_SEPARATOR+"Sums");
 			}
 			else{
 				base.exportBase(filepath);
