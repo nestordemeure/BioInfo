@@ -74,7 +74,7 @@ public class ExcelManager {
 								
 								String filepath = folder+Configuration.FOLDER_SEPARATOR+listeFichiers[i]+Configuration.FOLDER_SEPARATOR+listelvl1[j]+Configuration.FOLDER_SEPARATOR+listelvl2[k];
 								//System.out.println(filepath);
-								Bdd base = ExcelReader.reader(filepath);
+								Bdd base = ExcelReader.reader(filepath,true);
 								ExcelWriter.writer(filepath+Configuration.FOLDER_SEPARATOR+listelvl2[k], chemin, base);
 							}
 							
@@ -88,7 +88,7 @@ public class ExcelManager {
 						chemin [3] = "";
 						
 						String filepath = folder+Configuration.FOLDER_SEPARATOR+listeFichiers[i]+Configuration.FOLDER_SEPARATOR+listelvl1[j];
-						Bdd base = ExcelReader.reader(filepath);
+						Bdd base = ExcelReader.reader(filepath,false);
 						ExcelWriter.writer(filepath+Configuration.FOLDER_SEPARATOR+listelvl1[j], chemin, base);
 					}
 				}
@@ -99,7 +99,7 @@ public class ExcelManager {
 				chemin [3] = "";
 				
 				String filepath = folder+Configuration.FOLDER_SEPARATOR+listeFichiers[i];
-				Bdd base = ExcelReader.reader(filepath);
+				Bdd base = ExcelReader.reader(filepath,false);
 				ExcelWriter.writer(filepath+Configuration.FOLDER_SEPARATOR+listeFichiers[i], chemin, base);
 			}
 		}
@@ -110,7 +110,7 @@ public class ExcelManager {
 		chemin [3] = "";
 		
 		String filepath = folder;
-		Bdd base = ExcelReader.reader(filepath);
+		Bdd base = ExcelReader.reader(filepath,false);
 		ExcelWriter.writer(filepath+Configuration.FOLDER_SEPARATOR+"Recapitulatif", chemin, base);
 	}
 }

@@ -56,7 +56,7 @@ public class ExcelWriter {
 	public static void writer(String filepath, String[] chemin, Bdd base) {
 		try {
 			
-			Boolean is_leaf = filepath.length() - filepath.replace(Configuration.FOLDER_SEPARATOR, "").length()==5;
+			Boolean is_leaf = filepath.length() - filepath.replace(Configuration.FOLDER_SEPARATOR, "").length()==4;
 			
 			Pattern regex1 = Pattern.compile(".*/");
 			Matcher m = regex1.matcher(filepath);
@@ -90,8 +90,8 @@ public class ExcelWriter {
 				}
 			}
 			
-			if (is_leaf){
-				baseSum.exportBase(folderpath+"Sums");
+			if (is_leaf && !chemin[3].isEmpty() && !chemin[3].equals("")){
+				baseSum.exportBase(folderpath+"Sums_"+chemin[3]);
 				
 				Bdd empty = new Bdd();
 				
@@ -116,7 +116,7 @@ public class ExcelWriter {
 			fileOut.flush();
 			fileOut.close();
 
-			if (!is_leaf){
+			if (!is_leaf || chemin[3].equals("") || chemin[3].isEmpty()){
 				base.exportBase(folderpath+"Sums");
 			}
 			else{

@@ -104,8 +104,8 @@ public class Main {
 		chemin[2]="Sous-Groupe";
 		chemin[3]="Organisme";
 		
-		ExcelWriter.writer("Results/patate/patate2/sous-grp/plop/plop", chemin, base);
-		ExcelWriter.writer("Results/patate/patate2/sous-grp/plop2/plop2", chemin, base);
+		ExcelWriter.writer("Results/patate/patate2/sous-grp/plop", chemin, base);
+		ExcelWriter.writer("Results/patate/patate2/sous-grp/plop2", chemin, base);
 		
 		ExcelManager.fusionExcels("Results");
 		
