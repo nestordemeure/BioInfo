@@ -5,12 +5,22 @@ import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 
 import configuration.Configuration;
+import main.Main;
 
 public class FileChooserDialog extends JDialog {
 	private JFileChooser fileChooser;
@@ -22,7 +32,14 @@ public class FileChooserDialog extends JDialog {
 		super();
 		this.mainFrame = mainFrame;
 		
-		fileChooser = new JFileChooser();
+		String preferencePath = this.getPreferencePath();
+		if (preferencePath != null) {
+			fileChooser = new JFileChooser(preferencePath);
+		}
+		else {
+			fileChooser = new JFileChooser();
+		}
+		
 		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		
 		dialog = this;
@@ -40,6 +57,7 @@ public class FileChooserDialog extends JDialog {
                     		path = path + Configuration.FOLDER_SEPARATOR;
                     	}
                     	Configuration.BASE_FOLDER = path;
+                    	FileChooserDialog.setPreferencePath(path);
                     	dialog.dispose();
                     }
                     else {
@@ -63,5 +81,74 @@ public class FileChooserDialog extends JDialog {
 		this.setSize(500,500);
 		this.setLocationRelativeTo(this.mainFrame);
 		this.setVisible(true);
+	}
+	
+	public static String getJarPath() {
+		String path = Main.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+		try {
+			String decodedPath = URLDecoder.decode(path, "UTF-8");
+			return decodedPath;
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public String getPreferencePath() {		
+		try {
+			String decodedPath = FileChooserDialog.getJarPath();
+			String str = null;
+			
+			File f = new File(decodedPath+"chosenPath.txt");
+			if(f.exists() && !f.isDirectory()) { 
+				BufferedReader in = null;
+				try {
+					in = new BufferedReader(new InputStreamReader(new FileInputStream(f), "UTF8"));
+				} catch (FileNotFoundException e2) {
+					e2.printStackTrace();
+				}
+
+				try {
+					str = in.readLine();
+					System.out.println(str);	
+				} catch (IOException e1) {
+					e1.printStackTrace();
+					return null;
+				}
+
+                try {
+					in.close();
+					return str;
+				} catch (IOException e) {
+					e.printStackTrace();
+					return null;
+				}
+			}
+			return str;
+			
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public static void setPreferencePath(String newPath) {
+		String decodedPath = FileChooserDialog.getJarPath();
+		try {
+			FileOutputStream output = new FileOutputStream(decodedPath+"chosenPath.txt", false);
+			byte[] b= newPath.getBytes();
+            try {
+				output.write(b);
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+            try {
+				output.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 }
