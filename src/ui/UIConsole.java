@@ -3,11 +3,11 @@ package ui;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import manager.TreeWalkerManager;
 import tree.Tree;
 import tree.TreeManager;
 import configuration.Configuration;
 import excel.ExcelManager;
+import manager.OrganismsFetcherService;
 
 public class UIConsole {
 	private static Lock consoleLock = new ReentrantLock();
@@ -36,8 +36,7 @@ public class UIConsole {
 		// Creating species statistics
 		UIManager.setMaxProgress(t.size());
 		
-		TreeWalkerManager.start(t);
-		//ThreadManager.start(t);
+		OrganismsFetcherService.launch(t);
 		
 		// Merge excels files
 		UIManager.log("Creating excel files...");

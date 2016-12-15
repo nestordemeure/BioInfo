@@ -25,7 +25,7 @@ import exceptions.ScannerNullException;
 import tree.Organism;
 import ui.UIManager;
 
-public class RepliconParserManager extends AbstractExecutionThreadService {
+public class RepliconParserManager {
 
 	private Retryer<Bdd> retryer;
 	
@@ -75,7 +75,6 @@ public class RepliconParserManager extends AbstractExecutionThreadService {
 				.build();
 	}
 	
-	@Override
 	public void run() {
 		UIManager.log("[RepliconParserManager] Start downloading "+this.organism.getName()+ " replicon: "+replicon);
 		Bdd db = null;

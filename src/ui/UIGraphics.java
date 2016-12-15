@@ -1,9 +1,9 @@
 package ui;
 import java.util.ArrayList;
 
-import manager.TreeWalkerManager;
 import configuration.Configuration;
 import excel.ExcelManager;
+import manager.OrganismsFetcherService;
 import tree.Tree;
 
 public class UIGraphics {
@@ -54,7 +54,7 @@ public class UIGraphics {
 		Thread thread = new Thread(){
 			public void run(){
 				UIManager.setMaxProgress(tree.size());
-				TreeWalkerManager.start(tree);
+				OrganismsFetcherService.launch(tree);
 				// Merge excels files
 				UIManager.log("Creating excel files...");
 				ExcelManager.fusionExcels(Configuration.BASE_FOLDER);
