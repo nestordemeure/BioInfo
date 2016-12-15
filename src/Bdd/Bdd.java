@@ -669,6 +669,7 @@ public class Bdd
 			
 			nb_CDS += cont.nb_CDS;
 			nb_CDS_non_traites += cont.nb_CDS_non_traites;
+			nb_items += cont.nb_items;
 
 			// TODO no fusion for the organisms
 		}
