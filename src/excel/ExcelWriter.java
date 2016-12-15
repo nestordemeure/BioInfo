@@ -56,7 +56,9 @@ public class ExcelWriter {
 	public static void writer(String filepath, String[] chemin, Bdd base) {
 		try {
 			
-			Boolean is_leaf = filepath.length() - filepath.replace(Configuration.FOLDER_SEPARATOR, "").length()==4;
+			//Boolean is_leaf = filepath.length() - filepath.replace(Configuration.FOLDER_SEPARATOR, "").length()==4;
+			Boolean is_leaf=!chemin[3].equals("");
+			
 			
 			Pattern regex1 = Pattern.compile(".*/");
 			Matcher m = regex1.matcher(filepath);
