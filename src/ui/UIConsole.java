@@ -3,7 +3,6 @@ package ui;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import manager.ThreadManager;
 import manager.TreeWalkerManager;
 import tree.Tree;
 import tree.TreeManager;

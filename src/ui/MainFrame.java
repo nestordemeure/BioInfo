@@ -9,6 +9,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -116,7 +118,7 @@ public class MainFrame extends Frame {
 		gInfosPanel.add(openButton, BorderLayout.PAGE_END);
 		
 		infosProcess = new JPanel(new BorderLayout());
-		download = new JCheckBox("Télécharger les fichiers");
+		download = new JCheckBox("Tï¿½lï¿½charger les fichiers");
 		
 		infosProcess.add(download, BorderLayout.NORTH);
 		infosProcess.add(start, BorderLayout.PAGE_END);
@@ -210,37 +212,42 @@ public class MainFrame extends Frame {
 			openButton.setVisible(false);
 			return;
 		} else {
-			String xls = FindExtension.check(infos.getRealPath(), ".xls");
-			String bdd = FindExtension.check(infos.getRealPath(), ".bdd");
-			if (xls != "") {
-				openButton.addActionListener(new OpenFileListener(xls));
-				openButton.setVisible(true);
-			} else {
-				openButton.setVisible(false);
-			}
+			Organism o = infos.getOrganism();
+			if(o != null) {
+				String xls = o.getPath()+Configuration.FOLDER_SEPARATOR+o.getName()+".xlsx";
+				String bdd = o.getPath()+Configuration.FOLDER_SEPARATOR+o.getName()+".bdd";
+				
+				if(Files.exists(FileSystems.getDefault().getPath(xls))){
+					openButton.addActionListener(new OpenFileListener(xls));
+					openButton.setVisible(true);
+				} else {
+					openButton.setVisible(false);
 
-			if (bdd != "") {
-				try {
-					HashMap<String, Long> res = ExcelManager.getInfo(bdd.substring(0, bdd.length() - 4));
-					this.pathLabel.setText(infos.getTreePath());
-					this.CDSCount.setText(res.get("nb_cds").toString());
-					this.CDSFailed.setText(res.get("cds_non_traites").toString());
-					this.dinucleotideCount.setText(res.get("nb_dinucleotides").toString());
-					this.trinucleotideCount.setText(res.get("nb_trinucleotides").toString());
+				}
+				
+				if(Files.exists(FileSystems.getDefault().getPath(bdd))) {
+					try {
+						HashMap<String, Long> res = ExcelManager.getInfo(bdd.substring(0, bdd.length() - 4));
+						this.pathLabel.setText(infos.getTreePath());
+						this.CDSCount.setText(res.get("nb_cds").toString());
+						this.CDSFailed.setText(res.get("cds_non_traites").toString());
+						this.dinucleotideCount.setText(res.get("nb_dinucleotides").toString());
+						this.trinucleotideCount.setText(res.get("nb_trinucleotides").toString());
 
-				} catch (IOException e) {
+					} catch (IOException e) {
+						this.pathLabel.setText("Inconnu");
+						this.CDSCount.setText("Inconnu");
+						this.CDSFailed.setText("Inconnu");
+						this.dinucleotideCount.setText("Inconnu");
+						this.trinucleotideCount.setText("Inconnu");
+					}
+				} else {
 					this.pathLabel.setText("Inconnu");
 					this.CDSCount.setText("Inconnu");
 					this.CDSFailed.setText("Inconnu");
 					this.dinucleotideCount.setText("Inconnu");
 					this.trinucleotideCount.setText("Inconnu");
 				}
-			} else {
-				this.pathLabel.setText("Inconnu");
-				this.CDSCount.setText("Inconnu");
-				this.CDSFailed.setText("Inconnu");
-				this.dinucleotideCount.setText("Inconnu");
-				this.trinucleotideCount.setText("Inconnu");
 			}
 		}
 	}

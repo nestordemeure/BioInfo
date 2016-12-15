@@ -15,6 +15,7 @@ import com.google.common.util.concurrent.ServiceManager;
 
 import Bdd.Bdd;
 import configuration.Configuration;
+import excel.ExcelWriter;
 import tree.Organism;
 import tree.Tree;
 import ui.UIManager;
@@ -49,20 +50,22 @@ public class TreeWalkerManager {
 	
 	public Organism readOrganism(Organism o){
 		String file = o.getPath()+Configuration.FOLDER_SEPARATOR+o.getName()+".org";
+		
+		Organism res = null;
 		AccessManager.accessFile(file);
 		ObjectInputStream inputstream;
 		FileInputStream chan;
 		try{
 			chan = new FileInputStream(file);
 			inputstream = new ObjectInputStream(chan);
+			res = (Organism) inputstream.readObject();
 			inputstream.close();
 			chan.close();
-			return (Organism) inputstream.readObject();
 		}catch(Exception e){
 			UIManager.log("[TreeWalker] Unable to read "+o.getName()+" file.");
 		}
 		AccessManager.doneWithFile(file);
-		return null;
+		return o;
 	}
 	
 	public void writeOrganism(Organism o){
@@ -112,7 +115,6 @@ public class TreeWalkerManager {
 		}
 		
 		ServiceManager manager = new ServiceManager(services);
-		
 		manager.startAsync();
 		manager.awaitStopped();
 	
@@ -122,6 +124,20 @@ public class TreeWalkerManager {
 			maindb.exportBase(dbPath);
 		} catch (IOException e) {
 			UIManager.log("[TreeWalker] Cannot write db file : "+o.getName()+" : "+dbPath);
+		}
+		
+		String[] chemin=new String[4];
+		chemin[0]=o.getKingdom();
+		chemin[1]=o.getGroup();
+		chemin[2]=o.getSubgroup();
+		chemin[3]=o.getName();
+		
+		UIManager.log("Writing Excel file for : "+o.getName());
+		try{
+			ExcelWriter.writer(o.getPath()+Configuration.FOLDER_SEPARATOR+o.getName(), chemin, maindb);
+		}catch(Exception e){
+			UIManager.log("Error while writing excel file for : "+o.getName());
+			e.printStackTrace();
 		}
 		
 		UIManager.log("[ŦreeWalker] Done with organism : "+o.getName());

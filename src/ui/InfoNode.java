@@ -33,6 +33,9 @@ public class InfoNode {
 	public String getRealPath() {
 		String res = rootPath;
 		for (String element : path) {
+			if(element == path.get(path.size() - 1)){
+				break;
+			}
 			res += separator;
 			res += element;
 		}
@@ -42,6 +45,9 @@ public class InfoNode {
 	public String getTreePath() {
 		String res = "";
 		for (String element : path) {
+			if(element == path.get(path.size() - 1)){
+				break;
+			}
 			res += "/";
 			res += element;
 		}
@@ -84,5 +90,9 @@ public class InfoNode {
 		}
 		
 		return true;
+	}
+	
+	public Organism getOrganism() {
+		return this.organism;
 	}
 }

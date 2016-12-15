@@ -22,7 +22,7 @@ public class Configuration {
 
 	// --- ParserManager Configuration ---	
 	public static int GEN_PER_DOWNLOAD = 10;
-	public static String GEN_DOWNLOAD_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=<ID>&rettype=gb"; // URL a utiliser pour télécharger les genes
+	public static String GEN_DOWNLOAD_URL = "https://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?tool=portal&save=file&log$=seqview&db=nuccore&report=gbwithparts&sort=&from=begin&to=end&maxplex=3&id=<ID>"; // URL a utiliser pour télécharger les genes
 	
 	// --- ThreadManager Configuration ---
 	public static int THREADS_NUMBER = 40; // Nombre de threads a lancer pour la récupération des fichiers de genes.

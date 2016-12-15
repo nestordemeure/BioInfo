@@ -1,7 +1,6 @@
 package ui;
 import java.util.ArrayList;
 
-import manager.ThreadManager;
 import manager.TreeWalkerManager;
 import configuration.Configuration;
 import excel.ExcelManager;
@@ -58,7 +57,7 @@ public class UIGraphics {
 				TreeWalkerManager.start(tree);
 				// Merge excels files
 				UIManager.log("Creating excel files...");
-				//ExcelManager.fusionExcels(Configuration.BASE_FOLDER);
+				ExcelManager.fusionExcels(Configuration.BASE_FOLDER);
 				UIManager.log("Done !");
 				UIGraphics.this.setDone();
 			}
