@@ -118,7 +118,7 @@ public class MainFrame extends Frame {
 		gInfosPanel.add(openButton, BorderLayout.PAGE_END);
 		
 		infosProcess = new JPanel(new BorderLayout());
-		download = new JCheckBox("Télécharger les fichiers");
+		download = new JCheckBox("Telecharger les fichiers");
 		
 		infosProcess.add(download, BorderLayout.NORTH);
 		infosProcess.add(start, BorderLayout.PAGE_END);
