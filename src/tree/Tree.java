@@ -85,11 +85,7 @@ public class Tree<T> {
 	}
 
 	public int size() {
-		if (this.size == -1) {
-			this.computeSize();
-		}
-
-		return this.size;
+		return this.computeSize();
 	}
 
 	public boolean isLeaf(String node) {

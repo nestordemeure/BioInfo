@@ -129,7 +129,7 @@ public class OrganismsFetcherService extends AbstractExecutionThreadService {
 			this.launchParser(cur);
 			cur = walker.next();
 		}
-		UIManager.log("[Organism fetcher "+this.id+"] Done !");
+		UIManager.log("[Organism fetcher "+this.id+"] Ending !");
 	}
 	
 	public static void launch(Tree t){
