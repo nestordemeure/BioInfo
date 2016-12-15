@@ -85,6 +85,7 @@ public class TreeBuilderService extends AbstractExecutionThreadService {
 			UIManager.log(this.type.toString()+ " page : "+this.currentPage);
 			UIManager.addProgress(1);
 			currentPage ++;
+			cont = false;
 		}
 	}
 	
