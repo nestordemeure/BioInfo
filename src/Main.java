@@ -42,20 +42,20 @@ public class Main {
 		
 		Callable<Boolean> callable =  new Callable<Boolean>(){
 			public Boolean call() throws Exception{
-				//Scanner sc = new Scanner(Resources.asByteSource(new URL("https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=NC_011594.1&rettype=gb")).openBufferedStream());
+				Scanner sc = new Scanner(Resources.asByteSource(new URL("https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=NC_008944.1&rettype=gb")).openBufferedStream());
 				Organism virus = new Organism(TreeBuilderService.OrganismType.VIRUSES.toString(), "group", "subgroup", "name", "bioproject");
 				Organism eukaryote = new Organism(TreeBuilderService.OrganismType.EUKARYOTES.toString(), "group", "subgroup", "name", "bioproject");
 				virus.addReplicon("NC_123456", "MON FICHIER");
 				eukaryote.addReplicon("chromosome_1_NC_123456", "slt");
 
-				URL url = new File("/home/nestor/Cours/2A/bioinformatique/sequence2.gb").toURI().toURL();
-				Scanner sc = new Scanner(Resources.asByteSource(url).openBufferedStream());
+				URL url = new File("/home/nestor/Cours/2A/bioinformatique/sequenceb.gb").toURI().toURL();
+				//Scanner sc = new Scanner(Resources.asByteSource(url).openBufferedStream());
 				sc.useDelimiter("\n");
 				Bdd db = new Bdd();
 				Parser p = new Parser(db, sc);
 				ByteArrayOutputStream stream = new ByteArrayOutputStream(); //TODO
 				// Virus
-				p.parse("NC_123456", virus, null); //TODO
+				//p.parse("NC_123456", virus, null); //TODO
 				// Non virus
 				// p.parse("chromosome_1_NC_123456", eukaryote, null);
 				System.out.println(stream.toString());

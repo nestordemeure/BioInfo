@@ -213,15 +213,22 @@ public class Parser
 	//renvois une exception si le scanneur a retourner un null au lieu d'un string
 	void importAndCheckNull() throws ScannerNullException
 	{
-		String str = scanner.next();
-		
-		if (str == null)
+		try 
+		{
+			String str = scanner.next();
+			
+			if (str == null)
+			{
+				throw new ScannerNullException();
+			}
+			else
+			{
+				ligne_actuelle = str;
+			}
+		}
+		catch (NoSuchElementException e)
 		{
 			throw new ScannerNullException();
-		}
-		else
-		{
-			ligne_actuelle = str;
 		}
 	}
 	
