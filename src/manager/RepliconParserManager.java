@@ -87,6 +87,7 @@ public class RepliconParserManager {
 			UIManager.log("[RepliconParserManager] Unable to download "+this.organism.getName()+ " replicon: "+replicon);
 		}
 		this.mainDb.fusionBase(db);
+		organism.addProcessedReplicon(replicon);
 		UIManager.log("[RepliconParserManager] Finished downloading "+this.organism.getName()+ " replicon: "+replicon);
 		UIManager.addProgress(1);
 	}

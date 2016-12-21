@@ -94,7 +94,7 @@ public class Organism implements Serializable {
 		return str;
 	}
 	
-	private void readObject(ObjectInputStream inputstream) throws IOException, ClassNotFoundException 
+	public void readObject(ObjectInputStream inputstream) throws IOException, ClassNotFoundException 
 	{
 		kingdom = (String) inputstream.readObject();
 		group = (String) inputstream.readObject();
@@ -109,7 +109,7 @@ public class Organism implements Serializable {
 		processed_replicons = (ArrayList<String>) inputstream.readObject();
 	}
 
-	private void writeObject(ObjectOutputStream outputstream) throws IOException
+	public void writeObject(ObjectOutputStream outputstream) throws IOException
 	{
 		outputstream.writeObject(kingdom);
 		outputstream.writeObject(group);

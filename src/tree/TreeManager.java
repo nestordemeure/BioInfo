@@ -11,7 +11,7 @@ import ui.UIManager;
 public class TreeManager {
 	
 	public static Tree construct(){
-		UIManager.setMaxProgress(37+72+60);
+		UIManager.setMaxProgress(37+72+60+10);
 		List<TreeBuilderService> services = new ArrayList<TreeBuilderService>();
 		TreeBuilderService eukaryotes = new TreeBuilderService(OrganismType.EUKARYOTES);
 		TreeBuilderService prokaryotes = new TreeBuilderService(OrganismType.PROKARYOTES);

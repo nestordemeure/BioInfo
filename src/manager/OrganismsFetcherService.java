@@ -8,6 +8,7 @@ import java.io.ObjectOutputStream;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -31,28 +32,28 @@ public class OrganismsFetcherService extends AbstractExecutionThreadService {
 		this.id = id;
 	}
 
-	public Organism readOrganism(Organism o){
-		String file = o.getPath()+Configuration.FOLDER_SEPARATOR+o.getName()+".org";
+	public ArrayList<String> readProcessed(Organism o){
+		String file = o.getPath()+Configuration.FOLDER_SEPARATOR+o.getName()+".rpcs";
 		
-		Organism res = null;
+		ArrayList<String> res = null;
 		AccessManager.accessFile(file);
 		ObjectInputStream inputstream;
 		FileInputStream chan;
 		try{
 			chan = new FileInputStream(file);
 			inputstream = new ObjectInputStream(chan);
-			res = (Organism) inputstream.readObject();
+			res = (ArrayList<String>) inputstream.readObject();
 			inputstream.close();
 			chan.close();
 		}catch(Exception e){
 			UIManager.log("[Organism fetcher "+this.id+"] Unable to read "+o.getName()+" file.");
 		}
 		AccessManager.doneWithFile(file);
-		return o;
+		return res;
 	}
 	
-	public void writeOrganism(Organism o){
-		String file = o.getPath()+Configuration.FOLDER_SEPARATOR+o.getName()+".org";
+	public void writeProcessed(Organism o){
+		String file = o.getPath()+Configuration.FOLDER_SEPARATOR+o.getName()+".rpcs";
 		AccessManager.accessFile(file);
 		Path p = FileSystems.getDefault().getPath(file);
 		try {
@@ -63,7 +64,7 @@ public class OrganismsFetcherService extends AbstractExecutionThreadService {
 		try{
 			FileOutputStream chan = new FileOutputStream(file);
 			ObjectOutputStream outputstream = new ObjectOutputStream(chan);
-			outputstream.writeObject(o);
+			outputstream.writeObject(o.getProcessedReplicons());
 			outputstream.close();
 		} catch (IOException e) {
 		}
@@ -77,9 +78,9 @@ public class OrganismsFetcherService extends AbstractExecutionThreadService {
 		}
 		
 		Bdd maindb;
-		Organism oldOrganism = this.readOrganism(o);
+		ArrayList<String> processedReplicons = this.readProcessed(o);
 		String dbPath = o.getPath()+Configuration.FOLDER_SEPARATOR+o.getName();
-		if(oldOrganism == null) {
+		if(processedReplicons == null) {
 			maindb = new Bdd();
 		} else {
 			try {
@@ -87,16 +88,20 @@ public class OrganismsFetcherService extends AbstractExecutionThreadService {
 			} catch (IOException e) {
 				maindb = new Bdd();
 			}
-			o.removeReplicons(oldOrganism.getProcessedReplicons());
+			o.removeReplicons(processedReplicons);
 		}
-		
-				
+						
 		for(String replicon : o.getReplicons().keySet()){
-			RepliconParserManager manager = new RepliconParserManager(o, replicon, maindb);
-			manager.run();
+			try{
+				RepliconParserManager manager = new RepliconParserManager(o, replicon, maindb);
+				manager.run();
+			}catch(Exception e){
+				UIManager.log("[Organism fetcher" +this.id+"] Error while processing request.");
+				e.printStackTrace();
+			}
 		}
-	
-		this.writeOrganism(o);
+			
+		this.writeProcessed(o);
 		
 		try {
 			maindb.exportBase(dbPath);
