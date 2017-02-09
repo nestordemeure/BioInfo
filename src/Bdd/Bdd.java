@@ -47,7 +47,7 @@ public class Bdd
 	private Organism tampon_organism;
 	
 	private OutputStream tampon_streamer;
-	private StringBuilder tampon_toStream; //TODO
+	private StringBuilder tampon_toStream;
 	
 	boolean empty_tamp;
 	
@@ -140,7 +140,7 @@ public class Bdd
 	{
 		tampon_tableautrinucleotides[phase3][nucleotide1][nucleotide2][nucleotide3]++;
 		tampon_tableaudinucleotides[phase2][nucleotide1][nucleotide2]++;
-		//TODO incrémente toStream pour le streamer
+		// incrémente toStream pour le streamer
 		ecrit_nucleotideToStream(nucleotide1);
 	}
 	
@@ -148,7 +148,7 @@ public class Bdd
 	public void ajoute_nucleotides (int phase, int nucleotide1, int nucleotide2, int nucleotide3) throws CharInvalideException
 	{
 		tampon_tableautrinucleotides[phase][nucleotide1][nucleotide2][nucleotide3]++;
-		//TODO incrémente toStream pour le streamer
+		// incrémente toStream pour le streamer
 		ecrit_nucleotideToStream(nucleotide1);
 	}
 	
@@ -178,7 +178,7 @@ public class Bdd
 		tampon_tableaudinucleotides[phase][nucleotide1][nucleotide2]--;
 	}
 
-	// TODO ajoute un nucleotide au stringbuilder qu'on feedera au streamer
+	// ajoute un nucleotide au stringbuilder qu'on feedera au streamer
 	public void ecrit_nucleotideToStream(int nucleotide)
 	{
 		if(tampon_streamer!=null){
@@ -194,7 +194,7 @@ public class Bdd
 	//déplace le contenus du tampon dans la mémoire
 		public void close_tampon()
 		{
-			//TODO streamer le texte si le streamer est non-null
+			// streamer le texte si le streamer est non-null
 			if(tampon_streamer!=null)
 			{
 				byte[] bytes = tampon_toStream.append('\n').toString().getBytes();
@@ -255,7 +255,7 @@ public class Bdd
 						tampon_tableautrinucleotides[2][nucleotide1][nucleotide2][nucleotide3]=0; //clear
 						
 						// phase pref
-						if(valeur_tampon!=0 || valeur_tampon1!=0 || valeur_tampon2!=0) //TODO set to 0 if there is no data
+						if(valeur_tampon!=0 || valeur_tampon1!=0 || valeur_tampon2!=0) // set to 0 if there is no data
 						{
 							if (valeur_tampon > valeur_tampon1)
 							{
@@ -322,8 +322,8 @@ public class Bdd
 			
 			tampon_cleft = cleft;
 			tampon_organism = organism;
-			tampon_streamer = streamer; //TODO
-			tampon_toStream = new StringBuilder(); //TODO
+			tampon_streamer = streamer;
+			tampon_toStream = new StringBuilder();
 		}
 	
 	//remet un tampon à 0
@@ -413,7 +413,7 @@ public class Bdd
 	}
 	
 	//sort un string qui représente le profil du tableau de trinucleotides
-	//TODO add phases pref
+	// TODO add phases pref
 	public String get_tableauxnucleotides_string ()
 	{
 		String str = "";
@@ -671,7 +671,7 @@ public class Bdd
 			nb_CDS_non_traites += cont.nb_CDS_non_traites;
 			nb_items += cont.nb_items;
 
-			// TODO no fusion for the organisms
+			// no fusion for the organisms
 		}
 		
 		//serialization
