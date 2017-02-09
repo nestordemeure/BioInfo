@@ -22,7 +22,7 @@ public class Parser
 	private ReservationTable table_des_reservations;
 	String cleft;
 	String cleftComplement;
-	Organism organism; //TODO
+	Organism organism;
 	OutputStream streamer;
 	
 	public Parser (Bdd base, Scanner scan)
@@ -33,7 +33,7 @@ public class Parser
 
 	public void parse(String key, Organism organismArg, OutputStream stream) throws ScannerNullException
 	{
-		// TODO on initialise l'identification de l'organism
+		// on initialise l'identification de l'organism
 		streamer = stream;
 		organism = organismArg;
 		if (organismArg.getKingdom().equals(TreeBuilderService.OrganismType.VIRUSES.toString())) 
@@ -70,24 +70,17 @@ public class Parser
 	{
 		try
 		{
-			/*
-			
-			String locus = ligne_actuelle.substring(12);
-			if(locus.contains(" ")){
-			   locus = locus.substring(0, locus.indexOf(" ")); 
-			}
-			*/
-			//TODO get key if needed
+			// get key if needed
 			if(cleft==null)
 			{
 				trouverPrefix("LOCUS");
 				if(ligne_actuelle.contains("DNA"))
 				{
-					cleft="DNA_"+cleftComplement; //TODO
+					cleft="DNA_"+cleftComplement;
 				}
 				else if(ligne_actuelle.contains("RNA"))
 				{
-					cleft="RNA_"+cleftComplement; //TODO
+					cleft="RNA_"+cleftComplement;
 				}
 				else
 				{
@@ -106,7 +99,7 @@ public class Parser
 				importAndCheckNull();
 				taxonomy += ligne_actuelle.substring(12);
 			}
-			organism.setTaxonomy(taxonomy); // TODO
+			organism.setTaxonomy(taxonomy);
 			
 			//on se place dans la catégorie features
 			trouverPrefix("FEATURES");

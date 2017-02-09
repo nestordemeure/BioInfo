@@ -30,15 +30,10 @@ public class ExcelManager {
 			
 			nb_CDS+=contenus.get_nb_CDS();
 			CDS_non_traites+=contenus.get_nb_CDS_non_traites();
-			NB_dinucl+=contenus.get_nb_dinucleotides();
-			NB_trinucl+=contenus.get_nb_trinucleotides();
-			
 		}
 		
 		res.put("nb_cds", nb_CDS);
 		res.put("cds_non_traites",CDS_non_traites);
-		res.put("nb_dinucleotides",NB_dinucl);
-		res.put("nb_trinucleotides",NB_trinucl);
 		
 		return res;
 		
