@@ -8,7 +8,6 @@ import exceptions.CharInvalideException;
 public class automateLecteurDeGenes 
 {
 	Bdd base_de_donnees;
-	int phase2; //0,1
 	int phase3; //0,1 ou 2
 	boolean already_started; //indique si cet automate à déjà tourné (join)
 	
@@ -28,7 +27,6 @@ public class automateLecteurDeGenes
 	
 	automateLecteurDeGenes (Bdd base)
 	{
-		phase2=0;
 		phase3=0;
 		already_started=false;
 		base_de_donnees=base;
@@ -58,20 +56,6 @@ public class automateLecteurDeGenes
 			//on vérifie que le dernier triplet est bien un codon stop (TAA,TAG,TGA,TTA)
 			throw new CDSInvalideException("codon stop invalide " +nucleotide1+nucleotide2+nucleotide3);
 		}
-		else if (phase2 != 0)
-		{
-			try
-			{
-			//le dernier dinucléotide rentré doit etre un 1 -> la phase2 doit valoir 0
-			//ne pas prendre le dernier dinucléotide en date
-			base_de_donnees.retire_nucleotides(0, nucleotide0, nucleotide1);
-			}
-			catch(CharInvalideException e)
-			{
-				throw new CDSInvalideException("char invalide");
-			}
-		}
-			
 	}
 	
 	void lire_sequence(sequence seq) throws CDSInvalideException
@@ -233,9 +217,6 @@ public class automateLecteurDeGenes
 				break;
 			default:
 				throw new CDSInvalideException("char invalide");
-				//nucleotide3=-1; 
-				//debut_sequence++;
-				//break;
 		}
 	}
 	
@@ -308,20 +289,17 @@ public class automateLecteurDeGenes
 				break;
 			default:
 				throw new CDSInvalideException("char invalide");
-				//nucleotide3=-1; 
-				//fin_sequence--;
-				//break;
 		}
 	}
 			
-	//ajoute un trinucléotide à la bdd
+	//TODO ajoute un trinucléotide à la bdd
 	//change de phase et décale chaque nucléotide
 	void ajoute_nucleotides() throws CDSInvalideException
 	{
 		try
 		{
-			base_de_donnees.ajoute_nucleotides(phase2,phase3, nucleotide1, nucleotide2, nucleotide3);
-			incrementer_phases(); 
+			base_de_donnees.ajoute_nucleotides(phase3, nucleotide1, nucleotide2, nucleotide3);
+			incrementer_phase(); 
 			nucleotide1=nucleotide2;
 			nucleotide2=nucleotide3;
 		}
@@ -343,9 +321,8 @@ public class automateLecteurDeGenes
 	}
 	
 	
-	void incrementer_phases()
+	void incrementer_phase()
 	{
-		phase2 = (phase2+1)%2;
 		phase3 = (phase3+1)%3;
 	}
 	
