@@ -66,7 +66,7 @@ public class Parser
 //--------------------------------------------------------------------------
 //lire l'entete
 	
-	void parser_entete() throws NoOriginException, ScannerNullException
+	void parser_entete() throws NoOriginException
 	{
 		try
 		{
@@ -129,9 +129,9 @@ public class Parser
 				}
 			}
 		}
-		catch (NoSuchElementException e)
+		catch (NoSuchElementException | ScannerNullException e)
 		{
-			throw new NoOriginException();
+			throw new NoOriginException("parser en-tête");
 		}
 	}
 		
@@ -189,15 +189,22 @@ public class Parser
 	//fait avancer un scanner jusqu'a atteindre le préfixe donné
 	//consomme la ligne qui contient le préfixe
 	//renvois une exception si on ne peux pas lire l'élément suivant
-	void trouverPrefix(String prefix) throws NoSuchElementException, ScannerNullException, NoOriginException
+	void trouverPrefix(String prefix) throws NoOriginException
 	{
 		do
 		{
-			importAndCheckNull();
+			try
+			{
+				importAndCheckNull();
+			}
+			catch (ScannerNullException e)
+			{
+				throw new NoOriginException("no prefix nor text");
+			}
 			
 			if (ligne_actuelle.startsWith("//"))
 			{
-				throw new NoOriginException();
+				throw new NoOriginException("no prefix, //");
 			}
 		}
 		while(!ligne_actuelle.startsWith(prefix));
