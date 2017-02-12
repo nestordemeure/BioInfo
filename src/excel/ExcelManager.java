@@ -21,7 +21,8 @@ public class ExcelManager {
 		String cleft;
 		content contenus;
 		
-		Long nb_CDS=(long) 0, CDS_non_traites=(long) 0, NB_dinucl=(long) 0, NB_trinucl=(long) 0;
+		Long nb_CDS=(long) 0;
+		Long CDS_non_traites=(long) 0;
 				
 		for (Entry<String, content> entry : tmp.getContenus())
 		{

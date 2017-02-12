@@ -38,7 +38,6 @@ import Bdd.*;
 import Bdd.Bdd.content;
 import configuration.Configuration;
 
-
 public class ExcelWriter {
 	
 	public static byte[] hexStringToByteArray(String s) {
@@ -50,8 +49,6 @@ public class ExcelWriter {
 	    }
 	    return data;
 	}
-	
-	
 	
 	public static void writer(String folderpath, String filepath, String[] chemin, Bdd base, boolean is_leaf) {
 		try {
@@ -171,7 +168,6 @@ public class ExcelWriter {
 			XSSFCellStyle int_type = (XSSFCellStyle) wb.createCellStyle();
 			int_type.setDataFormat(dataFormat.getFormat("0"));
 			
-			
 			XSSFCellStyle ngray_float = (XSSFCellStyle) wb.createCellStyle();
 			ngray_float.setFillForegroundColor(gray);
 			ngray_float.setFillPattern(CellStyle.SOLID_FOREGROUND);
@@ -198,29 +194,35 @@ public class ExcelWriter {
 			
 			Organism empty_org=new Organism("","","","","","","");
 			
+			//-------------------------------------------------------------------------------------
+			// build a 90x40 spreadsheet
+			
 			XSSFSheet worksheet = (XSSFSheet) wb.createSheet(cleft);
-	
-			List<XSSFRow> rowlist = new ArrayList<XSSFRow>();
+			List<XSSFRow> rowlist = new ArrayList<XSSFRow>();	
 			
-			
-			for (int i = 0; i <90; i++){
-				rowlist.add(worksheet.createRow(i));
-				
-				for(int j = 0; j<40; j++){
-					rowlist.get(i).createCell(j);
-				}
-			}
-						
-			for(int i = 0; i<90;i++)
+			// create the cells
+			for (int row = 0; row <90; row++)
 			{
-				for (int j = 0; j<40; j++)
+				rowlist.add(worksheet.createRow(row));
+				
+				for(int col = 0; col<40; col++)
 				{
-					rowlist.get(i).getCell(j).setCellStyle(getCellStyle(i,j,wb,dblue, lblue, lgray, ngray, float_type, int_type, ngray_float, ngray_int, lgray_int, default_type));
+					rowlist.get(row).createCell(col);
 				}
 			}
 			
+			// set the style for each cell
+			for (int row = 0; row <90; row++)
+			{
+				for(int col = 0; col<40; col++)
+				{
+					rowlist.get(row).getCell(col).setCellStyle(getCellStyle(row,col,wb,dblue, lblue, lgray, ngray, float_type, int_type, ngray_float, ngray_int, lgray_int, default_type));
+				}
+			}
 			
-			//En-tête
+			//-------------------------------------------------------------------------------------
+			// Description de l'organisme
+			
 			// Name
 			String filename = "";
 			if (chemin[3] != null && chemin[3] != "" ) {
@@ -239,63 +241,65 @@ public class ExcelWriter {
 				filename = chemin[0];
 				rowlist.get(2).getCell(17).setCellValue("Kingdom Name");
 			}
-			
 			rowlist.get(2).getCell(18).setCellValue(filename);
-			
-			
-			
-			//Nb Nucléotides
-			rowlist.get(4).getCell(17).setCellValue("Number of nucleotides");
-			rowlist.get(4).getCell(18).setCellValue(contenus.nb_trinucleotides);
 		
-			//Nb CDS
-			rowlist.get(6).getCell(17).setCellValue("Number of valid cds sequences");
-			rowlist.get(6).getCell(18).setCellValue(contenus.nb_CDS);
+			// Nb CDS
+			rowlist.get(4).getCell(17).setCellValue("Number of valid cds sequences");
+			rowlist.get(4).getCell(18).setCellValue(contenus.nb_CDS);
 			
-			//Invalid CDS
-			rowlist.get(8).getCell(17).setCellValue("Number of invalid cds");
-			rowlist.get(8).getCell(18).setCellValue(contenus.nb_CDS_non_traites);
+			// Invalid CDS
+			rowlist.get(6).getCell(17).setCellValue("Number of invalid cds");
+			rowlist.get(6).getCell(18).setCellValue(contenus.nb_CDS_non_traites);
 			
 			//Modification date
 			String mod_date=contenus.organism.getModificationDate();
 			if(mod_date!=null && !mod_date.isEmpty()){
-				rowlist.get(10).getCell(17).setCellValue("Modification Date");
-				rowlist.get(10).getCell(18).setCellValue(mod_date);
+				rowlist.get(8).getCell(17).setCellValue("Modification Date");
+				rowlist.get(8).getCell(18).setCellValue(mod_date);
 			}
 			
 			if (accession!=null && !accession.isEmpty()){
 				//Accession
-				rowlist.get(12).getCell(17).setCellValue("Accession");
-				rowlist.get(12).getCell(18).setCellValue(accession);
+				rowlist.get(10).getCell(17).setCellValue("Accession");
+				rowlist.get(10).getCell(18).setCellValue(accession);
 			}
 			
 			if (taxonomy!=null && !taxonomy.isEmpty()){
 				//Taxonomy
-				rowlist.get(14).getCell(17).setCellValue("Taxonomy");
-				rowlist.get(14).getCell(18).setCellValue(taxonomy);
+				rowlist.get(12).getCell(17).setCellValue("Taxonomy");
+				rowlist.get(12).getCell(18).setCellValue(taxonomy);
 			}
 			
 			if (bioproject!=null && !bioproject.isEmpty()){
-				rowlist.get(16).getCell(17).setCellValue("Bioproject");
-				rowlist.get(16).getCell(18).setCellValue(bioproject);
+				rowlist.get(14).getCell(17).setCellValue("Bioproject");
+				rowlist.get(14).getCell(18).setCellValue(bioproject);
 			}
 			
-			//Nombre de Chromosomes, DNA, Mitochondrion, etc...
-			Integer tmp_i=18;
-			Integer tmp_j=17;
-			
-			if ((bioproject==null || bioproject.isEmpty()) && (accession==null || accession.isEmpty()) && (taxonomy==null || taxonomy.isEmpty()) && (mod_date==null || mod_date.isEmpty())){
-				tmp_i=10;
+			// Sums : Nombre de Chromosomes, DNA, Mitochondrion, etc...
+			Integer tmp_row=16;
+			Integer tmp_col=17;
+			if ((bioproject==null || bioproject.isEmpty()) && (accession==null || accession.isEmpty()) && (taxonomy==null || taxonomy.isEmpty()) && (mod_date==null || mod_date.isEmpty()))
+			{
+				tmp_row=8;
+			}
+			else
+			{
+				tmp_row=16;
 			}
 			
-			if (cleft.split("_")[0].equals("Sum")){
-				rowlist.get(tmp_i).getCell(tmp_j).setCellValue("Nb of "+cleft.split("_")[1]);
+			if (cleft.split("_")[0].equals("Sum"))
+			{
+				rowlist.get(tmp_row).getCell(tmp_col).setCellValue("Nb of "+cleft.split("_")[1]);
 			}
-			else {
-				rowlist.get(tmp_i).getCell(tmp_j).setCellValue("Nb of "+cleft.split("_")[0]);
+			else 
+			{
+				rowlist.get(tmp_row).getCell(tmp_col).setCellValue("Nb of "+cleft.split("_")[0]);
 			}
 			
-			rowlist.get(tmp_i).getCell(tmp_j+1).setCellValue(contenus.nb_items);
+			rowlist.get(tmp_row).getCell(tmp_col+1).setCellValue(contenus.nb_items);
+			
+			//-------------------------------------------------------------------------------------
+			// En-tête
 			
 			//Ligne 1
 			rowlist.get(0).getCell(0).setCellValue("Trinucléotides");			
@@ -318,18 +322,24 @@ public class ExcelWriter {
 			rowlist.get(66).getCell(0).setCellValue("Total");
 			rowlist.get(18).getCell(11).setCellValue("Total");
 			
+			//-------------------------------------------------------------------------------------
+			// Tableau
 			
 			//on remplit les phases nombres des trinucléotides
 			StringBuilder triplet = new StringBuilder("---");
-			for (int j=0; j< 4; j++){
+			for (int j=0; j< 4; j++)
+			{
 				triplet.setCharAt(0, Bdd.charOfNucleotideInt(j));
-				for (int k=0; k< 4; k++){
+				for (int k=0; k< 4; k++)
+				{
 					triplet.setCharAt(1, Bdd.charOfNucleotideInt(k));
-					for (int l=0; l< 4; l++){
+					for (int l=0; l< 4; l++)
+					{
 						int trinucleotide = l+4*k+16*j+1;
 						triplet.setCharAt(2, Bdd.charOfNucleotideInt(l));
 						rowlist.get(trinucleotide).getCell(0).setCellValue(triplet.toString()); //on remplit le nom des trinucléotides
-						for (int i = 0; i<3; i++){
+						for (int i = 0; i<3; i++)
+						{
 							rowlist.get(trinucleotide).getCell(1+2*i).setCellValue((double)(contenus.get_tableautrinucleotides(i,j,k,l)));
 							rowlist.get(trinucleotide).getCell(7+i).setCellValue((double)(contenus.get_tableauPhasePref(i,j,k,l)));
 							baseSum.get_contenu(new_cleft, empty_org).ajoute_mult_nucleotides(i, j, k, l, contenus.get_tableautrinucleotides(i,j,k,l),new_cleft);
@@ -343,13 +353,18 @@ public class ExcelWriter {
 			
 			//on remplit les phases nombres  des dinucléotides
 			StringBuilder couple = new StringBuilder("--");
-			for (int j=0; j< 4; j++){
+			for (int j=0; j< 4; j++)
+			{
 				couple.setCharAt(0, Bdd.charOfNucleotideInt(j));
-				for (int k=0; k< 4; k++){
+				
+				for (int k=0; k< 4; k++)
+				{
 					couple.setCharAt(1, Bdd.charOfNucleotideInt(k));
 					int dinucleotide = k+4*j+1;
 					rowlist.get(dinucleotide).getCell(11).setCellValue(couple.toString()); //on remplit le nom des dinucléotides
-					for (int i = 0; i<2; i++){
+					
+					for (int i = 0; i<2; i++)
+					{
 						rowlist.get(dinucleotide).getCell(12+2*i).setCellValue((double)(contenus.get_tableaudinucleotides(i,j,k)));
 						baseSum.get_contenu(new_cleft, empty_org).ajoute_mult_nucleotides(i, j, k,  contenus.get_tableaudinucleotides(i,j,k));
 					}
@@ -358,41 +373,52 @@ public class ExcelWriter {
 			
 			//on remplit les totaux entiers
 			//trinucleotides
-			for(int i = 0; i<3;i++){
+			for(int i = 0; i<3;i++)
+			{
 				double tmp = 0;
-				for (int j = 0; j<64;j++){
+				for (int j = 0; j<64;j++)
+				{
 					tmp = tmp + (rowlist.get(j+1).getCell(1+2*i).getNumericCellValue());	
 				}
-				rowlist.get(66).getCell(1+2*i).setCellValue(tmp);
 				
+				rowlist.get(66).getCell(1+2*i).setCellValue(tmp);
 			}
+			
 			//dinucleotides
-			for(int i = 0; i<2;i++){
+			for(int i = 0; i<2;i++)
+			{
 				double tmp = 0;
-				for (int j = 0; j<16;j++){
+				for (int j = 0; j<16;j++)
+				{
 					tmp = tmp + (rowlist.get(j+1).getCell(12+2*i).getNumericCellValue());	
 				}
-				rowlist.get(18).getCell(12+2*i).setCellValue(tmp);
 				
+				rowlist.get(18).getCell(12+2*i).setCellValue(tmp);
 			}
 			
 			
 			//on remplit les phases probabilités
 			//trinucleotides
-			for (int i =0; i<3; i++){
+			for (int i =0; i<3; i++)
+			{
 				double total = rowlist.get(66).getCell(1+2*i).getNumericCellValue();
-				if (total != 0){
-					for (int j = 0; j<64; j++){
+				if (total != 0)
+				{
+					for (int j = 0; j<64; j++)
+					{
 						double tmp = rowlist.get(j+1).getCell(1+2*i).getNumericCellValue();
 						rowlist.get(j+1).getCell(2+2*i).setCellValue(100*tmp/total);
 					}
 				}
 			}
 			//dinucleotides
-			for (int i =0; i<2; i++){
+			for (int i =0; i<2; i++)
+			{
 				double total = rowlist.get(18).getCell(12+2*i).getNumericCellValue();
-				if (total != 0){
-					for (int j = 0; j<16; j++){
+				if (total != 0)
+				{
+					for (int j = 0; j<16; j++)
+					{
 						double tmp = rowlist.get(j+1).getCell(12+2*i).getNumericCellValue();
 						rowlist.get(j+1).getCell(13+2*i).setCellValue(100*tmp/total);
 					}
@@ -401,46 +427,48 @@ public class ExcelWriter {
 			
 			//on remplit les totaux flottants
 			//trinucleotides
-			for(int i = 0; i<3;i++){
+			for(int i = 0; i<3;i++)
+			{
 				double tmp = 0;
-				for (int j = 0; j<64;j++){
+				for (int j = 0; j<64;j++)
+				{
 					tmp = tmp + (rowlist.get(j+1).getCell(2+2*i).getNumericCellValue());	
 				}
+				
 				rowlist.get(66).getCell(2+2*i).setCellValue(tmp);
-				
-			}
-			//dinucleotides
-			for(int i = 0; i<2;i++){
-				double tmp = 0;
-				for (int j = 0; j<16;j++){
-					tmp = tmp + (rowlist.get(j+1).getCell(13+2*i).getNumericCellValue());	
-				}
-				rowlist.get(18).getCell(13+2*i).setCellValue(tmp);
-				
 			}
 			
+			//dinucleotides
+			for(int i = 0; i<2;i++)
+			{
+				double tmp = 0;
+				for (int j = 0; j<16;j++)
+				{
+					tmp = tmp + (rowlist.get(j+1).getCell(13+2*i).getNumericCellValue());	
+				}
+				
+				rowlist.get(18).getCell(13+2*i).setCellValue(tmp);
+			}
+			
+			//-------------------------------------------------------------------------------------
+			// Clean-up
+			
 			//autosize column 
-			for (int i = 0; i<89; i++){
-				for (int j = 0; j < rowlist.get(i).getLastCellNum();j++) {
-					worksheet.autoSizeColumn(j);
+			for (int row = 0; row<89; row++)
+			{
+				for (int col = 0; col<rowlist.get(row).getLastCellNum();col++) 
+				{
+					worksheet.autoSizeColumn(col);
 				}
 			}
 						
 			baseSum.incr_mult_nb_CDS_non_traites(new_cleft, empty_org, contenus.nb_CDS_non_traites);
 			baseSum.incr_mult_nb_CDS_traites(new_cleft, empty_org, contenus.nb_CDS);
-			baseSum.get_contenu(new_cleft, empty_org).add_nb_trinucleotides(0, contenus.get_nb_trinucleotides(0));
-			baseSum.get_contenu(new_cleft, empty_org).add_nb_trinucleotides(1, contenus.get_nb_trinucleotides(1));
-			baseSum.get_contenu(new_cleft, empty_org).add_nb_trinucleotides(2, contenus.get_nb_trinucleotides(2));
-			baseSum.get_contenu(new_cleft, empty_org).add_nb_items(1);
-			
-			//baseSum.close_tampon();
-			
-		} catch (CharInvalideException e) {
-			e.printStackTrace();
-		}
-		
+			baseSum.get_contenu(new_cleft, empty_org).add_nb_items(1);			
+		} catch (CharInvalideException e) { e.printStackTrace(); }
 	}
-		
+	
+	// deal with the style of cells according to their positions
 	private static XSSFCellStyle getCellStyle(int i, int j, Workbook wb, XSSFCellStyle dblue, XSSFCellStyle lblue, XSSFCellStyle lgray, XSSFCellStyle ngray, XSSFCellStyle float_type, XSSFCellStyle int_type, XSSFCellStyle ngray_float, XSSFCellStyle ngray_int, XSSFCellStyle lgray_int, XSSFCellStyle default_type){
 		
 		
