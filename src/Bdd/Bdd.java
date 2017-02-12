@@ -137,9 +137,13 @@ public class Bdd
 
 	//tampon
 	//ajoute un tri nucleotides a la phase indiquée
-	// TODO dead function to be updated
+	// TODO dead function to be updated :
 	public void ajoute_nucleotides (int phase, int nucleotide1, int nucleotide2, int nucleotide3) throws CharInvalideException
 	{
+		// if we have already read enought, we do nothing
+		// we compute the code for the triplet
+		// we update ciw1w2
+		
 		// incrémente toStream pour le streamer
 		ecrit_nucleotideToStream(nucleotide1);
 	}

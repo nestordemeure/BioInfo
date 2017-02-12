@@ -45,7 +45,7 @@ public class CDS
 		sequence seq = new sequence(deb,fi,sens_de_lect);
 		sequence_list.add(seq);
 		expected_ligne_number += ((fi-1)/60) - ((deb-1)/60) +1;
-		geneLength += fi - deb; // TODO WARNING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		geneLength += fi - deb; // TODO
 		return sequence_list.size()-1;
 	}
 	

@@ -2,11 +2,9 @@
 
 Recherche de signaux de codes circulaires dans les gènes
 
-Plan de travail :
-- ajouter les champs nécéssaire à la bdd
+Travail restant :
 - changer l'écriture dans un excel
+- mettre à jour les Ciw1w2 à la lecture des trinucléotides
 - *test* : vérifier que le programme produit des excel qui contiennent bien les champs voulut
-- retirer les champs inutiles de la bdd
-- modifier le parseur pour collecter l'information voulue
 - *test* : vérifier que tout le pipeline fonctionne
 - *test* : vérifier que les valeurs sont correctes
