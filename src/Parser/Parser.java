@@ -234,26 +234,34 @@ public class Parser
 	
 	//lit des lignes et les distribues au séquences listées
 	//retourne le nouveau numéros de ligne actuelle (dernière ligne consommée en date)
-	int distribuer_lignes(int num_ligne_actuelle, int num_ligne_cible, ArrayList<IndexesSequence> indexesSequenceList) throws ScannerNullException
+	int distribuer_lignes(int num_ligne_actuelle, int num_ligne_cible, ArrayList<IndexesSequence> indexesSequenceList)
 	{
-		while (num_ligne_actuelle<num_ligne_cible) //on n'a pas encore consommé la ligne cible
+		boolean linesLeft = true;
+		while (num_ligne_actuelle<num_ligne_cible && linesLeft) //on n'a pas encore consommé la ligne cible
 		{
-			importAndCheckNull();
-			
-			//on ajoute la ligne lue à toute les séquences qu'elle interesse
-			for(IndexesSequence i : indexesSequenceList)
+			try
 			{
-				try
+				importAndCheckNull();
+				
+				//on ajoute la ligne lue à toute les séquences qu'elle interesse
+				for(IndexesSequence i : indexesSequenceList)
 				{
-					CDS_list.get(i.getIndexCds()).appendLigne(i.getIndexSequence(),ligne_actuelle);
+					try
+					{
+						CDS_list.get(i.getIndexCds()).appendLigne(i.getIndexSequence(),ligne_actuelle);
+					}
+					catch (DeadCDSException e) //le cds ne sert plus
+					{
+						CDS_list.set(i.getIndexCds(),null);
+					}
 				}
-				catch (DeadCDSException e) //le cds ne sert plus
-				{
-					CDS_list.set(i.getIndexCds(),null);
-				}
+				
+				num_ligne_actuelle++;
 			}
-			
-			num_ligne_actuelle++;
+			catch (ScannerNullException e)
+			{
+				linesLeft = false;
+			}
 		}
 		
 		return num_ligne_actuelle;

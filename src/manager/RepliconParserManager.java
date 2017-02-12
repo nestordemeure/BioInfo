@@ -83,12 +83,16 @@ public class RepliconParserManager {
 		} catch (ExecutionException | RetryException e) {
 			UIManager.log("[RepliconParserManager] Unable to download "+this.organism.getName()+ " replicon: "+replicon);
 		}
-		if(db == null){
+		if(db == null)
+		{
 			UIManager.log("[RepliconParserManager] Unable to download "+this.organism.getName()+ " replicon: "+replicon);
 		}
-		this.mainDb.fusionBase(db);
+		else
+		{
+			this.mainDb.fusionBase(db);
+			UIManager.log("[RepliconParserManager] Finished downloading "+this.organism.getName()+ " replicon: "+replicon);
+		}
 		organism.addProcessedReplicon(replicon);
-		UIManager.log("[RepliconParserManager] Finished downloading "+this.organism.getName()+ " replicon: "+replicon);
 		UIManager.addProgress(1);
 	}
 }

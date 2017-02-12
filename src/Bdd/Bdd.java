@@ -17,6 +17,7 @@ import exceptions.CDSInvalideException;
 import exceptions.CharInvalideException;
 import manager.AccessManager;
 import tree.Organism;
+import ui.UIManager;
 
 public class Bdd 
 {
@@ -44,8 +45,8 @@ public class Bdd
 	//tampon
 	private int tampon_Ciw1w2[][][]; // TODO tampon_Ciw1w2[i][w1][w2]
 	private int tampon_geneLength; // TODO longueur totale du gene
-	public int imax = 99; // TODO 
-	int minGeneLength = 200; // TODO
+	public static int imax = 99; // TODO 
+	static int minGeneLength = 200; // TODO
 	
 	private String tampon_cleft;
 	private Organism tampon_organism;
@@ -78,7 +79,6 @@ public class Bdd
 		try 
 		{
 			contenus = (TreeMap<String,content>) inputstream.readObject();
-			imax = inputstream.readInt(); // TODO
 		} 
 		catch (ClassNotFoundException e) 
 		{
@@ -239,7 +239,6 @@ public class Bdd
 			contenus_cleft_foreign = entry.getValue();		
 			cleft_foreign = entry.getKey();
 			content contenus_cleft_local = contenus.get(cleft_foreign);
-			
 			if (contenus_cleft_local == null)
 			{
 				contenus.put(cleft_foreign,contenus_cleft_foreign);
@@ -270,7 +269,6 @@ public class Bdd
 		ObjectOutputStream outputstream = new ObjectOutputStream(chan);
 
 		outputstream.writeObject(contenus);
-		outputstream.writeInt(imax); // TODO
 
 		outputstream.close();
 		
@@ -313,8 +311,8 @@ public class Bdd
 			
 			oiw1w2 = new double[imax][4][4]; // TODO
 			
+			nb_items = 1;
 			organism = organismArg;
-			nb_items=1;
 		}
 		
 		//----------
@@ -334,7 +332,6 @@ public class Bdd
 					for(int w2 = 0 ; w2<4 ; w2++)
 					{
 						oiw1w2[i][w1][w2] += cont.oiw1w2[i][w1][w2]; // TODO
-						
 					}
 				}
 			}

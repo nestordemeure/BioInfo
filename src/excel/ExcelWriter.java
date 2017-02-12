@@ -206,22 +206,24 @@ public class ExcelWriter {
 			for(int col = 0; col<21; col++)
 			{
 				rowlist.get(row).createCell(col);
+				rowlist.get(row).getCell(col).setCellStyle(default_type);
 			}
 		}
-		
+		/*
 		// set the style for each cell
 		for (int row = 0; row <baseSum.imax+2; row++)
 		{
 			for(int col = 0; col<21; col++)
 			{
-				rowlist.get(row).getCell(col).setCellStyle(getCellStyle(row,col,wb,dblue, lblue, lgray, ngray, float_type, int_type, ngray_float, ngray_int, lgray_int, default_type));
+				rowlist.get(row).getCell(col).setCellStyle(default_type);
+				//rowlist.get(row).getCell(col).setCellStyle(getCellStyle(row,col,wb,dblue, lblue, lgray, ngray, float_type, int_type, ngray_float, ngray_int, lgray_int, default_type));
 			}
 		}
-		
+		*/
 		//-------------------------------------------------------------------------------------
 		// Description de l'organisme
 		
-		int descriptionCol = 19;
+		int descriptionCol = 18;
 		
 		// Name
 		String filename = "";
@@ -306,9 +308,18 @@ public class ExcelWriter {
 		int col = 0;
 		
 		// i
+		rowlist.get(enTeteRow).getCell(col).setCellStyle(lblue);
 		rowlist.get(enTeteRow).getCell(col).setCellValue("i");
 		for (int i = 0; i < baseSum.imax; i++)
 		{
+			if (i%2 == 0)
+			{
+				rowlist.get(i+1).getCell(col).setCellStyle(lgray_int);
+			}
+			else
+			{
+				rowlist.get(i+1).getCell(col).setCellStyle(int_type);
+			}
 			rowlist.get(i+1).getCell(col).setCellValue(i);
 		}
 		rowlist.get(baseSum.imax+1).getCell(col).setCellValue("Total");
@@ -320,15 +331,25 @@ public class ExcelWriter {
 			{
 				col++;
 				String codeName = String.format("A(%s, %s)", codes[w1], codes[w2]);
+				rowlist.get(enTeteRow).getCell(col).setCellStyle(lblue);
 				rowlist.get(enTeteRow).getCell(col).setCellValue(codeName);
 				
 				double total = 0;
 				for (int i = 0; i < baseSum.imax; i++)
 				{
+					if (i%2 == 0)
+					{
+						rowlist.get(i+1).getCell(col).setCellStyle(ngray_float);
+					}
+					else
+					{
+						rowlist.get(i+1).getCell(col).setCellStyle(float_type);
+					}
 					double Aiw1w2 = contenus.A(i, w1, w2);
 					rowlist.get(i+1).getCell(col).setCellValue(Aiw1w2);
 					total += Aiw1w2;
 				}
+				rowlist.get(baseSum.imax+1).getCell(col).setCellStyle(ngray_float);
 				rowlist.get(baseSum.imax+1).getCell(col).setCellValue(total);
 			}
 		}

@@ -64,11 +64,12 @@ public class ExcelReader {
 		
 		Bdd tmp;
 		for (String fichier:  listebdd){
-			try {
-				
+			try 
+			{
 				tmp = new Bdd(fichier.substring(0,fichier.length()-4));
 				base.fusionBase(tmp);
-			} catch (IOException e) {
+			} catch (IOException e) 
+			{
 				e.printStackTrace();
 			}
 		}	
