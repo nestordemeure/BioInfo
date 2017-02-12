@@ -44,7 +44,7 @@ public class Bdd
 	//tampon
 	private int tampon_Ciw1w2[][][]; // TODO tampon_Ciw1w2[i][w1][w2]
 	private int tampon_geneLength; // TODO longueur totale du gene
-	int imax = 99; // TODO 
+	public int imax = 99; // TODO 
 	int minGeneLength = 200; // TODO
 	
 	private String tampon_cleft;
@@ -107,32 +107,6 @@ public class Bdd
 		}
 		
 		contenus_cleft.nb_CDS_non_traites++;
-	}
-	
-	public void incr_mult_nb_CDS_non_traites (String cleft, Organism organismArg, long nbr)
-	{
-		content contenus_cleft = contenus.get(cleft);
-		
-		if (contenus_cleft == null)
-		{
-			contenus_cleft = new content(organismArg);
-			contenus.put(cleft,contenus_cleft);
-		}
-		
-		contenus_cleft.nb_CDS_non_traites+=nbr;
-	}
-	
-	public void incr_mult_nb_CDS_traites (String cleft, Organism organismArg, long nbr)
-	{
-		content contenus_cleft = contenus.get(cleft);
-		
-		if (contenus_cleft == null)
-		{
-			contenus_cleft = new content(organismArg);
-			contenus.put(cleft,contenus_cleft);
-		}
-		
-		contenus_cleft.nb_CDS+=nbr;
 	}
 
 	//tampon
@@ -345,9 +319,9 @@ public class Bdd
 		
 		//----------
 		
-		public void add_nb_items(int nbr)
+		public double A(int i, int w1, int w2)
 		{
-			nb_items+=nbr;
+			return oiw1w2[i][w1][w2]/nb_CDS;
 		}
 				
 		//un contenus a un autre

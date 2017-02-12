@@ -128,344 +128,224 @@ public class ExcelWriter {
 
 	}
 
-	private static void writeTab(String cleft, content contenus, Bdd baseSum, Workbook wb, String[] chemin){
+	private static void writeTab(String cleft, content contenus, Bdd baseSum, Workbook wb, String[] chemin)
+	{	
+		XSSFDataFormat dataFormat = (XSSFDataFormat) wb.createDataFormat();
 		
-		try {
-			
-			XSSFDataFormat dataFormat = (XSSFDataFormat) wb.createDataFormat();
-			
-			byte[] LIGHT_BLUE = hexStringToByteArray("a7c8fd");
-			XSSFColor light_blue = new XSSFColor(LIGHT_BLUE);
-			
-			byte[] DARK_BLUE = hexStringToByteArray("3686ca");
-			XSSFColor dark_blue = new XSSFColor(DARK_BLUE);
-			
-			byte[] LIGHT_GRAY = hexStringToByteArray("e6e6e6");
-			XSSFColor light_gray = new XSSFColor(LIGHT_GRAY);
-			
-			byte[] GRAY = hexStringToByteArray("cecece");
-			XSSFColor gray = new XSSFColor(GRAY);
-			
-			XSSFCellStyle lblue = (XSSFCellStyle) wb.createCellStyle();
-			lblue.setFillForegroundColor(light_blue);
-			lblue.setFillPattern(CellStyle.SOLID_FOREGROUND);
-			
-			XSSFCellStyle dblue = (XSSFCellStyle) wb.createCellStyle();
-			dblue.setFillForegroundColor(dark_blue);
-			dblue.setFillPattern(CellStyle.SOLID_FOREGROUND);
-			
-			XSSFCellStyle lgray = (XSSFCellStyle) wb.createCellStyle();
-			lgray.setFillForegroundColor(light_gray);
-			lgray.setFillPattern(CellStyle.SOLID_FOREGROUND);
-			
-			XSSFCellStyle ngray = (XSSFCellStyle) wb.createCellStyle();
-			ngray.setFillForegroundColor(gray);
-			ngray.setFillPattern(CellStyle.SOLID_FOREGROUND);
-			
-			XSSFCellStyle float_type = (XSSFCellStyle) wb.createCellStyle();
-			float_type.setDataFormat(dataFormat.getFormat("0.00"));
-			
-			XSSFCellStyle int_type = (XSSFCellStyle) wb.createCellStyle();
-			int_type.setDataFormat(dataFormat.getFormat("0"));
-			
-			XSSFCellStyle ngray_float = (XSSFCellStyle) wb.createCellStyle();
-			ngray_float.setFillForegroundColor(gray);
-			ngray_float.setFillPattern(CellStyle.SOLID_FOREGROUND);
-			ngray_float.setDataFormat(dataFormat.getFormat("0.00"));
-			
-			XSSFCellStyle ngray_int = (XSSFCellStyle) wb.createCellStyle();
-			ngray_int.setFillForegroundColor(gray);
-			ngray_int.setFillPattern(CellStyle.SOLID_FOREGROUND);
-			ngray_int.setDataFormat(dataFormat.getFormat("0"));
-			
-			XSSFCellStyle lgray_int = (XSSFCellStyle) wb.createCellStyle();
-			lgray_int.setFillForegroundColor(light_gray);
-			lgray_int.setFillPattern(CellStyle.SOLID_FOREGROUND);
-			lgray_int.setDataFormat(dataFormat.getFormat("0"));
-			
-			XSSFCellStyle default_type = (XSSFCellStyle) wb.createCellStyle();
-			
-			
-			String accession = contenus.organism.getAccession();
-			String taxonomy = contenus.organism.getTaxonomy();
-			String bioproject = contenus.organism.getBioproject();
-			
-			String new_cleft="Sum_"+cleft.split("_")[0];
-			
-			Organism empty_org=new Organism("","","","","","","");
-			
-			//-------------------------------------------------------------------------------------
-			// build a 90x40 spreadsheet
-			
-			XSSFSheet worksheet = (XSSFSheet) wb.createSheet(cleft);
-			List<XSSFRow> rowlist = new ArrayList<XSSFRow>();	
-			
-			// create the cells
-			for (int row = 0; row <90; row++)
-			{
-				rowlist.add(worksheet.createRow(row));
-				
-				for(int col = 0; col<40; col++)
-				{
-					rowlist.get(row).createCell(col);
-				}
-			}
-			
-			// set the style for each cell
-			for (int row = 0; row <90; row++)
-			{
-				for(int col = 0; col<40; col++)
-				{
-					rowlist.get(row).getCell(col).setCellStyle(getCellStyle(row,col,wb,dblue, lblue, lgray, ngray, float_type, int_type, ngray_float, ngray_int, lgray_int, default_type));
-				}
-			}
-			
-			//-------------------------------------------------------------------------------------
-			// Description de l'organisme
-			
-			// Name
-			String filename = "";
-			if (chemin[3] != null && chemin[3] != "" ) {
-				filename = chemin[3];
-				rowlist.get(2).getCell(17).setCellValue("Organism Name");
-			}
-			else if (chemin[2] != null && chemin[2] != "" ) {
-				filename = chemin[2];
-				rowlist.get(2).getCell(17).setCellValue("SubGroup Name");
-			}
-			else if (chemin[1] != null && chemin[1] != "") {
-				filename = chemin[1];
-				rowlist.get(2).getCell(17).setCellValue("Group Name");
-			}
-			else {
-				filename = chemin[0];
-				rowlist.get(2).getCell(17).setCellValue("Kingdom Name");
-			}
-			rowlist.get(2).getCell(18).setCellValue(filename);
+		byte[] LIGHT_BLUE = hexStringToByteArray("a7c8fd");
+		XSSFColor light_blue = new XSSFColor(LIGHT_BLUE);
 		
-			// Nb CDS
-			rowlist.get(4).getCell(17).setCellValue("Number of valid cds sequences");
-			rowlist.get(4).getCell(18).setCellValue(contenus.nb_CDS);
+		byte[] DARK_BLUE = hexStringToByteArray("3686ca");
+		XSSFColor dark_blue = new XSSFColor(DARK_BLUE);
+		
+		byte[] LIGHT_GRAY = hexStringToByteArray("e6e6e6");
+		XSSFColor light_gray = new XSSFColor(LIGHT_GRAY);
+		
+		byte[] GRAY = hexStringToByteArray("cecece");
+		XSSFColor gray = new XSSFColor(GRAY);
+		
+		XSSFCellStyle lblue = (XSSFCellStyle) wb.createCellStyle();
+		lblue.setFillForegroundColor(light_blue);
+		lblue.setFillPattern(CellStyle.SOLID_FOREGROUND);
+		
+		XSSFCellStyle dblue = (XSSFCellStyle) wb.createCellStyle();
+		dblue.setFillForegroundColor(dark_blue);
+		dblue.setFillPattern(CellStyle.SOLID_FOREGROUND);
+		
+		XSSFCellStyle lgray = (XSSFCellStyle) wb.createCellStyle();
+		lgray.setFillForegroundColor(light_gray);
+		lgray.setFillPattern(CellStyle.SOLID_FOREGROUND);
+		
+		XSSFCellStyle ngray = (XSSFCellStyle) wb.createCellStyle();
+		ngray.setFillForegroundColor(gray);
+		ngray.setFillPattern(CellStyle.SOLID_FOREGROUND);
+		
+		XSSFCellStyle float_type = (XSSFCellStyle) wb.createCellStyle();
+		float_type.setDataFormat(dataFormat.getFormat("0.00"));
+		
+		XSSFCellStyle int_type = (XSSFCellStyle) wb.createCellStyle();
+		int_type.setDataFormat(dataFormat.getFormat("0"));
+		
+		XSSFCellStyle ngray_float = (XSSFCellStyle) wb.createCellStyle();
+		ngray_float.setFillForegroundColor(gray);
+		ngray_float.setFillPattern(CellStyle.SOLID_FOREGROUND);
+		ngray_float.setDataFormat(dataFormat.getFormat("0.00"));
+		
+		XSSFCellStyle ngray_int = (XSSFCellStyle) wb.createCellStyle();
+		ngray_int.setFillForegroundColor(gray);
+		ngray_int.setFillPattern(CellStyle.SOLID_FOREGROUND);
+		ngray_int.setDataFormat(dataFormat.getFormat("0"));
+		
+		XSSFCellStyle lgray_int = (XSSFCellStyle) wb.createCellStyle();
+		lgray_int.setFillForegroundColor(light_gray);
+		lgray_int.setFillPattern(CellStyle.SOLID_FOREGROUND);
+		lgray_int.setDataFormat(dataFormat.getFormat("0"));
+		
+		XSSFCellStyle default_type = (XSSFCellStyle) wb.createCellStyle();
+		
+		
+		String accession = contenus.organism.getAccession();
+		String taxonomy = contenus.organism.getTaxonomy();
+		String bioproject = contenus.organism.getBioproject();
+		
+		String new_cleft="Sum_"+cleft.split("_")[0];
+		
+		Organism empty_org=new Organism("","","","","","","");
+		
+		//-------------------------------------------------------------------------------------
+		// build a 90x40 spreadsheet
+		
+		XSSFSheet worksheet = (XSSFSheet) wb.createSheet(cleft);
+		List<XSSFRow> rowlist = new ArrayList<XSSFRow>();	
+		
+		// create the cells
+		for (int row = 0; row <baseSum.imax+2; row++)
+		{
+			rowlist.add(worksheet.createRow(row));
 			
-			// Invalid CDS
-			rowlist.get(6).getCell(17).setCellValue("Number of invalid cds");
-			rowlist.get(6).getCell(18).setCellValue(contenus.nb_CDS_non_traites);
-			
-			//Modification date
-			String mod_date=contenus.organism.getModificationDate();
-			if(mod_date!=null && !mod_date.isEmpty()){
-				rowlist.get(8).getCell(17).setCellValue("Modification Date");
-				rowlist.get(8).getCell(18).setCellValue(mod_date);
-			}
-			
-			if (accession!=null && !accession.isEmpty()){
-				//Accession
-				rowlist.get(10).getCell(17).setCellValue("Accession");
-				rowlist.get(10).getCell(18).setCellValue(accession);
-			}
-			
-			if (taxonomy!=null && !taxonomy.isEmpty()){
-				//Taxonomy
-				rowlist.get(12).getCell(17).setCellValue("Taxonomy");
-				rowlist.get(12).getCell(18).setCellValue(taxonomy);
-			}
-			
-			if (bioproject!=null && !bioproject.isEmpty()){
-				rowlist.get(14).getCell(17).setCellValue("Bioproject");
-				rowlist.get(14).getCell(18).setCellValue(bioproject);
-			}
-			
-			// Sums : Nombre de Chromosomes, DNA, Mitochondrion, etc...
-			Integer tmp_row=16;
-			Integer tmp_col=17;
-			if ((bioproject==null || bioproject.isEmpty()) && (accession==null || accession.isEmpty()) && (taxonomy==null || taxonomy.isEmpty()) && (mod_date==null || mod_date.isEmpty()))
+			for(int col = 0; col<21; col++)
 			{
-				tmp_row=8;
+				rowlist.get(row).createCell(col);
 			}
-			else
+		}
+		
+		// set the style for each cell
+		for (int row = 0; row <baseSum.imax+2; row++)
+		{
+			for(int col = 0; col<21; col++)
 			{
-				tmp_row=16;
+				rowlist.get(row).getCell(col).setCellStyle(getCellStyle(row,col,wb,dblue, lblue, lgray, ngray, float_type, int_type, ngray_float, ngray_int, lgray_int, default_type));
 			}
-			
-			if (cleft.split("_")[0].equals("Sum"))
+		}
+		
+		//-------------------------------------------------------------------------------------
+		// Description de l'organisme
+		
+		int descriptionCol = 19;
+		
+		// Name
+		String filename = "";
+		if (chemin[3] != null && chemin[3] != "" ) {
+			filename = chemin[3];
+			rowlist.get(2).getCell(descriptionCol).setCellValue("Organism Name");
+		}
+		else if (chemin[2] != null && chemin[2] != "" ) {
+			filename = chemin[2];
+			rowlist.get(2).getCell(descriptionCol).setCellValue("SubGroup Name");
+		}
+		else if (chemin[1] != null && chemin[1] != "") {
+			filename = chemin[1];
+			rowlist.get(2).getCell(descriptionCol).setCellValue("Group Name");
+		}
+		else {
+			filename = chemin[0];
+			rowlist.get(2).getCell(descriptionCol).setCellValue("Kingdom Name");
+		}
+		rowlist.get(2).getCell(descriptionCol+1).setCellValue(filename);
+
+		// Nb CDS
+		rowlist.get(4).getCell(descriptionCol).setCellValue("Number of valid cds sequences");
+		rowlist.get(4).getCell(descriptionCol+1).setCellValue(contenus.nb_CDS);
+		
+		// Invalid CDS
+		rowlist.get(6).getCell(descriptionCol).setCellValue("Number of invalid cds");
+		rowlist.get(6).getCell(descriptionCol+1).setCellValue(contenus.nb_CDS_non_traites);
+		
+		//Modification date
+		String mod_date=contenus.organism.getModificationDate();
+		if(mod_date!=null && !mod_date.isEmpty()){
+			rowlist.get(8).getCell(descriptionCol).setCellValue("Modification Date");
+			rowlist.get(8).getCell(descriptionCol+1).setCellValue(mod_date);
+		}
+		
+		if (accession!=null && !accession.isEmpty()){
+			//Accession
+			rowlist.get(10).getCell(descriptionCol).setCellValue("Accession");
+			rowlist.get(10).getCell(descriptionCol+1).setCellValue(accession);
+		}
+		
+		if (taxonomy!=null && !taxonomy.isEmpty()){
+			//Taxonomy
+			rowlist.get(12).getCell(descriptionCol).setCellValue("Taxonomy");
+			rowlist.get(12).getCell(descriptionCol+1).setCellValue(taxonomy);
+		}
+		
+		if (bioproject!=null && !bioproject.isEmpty()){
+			rowlist.get(14).getCell(descriptionCol).setCellValue("Bioproject");
+			rowlist.get(14).getCell(descriptionCol+1).setCellValue(bioproject);
+		}
+		
+		// Sums : Nombre de Chromosomes, DNA, Mitochondrion, etc...
+		Integer tmp_row=16;
+		if ((bioproject==null || bioproject.isEmpty()) && (accession==null || accession.isEmpty()) && (taxonomy==null || taxonomy.isEmpty()) && (mod_date==null || mod_date.isEmpty()))
+		{
+			tmp_row=8;
+		}
+		else
+		{
+			tmp_row=16;
+		}
+		
+		if (cleft.split("_")[0].equals("Sum"))
+		{
+			rowlist.get(tmp_row).getCell(descriptionCol).setCellValue("Nb of "+cleft.split("_")[1]);
+		}
+		else 
+		{
+			rowlist.get(tmp_row).getCell(descriptionCol).setCellValue("Nb of "+cleft.split("_")[0]);
+		}
+		
+		rowlist.get(tmp_row).getCell(descriptionCol+1).setCellValue(contenus.nb_items);
+		
+		//-------------------------------------------------------------------------------------
+		// Tableau
+		
+		// entete du tableau
+		String codes[] = {"X", "X1", "X2", "Xp"};
+		int enTeteRow = 0;
+		int col = 0;
+		
+		// i
+		rowlist.get(enTeteRow).getCell(col).setCellValue("i");
+		for (int i = 0; i < baseSum.imax; i++)
+		{
+			rowlist.get(i+1).getCell(col).setCellValue(i);
+		}
+		rowlist.get(baseSum.imax+1).getCell(col).setCellValue("Total");
+		
+		// A(X1, X2)
+		for (int w1 = 0; w1 < 4; w1++)
+		{
+			for (int w2 = 0; w2 < 4; w2++)
 			{
-				rowlist.get(tmp_row).getCell(tmp_col).setCellValue("Nb of "+cleft.split("_")[1]);
-			}
-			else 
-			{
-				rowlist.get(tmp_row).getCell(tmp_col).setCellValue("Nb of "+cleft.split("_")[0]);
-			}
-			
-			rowlist.get(tmp_row).getCell(tmp_col+1).setCellValue(contenus.nb_items);
-			
-			//-------------------------------------------------------------------------------------
-			// En-tête
-			
-			//Ligne 1
-			rowlist.get(0).getCell(0).setCellValue("Trinucléotides");			
-			rowlist.get(0).getCell(1).setCellValue("Phase 0");			
-			rowlist.get(0).getCell(2).setCellValue("Freq. Phase 0");		
-			rowlist.get(0).getCell(3).setCellValue("Phase 1");		
-			rowlist.get(0).getCell(4).setCellValue("Freq. Phase 1");			
-			rowlist.get(0).getCell(5).setCellValue("Phase 2");			
-			rowlist.get(0).getCell(6).setCellValue("Freq. Phase 2");
-			rowlist.get(0).getCell(7).setCellValue("Pref. Phase 0");
-			rowlist.get(0).getCell(8).setCellValue("Pref. Phase 1");
-			rowlist.get(0).getCell(9).setCellValue("Pref. Phase 3");
-			
-			rowlist.get(0).getCell(11).setCellValue("Dinucléotides");			
-			rowlist.get(0).getCell(12).setCellValue("Phase 0");			
-			rowlist.get(0).getCell(13).setCellValue("Freq. Phase 0");			
-			rowlist.get(0).getCell(14).setCellValue("Phase 1");
-			rowlist.get(0).getCell(15).setCellValue("Freq. Phase 1");
-			
-			rowlist.get(66).getCell(0).setCellValue("Total");
-			rowlist.get(18).getCell(11).setCellValue("Total");
-			
-			//-------------------------------------------------------------------------------------
-			// Tableau
-			
-			//on remplit les phases nombres des trinucléotides
-			StringBuilder triplet = new StringBuilder("---");
-			for (int j=0; j< 4; j++)
-			{
-				triplet.setCharAt(0, Bdd.charOfNucleotideInt(j));
-				for (int k=0; k< 4; k++)
-				{
-					triplet.setCharAt(1, Bdd.charOfNucleotideInt(k));
-					for (int l=0; l< 4; l++)
-					{
-						int trinucleotide = l+4*k+16*j+1;
-						triplet.setCharAt(2, Bdd.charOfNucleotideInt(l));
-						rowlist.get(trinucleotide).getCell(0).setCellValue(triplet.toString()); //on remplit le nom des trinucléotides
-						for (int i = 0; i<3; i++)
-						{
-							rowlist.get(trinucleotide).getCell(1+2*i).setCellValue((double)(contenus.get_tableautrinucleotides(i,j,k,l)));
-							rowlist.get(trinucleotide).getCell(7+i).setCellValue((double)(contenus.get_tableauPhasePref(i,j,k,l)));
-							baseSum.get_contenu(new_cleft, empty_org).ajoute_mult_nucleotides(i, j, k, l, contenus.get_tableautrinucleotides(i,j,k,l),new_cleft);
-							baseSum.get_contenu(new_cleft, empty_org).ajout_mult_PhasePref(i, j, k, l, contenus.get_tableauPhasePref(i,j,k,l),new_cleft);
-							//System.out.println(baseSum.get_contenu(new_cleft, "", filename));;
-						}
-					}
-				}
-			}
-			
-			
-			//on remplit les phases nombres  des dinucléotides
-			StringBuilder couple = new StringBuilder("--");
-			for (int j=0; j< 4; j++)
-			{
-				couple.setCharAt(0, Bdd.charOfNucleotideInt(j));
+				col++;
+				String codeName = String.format("A(%s, %s)", codes[w1], codes[w2]);
+				rowlist.get(enTeteRow).getCell(col).setCellValue(codeName);
 				
-				for (int k=0; k< 4; k++)
+				double total = 0;
+				for (int i = 0; i < baseSum.imax; i++)
 				{
-					couple.setCharAt(1, Bdd.charOfNucleotideInt(k));
-					int dinucleotide = k+4*j+1;
-					rowlist.get(dinucleotide).getCell(11).setCellValue(couple.toString()); //on remplit le nom des dinucléotides
-					
-					for (int i = 0; i<2; i++)
-					{
-						rowlist.get(dinucleotide).getCell(12+2*i).setCellValue((double)(contenus.get_tableaudinucleotides(i,j,k)));
-						baseSum.get_contenu(new_cleft, empty_org).ajoute_mult_nucleotides(i, j, k,  contenus.get_tableaudinucleotides(i,j,k));
-					}
+					double Aiw1w2 = contenus.A(i, w1, w2);
+					rowlist.get(i+1).getCell(col).setCellValue(Aiw1w2);
+					total += Aiw1w2;
 				}
+				rowlist.get(baseSum.imax+1).getCell(col).setCellValue(total);
 			}
-			
-			//on remplit les totaux entiers
-			//trinucleotides
-			for(int i = 0; i<3;i++)
+		}
+		
+		//-------------------------------------------------------------------------------------
+		// Clean-up
+		
+		//autosize column 
+		for (int row = 0; row<baseSum.imax+2; row++)
+		{
+			for (int c = 0; c<rowlist.get(row).getLastCellNum();c++) 
 			{
-				double tmp = 0;
-				for (int j = 0; j<64;j++)
-				{
-					tmp = tmp + (rowlist.get(j+1).getCell(1+2*i).getNumericCellValue());	
-				}
-				
-				rowlist.get(66).getCell(1+2*i).setCellValue(tmp);
+				worksheet.autoSizeColumn(c);
 			}
-			
-			//dinucleotides
-			for(int i = 0; i<2;i++)
-			{
-				double tmp = 0;
-				for (int j = 0; j<16;j++)
-				{
-					tmp = tmp + (rowlist.get(j+1).getCell(12+2*i).getNumericCellValue());	
-				}
-				
-				rowlist.get(18).getCell(12+2*i).setCellValue(tmp);
-			}
-			
-			
-			//on remplit les phases probabilités
-			//trinucleotides
-			for (int i =0; i<3; i++)
-			{
-				double total = rowlist.get(66).getCell(1+2*i).getNumericCellValue();
-				if (total != 0)
-				{
-					for (int j = 0; j<64; j++)
-					{
-						double tmp = rowlist.get(j+1).getCell(1+2*i).getNumericCellValue();
-						rowlist.get(j+1).getCell(2+2*i).setCellValue(100*tmp/total);
-					}
-				}
-			}
-			//dinucleotides
-			for (int i =0; i<2; i++)
-			{
-				double total = rowlist.get(18).getCell(12+2*i).getNumericCellValue();
-				if (total != 0)
-				{
-					for (int j = 0; j<16; j++)
-					{
-						double tmp = rowlist.get(j+1).getCell(12+2*i).getNumericCellValue();
-						rowlist.get(j+1).getCell(13+2*i).setCellValue(100*tmp/total);
-					}
-				}
-			}
-			
-			//on remplit les totaux flottants
-			//trinucleotides
-			for(int i = 0; i<3;i++)
-			{
-				double tmp = 0;
-				for (int j = 0; j<64;j++)
-				{
-					tmp = tmp + (rowlist.get(j+1).getCell(2+2*i).getNumericCellValue());	
-				}
-				
-				rowlist.get(66).getCell(2+2*i).setCellValue(tmp);
-			}
-			
-			//dinucleotides
-			for(int i = 0; i<2;i++)
-			{
-				double tmp = 0;
-				for (int j = 0; j<16;j++)
-				{
-					tmp = tmp + (rowlist.get(j+1).getCell(13+2*i).getNumericCellValue());	
-				}
-				
-				rowlist.get(18).getCell(13+2*i).setCellValue(tmp);
-			}
-			
-			//-------------------------------------------------------------------------------------
-			// Clean-up
-			
-			//autosize column 
-			for (int row = 0; row<89; row++)
-			{
-				for (int col = 0; col<rowlist.get(row).getLastCellNum();col++) 
-				{
-					worksheet.autoSizeColumn(col);
-				}
-			}
-						
-			baseSum.incr_mult_nb_CDS_non_traites(new_cleft, empty_org, contenus.nb_CDS_non_traites);
-			baseSum.incr_mult_nb_CDS_traites(new_cleft, empty_org, contenus.nb_CDS);
-			baseSum.get_contenu(new_cleft, empty_org).add_nb_items(1);			
-		} catch (CharInvalideException e) { e.printStackTrace(); }
+		}
+		
+		baseSum.get_contenu(new_cleft, empty_org).fusionContent(contenus);
 	}
 	
 	// deal with the style of cells according to their positions
