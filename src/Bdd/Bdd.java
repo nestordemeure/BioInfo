@@ -13,6 +13,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
+import exceptions.CDSInvalideException;
 import exceptions.CharInvalideException;
 import manager.AccessManager;
 import tree.Organism;
@@ -42,8 +43,9 @@ public class Bdd
 	
 	//tampon
 	private int tampon_Ciw1w2[][][]; // TODO tampon_Ciw1w2[i][w1][w2]
-	private int tampon_geneLength; // TODO longueur du gene
-	int imax; // TODO 
+	private int tampon_geneLength; // TODO longueur totale du gene
+	int imax = 99; // TODO 
+	int minGeneLength = 200; // TODO
 	
 	private String tampon_cleft;
 	private Organism tampon_organism;
@@ -61,10 +63,7 @@ public class Bdd
 	public Bdd ()
 	{
 		contenus = new TreeMap<String,content>();
-		
-		imax = 99;
 		tampon_Ciw1w2 = new int[imax][4][4]; // TODO
-
 		empty_tamp=true;
 	}
 	
@@ -92,7 +91,6 @@ public class Bdd
 		AccessManager.doneWithFile(adresse); //mutex
 		
 		tampon_Ciw1w2 = new int[imax][4][4]; // TODO
-		
 		empty_tamp=true;
 	}
 	
@@ -138,16 +136,8 @@ public class Bdd
 	}
 
 	//tampon
-	//ajoute un dinucleotide et un tri nucleotides au phases indiquées
-	// TODO dead function
-	public void ajoute_nucleotides (int phase2, int phase3, int nucleotide1, int nucleotide2, int nucleotide3) throws CharInvalideException
-	{
-		// incrémente toStream pour le streamer
-		ecrit_nucleotideToStream(nucleotide1);
-	}
-	
 	//ajoute un tri nucleotides a la phase indiquée
-	// TODO dead function
+	// TODO dead function to be updated
 	public void ajoute_nucleotides (int phase, int nucleotide1, int nucleotide2, int nucleotide3) throws CharInvalideException
 	{
 		// incrémente toStream pour le streamer
@@ -200,16 +190,27 @@ public class Bdd
 				contenus.put(tampon_cleft,contenus_cleft);
 			}
 			
-			// TODO needs rebuilding
-			
 			//on suppose qu'on ne ferme le tampon que pour écrire un CDS
 			contenus_cleft.nb_CDS++;
 			
+			// TODO : build oiw1w2, clear tampon
+			double lGene = tampon_geneLength - imax - 6; // TODO
+			for(int i = 0 ; i<imax ; i++)
+			{
+				for(int w1 = 0 ; w1<4 ; w1++)
+				{
+					for(int w2 = 0 ; w2<4 ; w2++)
+					{
+						contenus_cleft.oiw1w2[i][w1][w2]+= 3*tampon_Ciw1w2[i][w1][w2]/lGene;
+						tampon_Ciw1w2[i][w1][w2]=0;
+					}
+				}
+			}
 			empty_tamp=true;
 		}
 		
 		//s'assure que le tampon est vide pour avancer
-		public void open_tampon(int geneLength, String cleft, Organism organism, OutputStream streamer)
+		public void open_tampon(int geneLength, String cleft, Organism organism, OutputStream streamer) throws CDSInvalideException
 		{
 			if (empty_tamp)
 			{
@@ -220,11 +221,18 @@ public class Bdd
 				clear_tampon();
 			}
 			
-			tampon_geneLength = geneLength; // TODO
-			tampon_cleft = cleft;
-			tampon_organism = organism;
-			tampon_streamer = streamer;
-			tampon_toStream = new StringBuilder();
+			if (geneLength < minGeneLength)
+			{
+				throw new CDSInvalideException("gene too short"); // TODO
+			}
+			else
+			{
+				tampon_geneLength = geneLength; // TODO
+				tampon_cleft = cleft;
+				tampon_organism = organism;
+				tampon_streamer = streamer;
+				tampon_toStream = new StringBuilder();
+			}
 		}
 	
 	// TODO remet un tampon à 0
@@ -312,22 +320,20 @@ public class Bdd
 	//contient les valeures associées a un type (mitochondrie, géne, chloroplaste, general,...)
 	public class content implements Serializable
 	{
-		private long nb_CDS;
-		private long nb_CDS_non_traites;
+		public long nb_CDS;
+		public long nb_CDS_non_traites;
 		
-		private long ciw1w2[][][]; // TODO
-		private long totalGeneLength; // TODO
+		public double oiw1w2[][][]; // TODO : sum of all oiw1w2
 
-		private long nb_items;
-		private Organism organism;
+		public long nb_items;
+		public Organism organism;
 		
 		public content(Organism organismArg)
 		{
 			nb_CDS = 0;
 			nb_CDS_non_traites = 0;
-			totalGeneLength = 0; // TODO
 			
-			ciw1w2 = new long[imax][4][4]; // TODO
+			oiw1w2 = new double[imax][4][4]; // TODO
 			
 			organism = organismArg;
 			nb_items=1;
@@ -335,34 +341,11 @@ public class Bdd
 		
 		//----------
 		
-		//getters (resultat final)
-		public long get_nb_CDS ()
-		{
-			return nb_CDS;
-		}
-		
-		public long get_nb_CDS_non_traites ()
-		{
-			return nb_CDS_non_traites;
-		}
-		
-		public Organism get_organism ()
-		{
-			return organism;
-		}
-		
-		public long get_nb_items()
-		{
-			return nb_items;
-		}
-		
 		public void add_nb_items(int nbr)
 		{
 			nb_items+=nbr;
 		}
-		
-		//----------
-		
+				
 		//un contenus a un autre
 		public void fusionContent(content cont)
 		{			
@@ -372,17 +355,14 @@ public class Bdd
 				{
 					for(int w2 = 0 ; w2<4 ; w2++)
 					{
-						ciw1w2[i][w1][w2] += cont.ciw1w2[i][w1][w2]; // TODO
+						oiw1w2[i][w1][w2] += cont.oiw1w2[i][w1][w2]; // TODO
 						
 					}
 				}
 			}
-			
-			totalGeneLength += cont.totalGeneLength; // TODO
 			nb_CDS += cont.nb_CDS;
 			nb_CDS_non_traites += cont.nb_CDS_non_traites;
 			nb_items += cont.nb_items;
-
 			// no fusion for the organisms
 		}
 		
@@ -392,8 +372,7 @@ public class Bdd
 	   {
 		   nb_CDS = inputstream.readLong();
 		   nb_CDS_non_traites = inputstream.readLong();
-		   totalGeneLength = inputstream.readLong(); // TODO
-		   ciw1w2 = (long[][][]) inputstream.readObject(); // TODO
+		   oiw1w2 = (double[][][]) inputstream.readObject(); // TODO
 		   organism = (Organism) inputstream.readObject();
 		   nb_items = inputstream.readLong();
 	   }
@@ -402,8 +381,7 @@ public class Bdd
 	   {
 			outputstream.writeLong(nb_CDS);
 			outputstream.writeLong(nb_CDS_non_traites);
-			outputstream.writeLong(totalGeneLength); // TODO
-			outputstream.writeObject(ciw1w2); // TODO
+			outputstream.writeObject(oiw1w2); // TODO
 			outputstream.writeObject(organism);
 			outputstream.writeLong(nb_items);
 	  }

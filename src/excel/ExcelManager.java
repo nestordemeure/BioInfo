@@ -28,8 +28,8 @@ public class ExcelManager {
 			cleft = entry.getKey(); //"mitochondire", "chloroplaste", "general"
 			contenus = entry.getValue(); //un objet content équipé de toute les fonction que vous appliquiez a la base avant
 			
-			nb_CDS+=contenus.get_nb_CDS();
-			CDS_non_traites+=contenus.get_nb_CDS_non_traites();
+			nb_CDS+=contenus.nb_CDS;
+			CDS_non_traites+=contenus.nb_CDS_non_traites;
 		}
 		
 		res.put("nb_cds", nb_CDS);

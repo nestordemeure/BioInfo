@@ -190,9 +190,9 @@ public class ExcelWriter {
 			XSSFCellStyle default_type = (XSSFCellStyle) wb.createCellStyle();
 			
 			
-			String accession = contenus.get_organism().getAccession();
-			String taxonomy = contenus.get_organism().getTaxonomy();
-			String bioproject = contenus.get_organism().getBioproject();
+			String accession = contenus.organism.getAccession();
+			String taxonomy = contenus.organism.getTaxonomy();
+			String bioproject = contenus.organism.getBioproject();
 			
 			String new_cleft="Sum_"+cleft.split("_")[0];
 			
@@ -246,20 +246,18 @@ public class ExcelWriter {
 			
 			//Nb Nucléotides
 			rowlist.get(4).getCell(17).setCellValue("Number of nucleotides");
-			rowlist.get(4).getCell(18).setCellValue(contenus.get_nb_trinucleotides());
+			rowlist.get(4).getCell(18).setCellValue(contenus.nb_trinucleotides);
 		
 			//Nb CDS
 			rowlist.get(6).getCell(17).setCellValue("Number of valid cds sequences");
-			rowlist.get(6).getCell(18).setCellValue(contenus.get_nb_CDS());
-			
-			
+			rowlist.get(6).getCell(18).setCellValue(contenus.nb_CDS);
 			
 			//Invalid CDS
 			rowlist.get(8).getCell(17).setCellValue("Number of invalid cds");
-			rowlist.get(8).getCell(18).setCellValue(contenus.get_nb_CDS_non_traites());
+			rowlist.get(8).getCell(18).setCellValue(contenus.nb_CDS_non_traites);
 			
 			//Modification date
-			String mod_date=contenus.get_organism().getModificationDate();
+			String mod_date=contenus.organism.getModificationDate();
 			if(mod_date!=null && !mod_date.isEmpty()){
 				rowlist.get(10).getCell(17).setCellValue("Modification Date");
 				rowlist.get(10).getCell(18).setCellValue(mod_date);
@@ -297,7 +295,7 @@ public class ExcelWriter {
 				rowlist.get(tmp_i).getCell(tmp_j).setCellValue("Nb of "+cleft.split("_")[0]);
 			}
 			
-			rowlist.get(tmp_i).getCell(tmp_j+1).setCellValue(contenus.get_nb_items());
+			rowlist.get(tmp_i).getCell(tmp_j+1).setCellValue(contenus.nb_items);
 			
 			//Ligne 1
 			rowlist.get(0).getCell(0).setCellValue("Trinucléotides");			
@@ -428,8 +426,8 @@ public class ExcelWriter {
 				}
 			}
 						
-			baseSum.incr_mult_nb_CDS_non_traites(new_cleft, empty_org, contenus.get_nb_CDS_non_traites());
-			baseSum.incr_mult_nb_CDS_traites(new_cleft, empty_org, contenus.get_nb_CDS());
+			baseSum.incr_mult_nb_CDS_non_traites(new_cleft, empty_org, contenus.nb_CDS_non_traites);
+			baseSum.incr_mult_nb_CDS_traites(new_cleft, empty_org, contenus.nb_CDS);
 			baseSum.get_contenu(new_cleft, empty_org).add_nb_trinucleotides(0, contenus.get_nb_trinucleotides(0));
 			baseSum.get_contenu(new_cleft, empty_org).add_nb_trinucleotides(1, contenus.get_nb_trinucleotides(1));
 			baseSum.get_contenu(new_cleft, empty_org).add_nb_trinucleotides(2, contenus.get_nb_trinucleotides(2));
