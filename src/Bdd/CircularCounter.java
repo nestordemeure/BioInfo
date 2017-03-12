@@ -49,8 +49,8 @@ public class CircularCounter
 		else
 		{
 			geneLength = geneLengthArg - imax - 6;
-			trinucleotidesLeftToRead = geneLength/3;
-			ciw1w2 = new int[imax][4][4];
+			trinucleotidesLeftToRead = geneLength/3 + 1;
+			ciw1w2 = new int[imax+1][4][4];
 			codeArray = new CircularArray();
 		}
 	}
@@ -58,7 +58,7 @@ public class CircularCounter
 	// add ciw1w2 to a oiw1w2
 	public void addCiw1w2(double[][][] oiw1w2)
 	{
-		for(int i = 0 ; i<imax ; i++)
+		for(int i = 0 ; i<=imax ; i++)
 		{
 			for(int w1 = 0 ; w1<4 ; w1++)
 			{
@@ -90,7 +90,11 @@ public class CircularCounter
 		for (int w=codeArray.minW; w<codeArray.maxW; w++)
 		{
 			int w1 = codeArray.getCode(w);
-			ciw1w2[phase + w*3][w1][w2]++;
+			int i = phase + w*3;
+			if (i <= imax)
+			{
+				ciw1w2[i][w1][w2]++;
+			}
 		}
 	}
 	
@@ -162,8 +166,6 @@ public class CircularCounter
 			{
 				offSet--;
 			}
-			
-			codes[offSet] = nextCode;
 		}
 	}
 }
