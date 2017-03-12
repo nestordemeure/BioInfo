@@ -1,5 +1,7 @@
 package Bdd;
 
+import exceptions.CDSInvalideException;
+
 public class CircularCounter 
 {
 	//-----------------------------------------------------------------------------
@@ -27,12 +29,47 @@ public class CircularCounter
 		codeOfTrinucleotide[3][3][3] = 3;
 	}
 	
-	//-----
+	public static int imax = 99;
+	public static int minGeneLength = 200;
 	
-	private int imax;
-	private int ciw1w2[][][];
-	private int trinucleotidesLetf;
-	
-	//-----------------------------------------------------------------------------	
+	public int ciw1w2[][][];
+	private int trinucleotidesToRead;
+	public int geneLength;
 
+	//-----------------------------------------------------------------------------	
+	// public methods
+	
+	public CircularCounter(int geneLengthArg) throws CDSInvalideException
+	{
+		if (geneLengthArg < minGeneLength)
+		{
+			throw new CDSInvalideException("gene too short");
+		}
+		else
+		{
+			geneLength = geneLengthArg - imax - 6;
+			trinucleotidesToRead = geneLength/3;
+			ciw1w2 = new int[imax][4][4];
+		}
+	}
+	
+	// add ciw1w2 to a oiw1w2
+	public void addCiw1w2(double[][][] oiw1w2)
+	{
+		for(int i = 0 ; i<imax ; i++)
+		{
+			for(int w1 = 0 ; w1<4 ; w1++)
+			{
+				for(int w2 = 0 ; w2<4 ; w2++)
+				{
+					oiw1w2[i][w1][w2]+= 3*ciw1w2[i][w1][w2]/geneLength;
+				}
+			}
+		}
+	}
+	
+	public void AddTrinucleotide(int phase, int nucleotide1, int nucleotide2, int nucleotide3)
+	{
+		int code = codeOfTrinucleotide[nucleotide1][nucleotide2][nucleotide3];
+	}
 }

@@ -43,19 +43,19 @@ public class Bdd
 	TreeMap<String,content> contenus;
 	
 	//tampon
-	private int tampon_Ciw1w2[][][]; // TODO tampon_Ciw1w2[i][w1][w2]
-	private int tampon_geneLength; // TODO longueur totale du gene
-	public static int imax = 99; // TODO 
-	static int minGeneLength = 200; // TODO
+	//private int tampon_Ciw1w2[][][]; // TODO tampon_Ciw1w2[i][w1][w2]
+	//private int tampon_geneLength; // TODO longueur totale du gene
+	//public static int imax = 99; // TODO 
+	//static int minGeneLength = 200; // TODO
+	
+	public CircularCounter tampon_circularCounter; // TODO
 	
 	private String tampon_cleft;
 	private Organism tampon_organism;
 	
 	private OutputStream tampon_streamer;
 	private StringBuilder tampon_toStream;
-	
-	boolean empty_tamp;
-	
+		
 //-----------------------------------------------------------------------------	
 //fonctions publiques
 		
@@ -64,8 +64,6 @@ public class Bdd
 	public Bdd ()
 	{
 		contenus = new TreeMap<String,content>();
-		tampon_Ciw1w2 = new int[imax][4][4]; // TODO
-		empty_tamp=true;
 	}
 	
 	public Bdd (String file) throws IOException
@@ -79,19 +77,15 @@ public class Bdd
 		try 
 		{
 			contenus = (TreeMap<String,content>) inputstream.readObject();
-		} 
-		catch (ClassNotFoundException e) 
-		{
-			e.printStackTrace(); //base mal écrite : improbable
-		}
-		try{
 			inputstream.close();
 			chan.close();
-		}catch(Exception e){}
-		AccessManager.doneWithFile(adresse); //mutex
+		}
+		catch(Exception e)
+		{
+			// base mal écrite : improbable
+		}
 		
-		tampon_Ciw1w2 = new int[imax][4][4]; // TODO
-		empty_tamp=true;
+		AccessManager.doneWithFile(adresse); //mutex
 	}
 	
 //incrementeurs
@@ -110,16 +104,11 @@ public class Bdd
 	}
 
 	//tampon
-	//ajoute un tri nucleotides a la phase indiquée
-	// TODO dead function to be updated :
+	// TODO ajoute un tri nucleotides a la phase indiquée
 	public void ajoute_nucleotides (int phase, int nucleotide1, int nucleotide2, int nucleotide3) throws CharInvalideException
 	{
-		// if we have already read enough, we do nothing
-		// we compute the code for the triplet
-		// we update ciw1w2
-		
-		// incrémente toStream pour le streamer
-		ecrit_nucleotideToStream(nucleotide1);
+		tampon_circularCounter.AddTrinucleotide(phase, nucleotide1, nucleotide2, nucleotide3);
+		ecrit_nucleotideToStream(nucleotide1); // incrémente toStream pour le streamer
 	}
 	
 	public content get_contenu(String cleft, Organism organismArg){
@@ -171,62 +160,20 @@ public class Bdd
 			//on suppose qu'on ne ferme le tampon que pour écrire un CDS
 			contenus_cleft.nb_CDS++;
 			
-			// TODO : build oiw1w2, clear tampon
-			double lGene = tampon_geneLength - imax - 6; // TODO
-			for(int i = 0 ; i<imax ; i++)
-			{
-				for(int w1 = 0 ; w1<4 ; w1++)
-				{
-					for(int w2 = 0 ; w2<4 ; w2++)
-					{
-						contenus_cleft.oiw1w2[i][w1][w2]+= 3*tampon_Ciw1w2[i][w1][w2]/lGene;
-						tampon_Ciw1w2[i][w1][w2]=0;
-					}
-				}
-			}
-			empty_tamp=true;
+			// TODO : build oiw1w2
+			tampon_circularCounter.addCiw1w2(contenus_cleft.oiw1w2);
+			tampon_circularCounter = null; // optional, clear memory until next use of the database
 		}
 		
 		//s'assure que le tampon est vide pour avancer
 		public void open_tampon(int geneLength, String cleft, Organism organism, OutputStream streamer) throws CDSInvalideException
 		{
-			if (empty_tamp)
-			{
-				empty_tamp=false;
-			}
-			else
-			{
-				clear_tampon();
-			}
-			
-			if (geneLength < minGeneLength)
-			{
-				throw new CDSInvalideException("gene too short"); // TODO
-			}
-			else
-			{
-				tampon_geneLength = geneLength; // TODO
-				tampon_cleft = cleft;
-				tampon_organism = organism;
-				tampon_streamer = streamer;
-				tampon_toStream = new StringBuilder();
-			}
+			tampon_circularCounter = new CircularCounter(geneLength); // TODO
+			tampon_cleft = cleft;
+			tampon_organism = organism;
+			tampon_streamer = streamer;
+			tampon_toStream = new StringBuilder();
 		}
-	
-	// TODO remet un tampon à 0
-	public void clear_tampon()
-	{
-		for(int i = 0 ; i<imax ; i++)
-		{
-			for(int w1 = 0 ; w1<4 ; w1++)
-			{
-				for(int w2 = 0 ; w2<4 ; w2++)
-				{
-					tampon_Ciw1w2[i][w1][w2]=0;
-				}
-			}
-		}
-	}
 	
 	// ajoute le contenus de la base donnée en argument à la base actuelle
 	public void fusionBase(Bdd base)
@@ -327,7 +274,7 @@ public class Bdd
 			nb_CDS = 0;
 			nb_CDS_non_traites = 0;
 			
-			oiw1w2 = new double[imax][4][4]; // TODO
+			oiw1w2 = new double[CircularCounter.imax][4][4]; // TODO
 			
 			nb_items = 1;
 			organism = organismArg;
@@ -343,7 +290,7 @@ public class Bdd
 		//un contenus a un autre
 		public void fusionContent(content cont)
 		{			
-			for(int i = 0 ; i<imax ; i++)
+			for(int i = 0 ; i<CircularCounter.imax ; i++)
 			{
 				for(int w1 = 0 ; w1<4 ; w1++)
 				{
@@ -360,7 +307,7 @@ public class Bdd
 		}
 		
 		//serialization
-
+		
 	   private void readObject(ObjectInputStream inputstream) throws IOException, ClassNotFoundException 
 	   {
 		   nb_CDS = inputstream.readLong();
