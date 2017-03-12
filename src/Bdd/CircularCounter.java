@@ -64,7 +64,7 @@ public class CircularCounter
 			{
 				for(int w2 = 0 ; w2<4 ; w2++)
 				{
-					oiw1w2[i][w1][w2]+= 3*ciw1w2[i][w1][w2]/geneLength;
+					oiw1w2[i][w1][w2]+= 3.0*((double)ciw1w2[i][w1][w2])/((double)geneLength);
 				}
 			}
 		}
