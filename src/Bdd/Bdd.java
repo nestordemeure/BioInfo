@@ -114,7 +114,7 @@ public class Bdd
 	// TODO dead function to be updated :
 	public void ajoute_nucleotides (int phase, int nucleotide1, int nucleotide2, int nucleotide3) throws CharInvalideException
 	{
-		// if we have already read enought, we do nothing
+		// if we have already read enough, we do nothing
 		// we compute the code for the triplet
 		// we update ciw1w2
 		
@@ -290,6 +290,24 @@ public class Bdd
 				return 'T';
 			default:
 				throw new CharInvalideException() ;
+		}
+	}
+
+	//rend le nucleotide, associé à un entier, sous forme de Char
+	public static int intOfNucleotideChar(char nucleotide)
+	{
+		switch(nucleotide)
+		{
+			case 'A' :
+				return 0;
+			case 'C' :
+				return 1;
+			case 'G' :
+				return 2;
+			case 'T' :
+				return 3;
+			default:
+				return -1;
 		}
 	}
 	
