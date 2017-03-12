@@ -199,7 +199,7 @@ public class ExcelWriter {
 		List<XSSFRow> rowlist = new ArrayList<XSSFRow>();	
 		
 		// create the cells
-		for (int row = 0; row <baseSum.imax+2; row++)
+		for (int row = 0; row <CircularCounter.imax+2; row++)
 		{
 			rowlist.add(worksheet.createRow(row));
 			
@@ -310,7 +310,7 @@ public class ExcelWriter {
 		// i
 		rowlist.get(enTeteRow).getCell(col).setCellStyle(lblue);
 		rowlist.get(enTeteRow).getCell(col).setCellValue("i");
-		for (int i = 0; i < baseSum.imax; i++)
+		for (int i = 0; i < CircularCounter.imax; i++)
 		{
 			if (i%2 == 0)
 			{
@@ -322,7 +322,7 @@ public class ExcelWriter {
 			}
 			rowlist.get(i+1).getCell(col).setCellValue(i);
 		}
-		rowlist.get(baseSum.imax+1).getCell(col).setCellValue("Total");
+		rowlist.get(CircularCounter.imax+1).getCell(col).setCellValue("Total");
 		
 		// A(X1, X2)
 		for (int w1 = 0; w1 < 4; w1++)
@@ -335,7 +335,7 @@ public class ExcelWriter {
 				rowlist.get(enTeteRow).getCell(col).setCellValue(codeName);
 				
 				double total = 0;
-				for (int i = 0; i < baseSum.imax; i++)
+				for (int i = 0; i < CircularCounter.imax; i++)
 				{
 					if (i%2 == 0)
 					{
@@ -349,8 +349,8 @@ public class ExcelWriter {
 					rowlist.get(i+1).getCell(col).setCellValue(Aiw1w2);
 					total += Aiw1w2;
 				}
-				rowlist.get(baseSum.imax+1).getCell(col).setCellStyle(ngray_float);
-				rowlist.get(baseSum.imax+1).getCell(col).setCellValue(total);
+				rowlist.get(CircularCounter.imax+1).getCell(col).setCellStyle(ngray_float);
+				rowlist.get(CircularCounter.imax+1).getCell(col).setCellValue(total);
 			}
 		}
 		
@@ -358,7 +358,7 @@ public class ExcelWriter {
 		// Clean-up
 		
 		//autosize column 
-		for (int row = 0; row<baseSum.imax+2; row++)
+		for (int row = 0; row<CircularCounter.imax+2; row++)
 		{
 			for (int c = 0; c<rowlist.get(row).getLastCellNum();c++) 
 			{

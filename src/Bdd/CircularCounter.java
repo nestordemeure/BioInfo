@@ -32,9 +32,10 @@ public class CircularCounter
 	public static int imax = 99;
 	public static int minGeneLength = 200;
 	
-	public int ciw1w2[][][];
-	private int trinucleotidesToRead;
-	public int geneLength;
+	private int ciw1w2[][][];
+	private int trinucleotidesLeftToRead;
+	private int geneLength;
+	private CircularArray codeArray;
 
 	//-----------------------------------------------------------------------------	
 	// public methods
@@ -48,8 +49,9 @@ public class CircularCounter
 		else
 		{
 			geneLength = geneLengthArg - imax - 6;
-			trinucleotidesToRead = geneLength/3;
+			trinucleotidesLeftToRead = geneLength/3;
 			ciw1w2 = new int[imax][4][4];
+			codeArray = new CircularArray();
 		}
 	}
 	
@@ -70,6 +72,98 @@ public class CircularCounter
 	
 	public void AddTrinucleotide(int phase, int nucleotide1, int nucleotide2, int nucleotide3)
 	{
-		int code = codeOfTrinucleotide[nucleotide1][nucleotide2][nucleotide3];
+		int w2 = codeOfTrinucleotide[nucleotide1][nucleotide2][nucleotide3];
+				
+		if (phase == 0)
+		{	
+			if (trinucleotidesLeftToRead>0)
+			{
+				trinucleotidesLeftToRead--;
+				codeArray.addCode(w2);
+			}
+			else
+			{
+				codeArray.addCode();
+			}
+		}
+		
+		for (int w=codeArray.minW; w<codeArray.maxW; w++)
+		{
+			int w1 = codeArray.getCode(w);
+			ciw1w2[phase + w*3][w1][w2]++;
+		}
+	}
+	
+	//-----------------------------------------------------------------------------	
+	// a circular array to store the circular codes (ironic)
+	
+	public class CircularArray
+	{
+		public int minW; // included
+		public int maxW; // excluded
+		public int offSet;
+		private int nextCode;
+		private int[] codes;
+		private int codeNumber = imax/3 + 1;
+		
+		public CircularArray()
+		{
+			minW = 0;
+			maxW = 0;
+			offSet = 0;
+			nextCode=-1;
+			codes = new int[codeNumber];
+		}
+		
+		// get the code stored at the position
+		// undefined if w<minW || w>=maxW
+		public int getCode(int w)
+		{
+			return codes[ (offSet + w)%codeNumber ];
+		}
+		
+		public void addCode(int code)
+		{
+			if (nextCode>=0)
+			{
+				if (maxW<codeNumber)
+				{
+					maxW++;
+				}
+				
+				if (offSet==0)
+				{
+					offSet=codeNumber-1;
+				}
+				else
+				{
+					offSet--;
+				}
+
+				codes[offSet] = nextCode;
+			}
+			nextCode = code;
+		}
+		
+		public void addCode()
+		{
+			if (maxW<imax)
+			{
+				maxW++;
+			}
+			
+			codeArray.minW++;
+			
+			if (offSet==0)
+			{
+				offSet=imax-1;
+			}
+			else
+			{
+				offSet--;
+			}
+			
+			codes[offSet] = nextCode;
+		}
 	}
 }
