@@ -3,8 +3,9 @@
 Recherche de signaux de codes circulaires dans les gènes.
 
 ### Travail restant :
-- mettre à jour les Ciw1w2 à la lecture des trinucléotides
-- *test* : vérifier que les valeurs sont correctes
+- tester CircularCounter
+- tester le contenus des excels
+- ajouter des courbes au excels ?
 
 ### Notes :
-*imax* (99) et *minGeneLength* (200) sont écrit en dur dans le fichier Bdd.java
+*imax* (99) et *minGeneLength* (200) sont écrit en dur dans le fichier `CircularCounter.java`
