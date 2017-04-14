@@ -48,9 +48,9 @@ public class CircularCounter
 		}
 		else
 		{
-			geneLength = geneLengthArg - imax - 6;
-			trinucleotidesLeftToRead = geneLength/3 + 1;
-			ciw1w2 = new int[imax+1][4][4];
+			geneLength = geneLengthArg - imax - 6; // number of nucleotides minus two trinucleotides and imax
+			trinucleotidesLeftToRead = geneLength/3;
+			ciw1w2 = new int[imax+1][4][4]; // +1 because i goes from 0 to imax included
 			codeArray = new CircularArray();
 		}
 	}
@@ -73,10 +73,22 @@ public class CircularCounter
 	public void AddTrinucleotide(int phase, int nucleotide1, int nucleotide2, int nucleotide3)
 	{
 		int w2 = codeOfTrinucleotide[nucleotide1][nucleotide2][nucleotide3];
-				
+		
+		// incrementing ciw1w2
+		for (int w=codeArray.minW; w<codeArray.maxW; w++)
+		{
+			int w1 = codeArray.getCode(w);
+			int i = phase + w*3;
+			if (i <= imax) // this test should not be required
+			{
+				ciw1w2[i][w1][w2]++;
+			}
+		}
+		
+		// adding a code to the array if needed
 		if (phase == 0)
 		{	
-			if (trinucleotidesLeftToRead>0)
+			if (trinucleotidesLeftToRead > 0)
 			{
 				trinucleotidesLeftToRead--;
 				codeArray.addCode(w2);
@@ -84,16 +96,6 @@ public class CircularCounter
 			else
 			{
 				codeArray.addCode();
-			}
-		}
-		
-		for (int w=codeArray.minW; w<codeArray.maxW; w++)
-		{
-			int w1 = codeArray.getCode(w);
-			int i = phase + w*3;
-			if (i <= imax)
-			{
-				ciw1w2[i][w1][w2]++;
 			}
 		}
 	}
@@ -106,61 +108,53 @@ public class CircularCounter
 		public int minW; // included
 		public int maxW; // excluded
 		public int offSet;
-		private int nextCode;
 		private int[] codes;
-		private int codeNumber = imax/3 + 1;
+		private int codeNumber = imax/3 + 1 + 1; // +1 to store the memory
 		
 		public CircularArray()
 		{
 			minW = 0;
-			maxW = 0;
+			maxW = -1; // -1 because the first code will go into memory
 			offSet = 0;
-			nextCode=-1;
 			codes = new int[codeNumber];
 		}
 		
 		// get the code stored at the position
-		// undefined if w<minW || w>=maxW
 		public int getCode(int w)
 		{
-			return codes[ (offSet + w)%codeNumber ];
+			return codes[ (offSet + 1 + w)%codeNumber ]; // +1, -1 would return the memory
 		}
 		
 		public void addCode(int code)
 		{
-			if (nextCode>=0)
-			{
-				if (maxW<codeNumber)
-				{
-					maxW++;
-				}
-				
-				if (offSet==0)
-				{
-					offSet=codeNumber-1;
-				}
-				else
-				{
-					offSet--;
-				}
+			incrWs(); // we free the memory
 
-				codes[offSet] = nextCode;
+			codes[offSet] = code; // we feed the memory
+
+			if (maxW < codeNumber-1) // -1 we don't want to hit the memory
+			{
+				maxW++;
 			}
-			nextCode = code;
 		}
 		
 		public void addCode()
 		{
-			if (maxW<imax)
+			if (maxW < codeNumber-1) // -1 we don't want to hit the memory
 			{
 				maxW++;
 			}
 			
-			codeArray.minW++;
+			minW++;
 			
+			incrWs();
+		}
+		
+		// incr all w
+		private void incrWs()
+		{
 			if (offSet==0)
 			{
-				offSet=imax-1;
+				offSet=codeNumber-1;
 			}
 			else
 			{

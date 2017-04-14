@@ -43,11 +43,6 @@ public class Bdd
 	TreeMap<String,content> contenus;
 	
 	//tampon
-	//private int tampon_Ciw1w2[][][]; // TODO tampon_Ciw1w2[i][w1][w2]
-	//private int tampon_geneLength; // TODO longueur totale du gene
-	//public static int imax = 99; // TODO 
-	//static int minGeneLength = 200; // TODO
-	
 	public CircularCounter tampon_circularCounter; // TODO
 	
 	private String tampon_cleft;
@@ -258,6 +253,48 @@ public class Bdd
 		}
 	}
 	
+
+	//sort un string qui représente le contenus de la base
+	public String toString ()
+	{
+		content contenus_cleft;
+		String codes[] = {"X", "X1", "X2", "Xp"};
+		String str = "";
+	
+		for (Entry<String, content> entry : contenus.entrySet())
+		{
+			contenus_cleft = entry.getValue();
+			
+			// header
+			str += entry.getKey() + " :\n";
+			str += "i";
+			for (int w1 = 0; w1 < 4; w1++)
+			{
+				for (int w2 = 0; w2 < 4; w2++)
+				{
+					str += "	" + String.format("A(%s, %s)", codes[w1], codes[w2]);
+				}
+			}
+			str += "\n";
+			
+			// body
+			for (int i = 0; i <= CircularCounter.imax; i++)
+			{
+				str += i;
+				for (int w1 = 0; w1 < 4; w1++)
+				{
+					for (int w2 = 0; w2 < 4; w2++)
+					{
+						str += "	" + contenus_cleft.oiw1w2[i][w1][w2];
+					}
+				}
+				str += "\n";
+			}
+		}
+		
+		return str;
+	}
+	
 	//contient les valeures associées a un type (mitochondrie, géne, chloroplaste, general,...)
 	public class content implements Serializable
 	{
@@ -274,7 +311,7 @@ public class Bdd
 			nb_CDS = 0;
 			nb_CDS_non_traites = 0;
 			
-			oiw1w2 = new double[CircularCounter.imax+1][4][4]; // TODO
+			oiw1w2 = new double[CircularCounter.imax+1][4][4];
 			
 			nb_items = 1;
 			organism = organismArg;
@@ -296,7 +333,7 @@ public class Bdd
 				{
 					for(int w2 = 0 ; w2<4 ; w2++)
 					{
-						oiw1w2[i][w1][w2] += cont.oiw1w2[i][w1][w2]; // TODO
+						oiw1w2[i][w1][w2] += cont.oiw1w2[i][w1][w2];
 					}
 				}
 			}
@@ -312,7 +349,7 @@ public class Bdd
 	   {
 		   nb_CDS = inputstream.readLong();
 		   nb_CDS_non_traites = inputstream.readLong();
-		   oiw1w2 = (double[][][]) inputstream.readObject(); // TODO
+		   oiw1w2 = (double[][][]) inputstream.readObject();
 		   organism = (Organism) inputstream.readObject();
 		   nb_items = inputstream.readLong();
 	   }
@@ -321,7 +358,7 @@ public class Bdd
 	   {
 			outputstream.writeLong(nb_CDS);
 			outputstream.writeLong(nb_CDS_non_traites);
-			outputstream.writeObject(oiw1w2); // TODO
+			outputstream.writeObject(oiw1w2);
 			outputstream.writeObject(organism);
 			outputstream.writeLong(nb_items);
 	  }

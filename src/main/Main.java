@@ -1,4 +1,8 @@
 package main;
+import java.io.File;
+import java.io.OutputStream;
+import java.util.Scanner;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -7,11 +11,32 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import Bdd.Bdd;
+import Parser.Parser;
 import configuration.Configuration;
+import io.Net;
 import tree.*;
 import ui.UIManager;
 public class Main {
 
+	// bdd tests
+	public static void main(String[] args) throws Exception 
+	{
+		// init
+		Bdd database = new Bdd();
+		Scanner fileSource = Net.getUrl("file:///home/nestor/Cours/2A/bioinformatique/sequence2.gb");
+		Organism testOrganism = new Organism("kingdom","group","subgroup","name","bioproj","creadate","moddate");
+		Parser parser = new Parser(database,fileSource);
+		
+		// parse
+		OutputStream stream = null;
+		parser.parse("testKey",testOrganism,stream);
+		
+		// display
+		System.out.println(database.toString());
+	}
+	
+	/*
 	public static void main(String[] args) throws Exception {
 		
 		parseArgs(args);
@@ -20,6 +45,7 @@ public class Main {
 		Tree tree = TreeManager.construct();
 		UIManager.startMainProcess(tree);
 	}
+	*/
 	
 	public static void parseArgs(String[] args){
 		Option help = new Option("h","help",false, "print this message");
