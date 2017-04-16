@@ -266,13 +266,13 @@ public class Bdd
 			contenus_cleft = entry.getValue();
 			
 			// header
-			str += entry.getKey() + " :\n";
+			str += entry.getKey() + String.format(" (%d CDS) :\n", contenus_cleft.nb_CDS);
 			str += "i";
 			for (int w1 = 0; w1 < 4; w1++)
 			{
 				for (int w2 = 0; w2 < 4; w2++)
 				{
-					str += "	" + String.format("A(%s, %s)", codes[w1], codes[w2]);
+					str += "	" + String.format("%s-%s", codes[w1], codes[w2]);
 				}
 			}
 			str += "\n";
@@ -285,7 +285,7 @@ public class Bdd
 				{
 					for (int w2 = 0; w2 < 4; w2++)
 					{
-						str += "	" + contenus_cleft.oiw1w2[i][w1][w2];
+						str += "	" + String.format("%.3f",contenus_cleft.oiw1w2[i][w1][w2]);
 					}
 				}
 				str += "\n";

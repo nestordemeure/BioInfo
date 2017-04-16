@@ -20,11 +20,12 @@ import ui.UIManager;
 public class Main {
 
 	// bdd tests
+	/*
 	public static void main(String[] args) throws Exception 
 	{
 		// init
 		Bdd database = new Bdd();
-		Scanner fileSource = Net.getUrl("file:///home/nestor/Cours/2A/bioinformatique/sequence2.gb");
+		Scanner fileSource = Net.getUrl("file:///home/nestor/Cours/stage/bioinfo/testseq.gb");
 		Organism testOrganism = new Organism("kingdom","group","subgroup","name","bioproj","creadate","moddate");
 		Parser parser = new Parser(database,fileSource);
 		
@@ -35,8 +36,8 @@ public class Main {
 		// display
 		System.out.println(database.toString());
 	}
+	*/
 	
-	/*
 	public static void main(String[] args) throws Exception {
 		
 		parseArgs(args);
@@ -45,7 +46,7 @@ public class Main {
 		Tree tree = TreeManager.construct();
 		UIManager.startMainProcess(tree);
 	}
-	*/
+	
 	
 	public static void parseArgs(String[] args){
 		Option help = new Option("h","help",false, "print this message");

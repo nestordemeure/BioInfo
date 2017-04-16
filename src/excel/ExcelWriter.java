@@ -198,8 +198,8 @@ public class ExcelWriter {
 		XSSFSheet worksheet = (XSSFSheet) wb.createSheet(cleft);
 		List<XSSFRow> rowlist = new ArrayList<XSSFRow>();	
 		
-		// create the cells
-		for (int row = 0; row <CircularCounter.imax+3; row++)
+		// create the cells (at least one per line of description)
+		for (int row = 0; row <= Math.max(20, CircularCounter.imax+2); row++)
 		{
 			rowlist.add(worksheet.createRow(row));
 			

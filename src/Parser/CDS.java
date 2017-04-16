@@ -15,7 +15,7 @@ public class CDS
 	int expected_ligne_number;
 	String cleft;
 	Organism organism;
-	int geneLength; // TODO
+	int geneLength;
 	OutputStream streamer;
 	
 	CDS(Bdd base, String clef, Organism organismArg, OutputStream stream)
@@ -26,7 +26,7 @@ public class CDS
 		cleft = clef;
 		organism = organismArg;
 		streamer = stream;
-		geneLength = 0; // TODO
+		geneLength = 0;
 	}
 
 	//on coupe les ponts vers les séquences et on envois une exception pour signaler que ce cds ne sert plus
@@ -45,7 +45,7 @@ public class CDS
 		sequence seq = new sequence(deb,fi,sens_de_lect);
 		sequence_list.add(seq);
 		expected_ligne_number += ((fi-1)/60) - ((deb-1)/60) +1;
-		geneLength += fi - deb; // TODO
+		geneLength += fi - deb + 1; // TODO +1 because deb is included in the range
 		return sequence_list.size()-1;
 	}
 	
@@ -63,7 +63,7 @@ public class CDS
 			try
 			{
 				//on s'assure que le tampon est vide avant d'attaquer
-				base_de_donnees.open_tampon(geneLength,cleft,organism,streamer); //TODO
+				base_de_donnees.open_tampon(geneLength,cleft,organism,streamer);
 				
 				//l'automate qui va parcourir cette séquence, dans le sens directe par défaut
 				automateLecteurDeGenes auto = new automateLecteurDeGenes(base_de_donnees);

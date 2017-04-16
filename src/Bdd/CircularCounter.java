@@ -29,8 +29,9 @@ public class CircularCounter
 		codeOfTrinucleotide[3][3][3] = 3;
 	}
 	
-	public static int imax = 99;
-	public static int minGeneLength = 200;
+	// je perd 2 trinucleotides, où ?
+	public static int imax = 99; // TODO
+	public static int minGeneLength = 200; // TODO
 	
 	private int ciw1w2[][][];
 	private int trinucleotidesLeftToRead;
@@ -48,6 +49,9 @@ public class CircularCounter
 		}
 		else
 		{
+			// TODO are we losing nucleotides ?
+			//System.out.println("length " + geneLengthArg);
+			
 			geneLength = geneLengthArg - imax - 6; // number of nucleotides minus two trinucleotides and imax
 			trinucleotidesLeftToRead = geneLength/3;
 			ciw1w2 = new int[imax+1][4][4]; // +1 because i goes from 0 to imax included
@@ -90,11 +94,13 @@ public class CircularCounter
 		{	
 			if (trinucleotidesLeftToRead > 0)
 			{
+				//System.out.println("ping " + trinucleotidesLeftToRead);
 				trinucleotidesLeftToRead--;
 				codeArray.addCode(w2);
 			}
 			else
 			{
+				//System.out.println("ding " + trinucleotidesLeftToRead);
 				codeArray.addCode();
 			}
 		}
@@ -122,7 +128,7 @@ public class CircularCounter
 		// get the code stored at the position
 		public int getCode(int w)
 		{
-			return codes[ (offSet + 1 + w)%codeNumber ]; // +1, -1 would return the memory
+			return codes[ (offSet + 1 + w)%codeNumber ]; // w=-1 would return the memory hence the +1
 		}
 		
 		public void addCode(int code)
@@ -139,14 +145,14 @@ public class CircularCounter
 		
 		public void addCode()
 		{
+			incrWs();
+			
 			if (maxW < codeNumber-1) // -1 we don't want to hit the memory
 			{
 				maxW++;
 			}
 			
 			minW++;
-			
-			incrWs();
 		}
 		
 		// incr all w
