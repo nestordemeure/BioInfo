@@ -30,8 +30,8 @@ public class CircularCounter
 	}
 	
 	// je perd 2 trinucleotides, où ?
-	public static int imax = 99; // TODO
-	public static int minGeneLength = 200; // TODO
+	public static int imax = /*3*/99; // TODO
+	public static int minGeneLength = /*0*/200; // TODO
 	
 	private int ciw1w2[][][];
 	private int trinucleotidesLeftToRead;
@@ -52,8 +52,9 @@ public class CircularCounter
 			// TODO are we losing nucleotides ?
 			//System.out.println("length " + geneLengthArg);
 			
-			geneLength = geneLengthArg - imax - 6; // number of nucleotides minus two trinucleotides and imax
-			trinucleotidesLeftToRead = geneLength/3;
+			// TODO -9 instead of -3, +3 in lefttoread
+			geneLength = geneLengthArg - imax - 9 /* TODO - 6*/; // number of nucleotides minus two trinucleotides and imax
+			trinucleotidesLeftToRead = (geneLength+3)/3; //TODO +3
 			ciw1w2 = new int[imax+1][4][4]; // +1 because i goes from 0 to imax included
 			codeArray = new CircularArray();
 		}
@@ -77,31 +78,34 @@ public class CircularCounter
 	public void AddTrinucleotide(int phase, int nucleotide1, int nucleotide2, int nucleotide3)
 	{
 		int w2 = codeOfTrinucleotide[nucleotide1][nucleotide2][nucleotide3];
+		//System.out.println("-"); //TODO
+		
+		// adding a code to the array if needed
+		if (phase == 0)
+		{	
+			codeArray.incrWs();
+			
+			if (trinucleotidesLeftToRead > 0)
+			{
+				//System.out.println("ping " + trinucleotidesLeftToRead); // TODO
+				trinucleotidesLeftToRead--;
+				codeArray.addCode(w2);
+			}
+			else
+			{
+				//System.out.println("ding " + trinucleotidesLeftToRead); // TODO
+				codeArray.addCode();
+			}
+		}
 		
 		// incrementing ciw1w2
 		for (int w=codeArray.minW; w<codeArray.maxW; w++)
 		{
 			int w1 = codeArray.getCode(w);
 			int i = phase + w*3;
-			if (i <= imax) // this test should not be required
+			if (i <= imax)
 			{
 				ciw1w2[i][w1][w2]++;
-			}
-		}
-		
-		// adding a code to the array if needed
-		if (phase == 0)
-		{	
-			if (trinucleotidesLeftToRead > 0)
-			{
-				//System.out.println("ping " + trinucleotidesLeftToRead);
-				trinucleotidesLeftToRead--;
-				codeArray.addCode(w2);
-			}
-			else
-			{
-				//System.out.println("ding " + trinucleotidesLeftToRead);
-				codeArray.addCode();
 			}
 		}
 	}
@@ -115,7 +119,7 @@ public class CircularCounter
 		public int maxW; // excluded
 		public int offSet;
 		private int[] codes;
-		private int codeNumber = imax/3 + 1 + 1; // +1 to store the memory
+		private int codeNumber = imax/3 /* TODO + 1*/ + 1; // +1 to store the memory
 		
 		public CircularArray()
 		{
@@ -128,36 +132,24 @@ public class CircularCounter
 		// get the code stored at the position
 		public int getCode(int w)
 		{
+			//System.out.println("w " + w); // TODO
 			return codes[ (offSet + 1 + w)%codeNumber ]; // w=-1 would return the memory hence the +1
 		}
 		
 		public void addCode(int code)
 		{
-			incrWs(); // we free the memory
-
-			codes[offSet] = code; // we feed the memory
-
-			if (maxW < codeNumber-1) // -1 we don't want to hit the memory
-			{
-				maxW++;
-			}
+			codes[offSet] = code;
 		}
 		
 		public void addCode()
 		{
-			incrWs();
-			
-			if (maxW < codeNumber-1) // -1 we don't want to hit the memory
-			{
-				maxW++;
-			}
-			
 			minW++;
 		}
 		
 		// incr all w
-		private void incrWs()
+		public void incrWs()
 		{
+			// move offset
 			if (offSet==0)
 			{
 				offSet=codeNumber-1;
@@ -165,6 +157,12 @@ public class CircularCounter
 			else
 			{
 				offSet--;
+			}
+			
+			// move maxW if needed
+			if (maxW < codeNumber-1) // -1 we don't want to hit the memory
+			{
+				maxW++;
 			}
 		}
 	}

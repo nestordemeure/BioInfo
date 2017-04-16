@@ -301,7 +301,7 @@ public class Bdd
 		public long nb_CDS;
 		public long nb_CDS_non_traites;
 		
-		public double oiw1w2[][][]; // TODO : sum of all oiw1w2
+		public double oiw1w2[][][]; // sum of all oiw1w2
 
 		public long nb_items;
 		public Organism organism;
@@ -321,7 +321,7 @@ public class Bdd
 		
 		public double A(int i, int w1, int w2)
 		{
-			return oiw1w2[i][w1][w2]/nb_CDS;
+			return oiw1w2[i][w1][w2]/((double)nb_CDS);
 		}
 				
 		//un contenus a un autre
