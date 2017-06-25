@@ -40,6 +40,12 @@ import configuration.Configuration;
 
 public class ExcelWriter {
 	
+	// returns a string representation of the given Cell
+	private static String Cell(int x, int y)
+	{
+		return String.valueOf((char)(x + 'A')) + (y+1);
+	}
+	
 	public static byte[] hexStringToByteArray(String s) {
 	    int len = s.length();
 	    byte[] data = new byte[len / 2];
@@ -203,7 +209,7 @@ public class ExcelWriter {
 		{
 			rowlist.add(worksheet.createRow(row));
 			
-			for(int col = 0; col<21; col++)
+			for(int col = 0; col<22; col++)
 			{
 				rowlist.get(row).createCell(col);
 				rowlist.get(row).getCell(col).setCellStyle(default_type);
@@ -213,7 +219,7 @@ public class ExcelWriter {
 		//-------------------------------------------------------------------------------------
 		// Description de l'organisme
 		
-		int descriptionCol = 18;
+		int descriptionCol = 19;
 		
 		// Name
 		String filename = "";
@@ -300,7 +306,7 @@ public class ExcelWriter {
 		// i
 		rowlist.get(enTeteRow).getCell(col).setCellStyle(lblue);
 		rowlist.get(enTeteRow).getCell(col).setCellValue("i");
-		for (int i = 0; i <= CircularCounter.imax; i++)
+		for (int i = 0; i < CircularCounter.imax; i++)
 		{
 			if (i%2 == 0)
 			{
@@ -312,7 +318,7 @@ public class ExcelWriter {
 			}
 			rowlist.get(i+1).getCell(col).setCellValue(i);
 		}
-		rowlist.get(CircularCounter.imax+2).getCell(col).setCellValue("Total");
+		rowlist.get(CircularCounter.imax+1).getCell(col).setCellValue("Total");
 		
 		// A(X1, X2)
 		for (int w1 = 0; w1 < 4; w1++)
@@ -325,7 +331,7 @@ public class ExcelWriter {
 				rowlist.get(enTeteRow).getCell(col).setCellValue(codeName);
 				
 				double total = 0;
-				for (int i = 0; i <= CircularCounter.imax; i++)
+				for (int i = 0; i < CircularCounter.imax; i++)
 				{
 					if (i%2 == 0)
 					{
@@ -339,9 +345,19 @@ public class ExcelWriter {
 					rowlist.get(i+1).getCell(col).setCellValue(Aiw1w2);
 					total += Aiw1w2;
 				}
-				rowlist.get(CircularCounter.imax+2).getCell(col).setCellStyle(ngray_float);
-				rowlist.get(CircularCounter.imax+2).getCell(col).setCellValue(total);
+				rowlist.get(CircularCounter.imax+1).getCell(col).setCellStyle(ngray_float);
+				rowlist.get(CircularCounter.imax+1).getCell(col).setCellValue(total);
 			}
+		}
+
+		col++;
+		rowlist.get(enTeteRow).getCell(col).setCellStyle(lblue);
+		rowlist.get(enTeteRow).getCell(col).setCellValue("Somme");
+		for (int i = 0; i < CircularCounter.imax; i++)
+		{
+			rowlist.get(i+1).getCell(col).setCellStyle(ngray_float);
+			rowlist.get(i+1).getCell(col).setCellType(XSSFCell.CELL_TYPE_FORMULA);
+			rowlist.get(i+1).getCell(col).setCellFormula(String.format("SUM(B%d:Q%d)",i+2,i+2));
 		}
 		
 		//-------------------------------------------------------------------------------------

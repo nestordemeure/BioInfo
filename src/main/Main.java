@@ -1,6 +1,8 @@
 package main;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.Scanner;
 
 import org.apache.commons.cli.CommandLine;
@@ -14,30 +16,44 @@ import org.apache.commons.cli.ParseException;
 import Bdd.Bdd;
 import Parser.Parser;
 import configuration.Configuration;
+import excel.ExcelWriter;
 import io.Net;
 import tree.*;
 import ui.UIManager;
 public class Main {
 
 	// bdd tests
-	/*
+	
 	public static void main(String[] args) throws Exception 
 	{
+		// TODO the constants in circularcounter have been altered to allow for very short CDS
+		String inputFile = "testseq";
+
 		// init
 		Bdd database = new Bdd();
-		Scanner fileSource = Net.getUrl("file:///home/nestor/Cours/stage/bioinfo/testseq.gb");
+		Scanner fileSource = Net.getUrl("file:///home/nestor/Cours/stage/bioinfo/" + inputFile + ".gb");
 		Organism testOrganism = new Organism("kingdom","group","subgroup","name","bioproj","creadate","moddate");
 		Parser parser = new Parser(database,fileSource);
 		
 		// parse
-		OutputStream stream = null;
+		//OutputStream stream = null;
+		File file = new File(inputFile + ".txt");
+		if (!file.exists()) 
+		{
+			file.createNewFile();
+		}
+		OutputStream stream = new FileOutputStream(file);
 		parser.parse("testKey",testOrganism,stream);
+		database.exportBase("Sums_" + inputFile);
 		
 		// display
 		System.out.println(database.toString());
+		// write excel
+		String[] chemin = {"kingdom","group","subgroup",inputFile,"bioproj","creadate","moddate"};
+		ExcelWriter.writer(".", inputFile, chemin, database, true);
 	}
-	*/
 	
+	/*
 	public static void main(String[] args) throws Exception {
 		
 		parseArgs(args);
@@ -46,7 +62,7 @@ public class Main {
 		Tree tree = TreeManager.construct();
 		UIManager.startMainProcess(tree);
 	}
-	
+	*/
 	
 	public static void parseArgs(String[] args){
 		Option help = new Option("h","help",false, "print this message");

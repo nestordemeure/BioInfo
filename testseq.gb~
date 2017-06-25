@@ -41,7 +41,7 @@ FEATURES             Location/Qualifiers
      gene            join(236..500,522..700)
                      /locus_tag="ABTV_sNgp1"
                      /db_xref="GeneID:10987403"
-     CDS             1..24
+     CDS             1..21
                      /locus_tag="ABTV_sNgp1"
                      /codon_start=1
                      /product="putative nuclear shuttle protein"
@@ -52,7 +52,7 @@ FEATURES             Location/Qualifiers
                      KVLLRSIQIGFNGSFRGSNRNVRGFIYVSVRQDDGQMRPIMVVPFGGYGYHNDYYYFE
                      GQSSTNCEIVSDYIPAGQDWSRDMEISISNSNNCNQECDIKCYVVCNLRIKE"
 ORIGIN      
-        1 ataaaaaaaa aaaaaaaata aaaaaaaaaa tcggggcggg acattctgtg atgggctggg
+        1 ataaaaaaaa aaaaaaaaaa aaaaaaaaaa tcggggcggg acattctgtg atgggctggg
        61 ctttatgcgg ccaaataagc ccataaagcc agatctgggc ccatttaagg gcccgtggtt
       121 tgaaaatgtc gcgttcccgc ctaaattgtt tgcttgccct gcaaggaaac gaaaactcta
       181 taaatagggt tgttctctgc ttgtttaata catcaggcgc aaatcttttg caacgatgga

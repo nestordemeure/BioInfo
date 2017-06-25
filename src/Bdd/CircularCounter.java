@@ -53,8 +53,8 @@ public class CircularCounter
 			//System.out.println("length " + geneLengthArg);
 			
 			// TODO -9 instead of -3, +3 in lefttoread
-			geneLength = geneLengthArg - imax - 9 /* TODO - 6*/; // number of nucleotides minus two trinucleotides and imax
-			trinucleotidesLeftToRead = (geneLength+3)/3; //TODO +3
+			geneLength = geneLengthArg - imax - 9 /* TODO was - 6*/; // number of nucleotides minus two trinucleotides and imax
+			trinucleotidesLeftToRead = (geneLength+3)/3; //TODO added +3
 			ciw1w2 = new int[imax+1][4][4]; // +1 because i goes from 0 to imax included
 			codeArray = new CircularArray();
 		}

@@ -140,7 +140,7 @@ public class Bdd
 			{
 				byte[] bytes = tampon_toStream.append('\n').toString().getBytes();
 				try { tampon_streamer.write(bytes); } 
-				catch (IOException e) { /* Auto-generated catch block */ }
+				catch (IOException e) { System.out.println(e.getMessage()); }
 				tampon_toStream = null;
 			}
 			
