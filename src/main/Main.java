@@ -32,6 +32,10 @@ public class Main {
 		//String inputFile = "s1";
 		for(String inputFile : inputFiles)
 		{
+			//displays progress
+			System.out.println(inputFile);
+			System.out.println("processing...");
+
 			// init
 			Bdd database = new Bdd();
 			Scanner fileSource = Net.getUrl("file:///home/nestor/Cours/stage/bioinfo/testFiles/" + inputFile + ".gb");
@@ -48,12 +52,11 @@ public class Main {
 			OutputStream stream = new FileOutputStream(file);
 			parser.parse("testKey",testOrganism,stream);
 			database.exportBase("Sums_" + inputFile);
-						
+			//System.out.println(database.toString());
 			fullDatabase.fusionBase(database);
 			
-			// display
-			//System.out.println(database.toString());
 			// write excel
+			System.out.println("writing excel file...");
 			String[] chemin = {"kingdom","group","subgroup",inputFile,"bioproj","creadate","moddate"};
 			ExcelWriter.writer(".", inputFile, chemin, database, true);	
 		}
