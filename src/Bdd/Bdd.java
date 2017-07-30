@@ -43,7 +43,7 @@ public class Bdd
 	TreeMap<String,content> contenus;
 	
 	//tampon
-	public CircularCounter tampon_circularCounter; // TODO
+	public CircularCounter tampon_circularCounter;
 	
 	private String tampon_cleft;
 	private Organism tampon_organism;
@@ -99,7 +99,7 @@ public class Bdd
 	}
 
 	//tampon
-	// TODO ajoute un tri nucleotides a la phase indiquée
+	// ajoute un tri nucleotides a la phase indiquée
 	public void ajoute_nucleotides (int phase, int nucleotide1, int nucleotide2, int nucleotide3) throws CharInvalideException
 	{
 		tampon_circularCounter.AddTrinucleotide(phase, nucleotide1, nucleotide2, nucleotide3);

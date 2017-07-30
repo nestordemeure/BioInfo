@@ -1,4 +1,10 @@
 
+*.fsx
+*testFiles*
+*.xlsx
+*.bdd
+*.txt
+
 .metadata
 bin/
 tmp/

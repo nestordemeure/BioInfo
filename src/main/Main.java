@@ -23,34 +23,44 @@ import ui.UIManager;
 public class Main {
 
 	// bdd tests
-	
+	// TODO the constants in circularcounter have been altered to allow for very short CDS
 	public static void main(String[] args) throws Exception 
 	{
-		// TODO the constants in circularcounter have been altered to allow for very short CDS
-		String inputFile = "testseq";
-
-		// init
-		Bdd database = new Bdd();
-		Scanner fileSource = Net.getUrl("file:///home/nestor/Cours/stage/bioinfo/" + inputFile + ".gb");
-		Organism testOrganism = new Organism("kingdom","group","subgroup","name","bioproj","creadate","moddate");
-		Parser parser = new Parser(database,fileSource);
+		String[] inputFiles = {"s1", "s2", "s3", "s4", "s5", "s6", "s7", "s8", "s9", "s10"};
+		Bdd fullDatabase = new Bdd();
 		
-		// parse
-		//OutputStream stream = null;
-		File file = new File(inputFile + ".txt");
-		if (!file.exists()) 
+		//String inputFile = "s1";
+		for(String inputFile : inputFiles)
 		{
-			file.createNewFile();
+			// init
+			Bdd database = new Bdd();
+			Scanner fileSource = Net.getUrl("file:///home/nestor/Cours/stage/bioinfo/testFiles/" + inputFile + ".gb");
+			Organism testOrganism = new Organism("kingdom","group","subgroup","name","bioproj","creadate","moddate");
+			Parser parser = new Parser(database,fileSource);
+			
+			// parse
+			//OutputStream stream = null;
+			File file = new File(inputFile + ".txt");
+			if (!file.exists()) 
+			{
+				file.createNewFile();
+			}
+			OutputStream stream = new FileOutputStream(file);
+			parser.parse("testKey",testOrganism,stream);
+			database.exportBase("Sums_" + inputFile);
+						
+			fullDatabase.fusionBase(database);
+			
+			// display
+			System.out.println(database.toString());
+			// write excel
+			String[] chemin = {"kingdom","group","subgroup",inputFile,"bioproj","creadate","moddate"};
+			ExcelWriter.writer(".", inputFile, chemin, database, true);	
 		}
-		OutputStream stream = new FileOutputStream(file);
-		parser.parse("testKey",testOrganism,stream);
-		database.exportBase("Sums_" + inputFile);
-		
-		// display
-		System.out.println(database.toString());
-		// write excel
-		String[] chemin = {"kingdom","group","subgroup",inputFile,"bioproj","creadate","moddate"};
-		ExcelWriter.writer(".", inputFile, chemin, database, true);
+		/*
+		System.out.println(fullDatabase.toString());
+		String[] chemin = {"kingdom","group","subgroup","allSfuse","bioproj","creadate","moddate"};
+		ExcelWriter.writer(".", "fullDatabase", chemin, fullDatabase, true);*/	
 	}
 	
 	/*

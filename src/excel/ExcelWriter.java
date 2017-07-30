@@ -205,7 +205,7 @@ public class ExcelWriter {
 		List<XSSFRow> rowlist = new ArrayList<XSSFRow>();	
 		
 		// create the cells (at least one per line of description)
-		for (int row = 0; row <= Math.max(20, CircularCounter.imax+2); row++)
+		for (int row = 0; row <= Math.max(20, CircularCounter.imax+2); row++) // TODO
 		{
 			rowlist.add(worksheet.createRow(row));
 			
@@ -306,7 +306,7 @@ public class ExcelWriter {
 		// i
 		rowlist.get(enTeteRow).getCell(col).setCellStyle(lblue);
 		rowlist.get(enTeteRow).getCell(col).setCellValue("i");
-		for (int i = 0; i < CircularCounter.imax; i++)
+		for (int i = 0; i < CircularCounter.imax; i++) // TODO
 		{
 			if (i%2 == 0)
 			{
@@ -318,7 +318,7 @@ public class ExcelWriter {
 			}
 			rowlist.get(i+1).getCell(col).setCellValue(i);
 		}
-		rowlist.get(CircularCounter.imax+1).getCell(col).setCellValue("Total");
+		rowlist.get(CircularCounter.imax+1).getCell(col).setCellValue("Total"); // TODO
 		
 		// A(X1, X2)
 		for (int w1 = 0; w1 < 4; w1++)
@@ -331,7 +331,7 @@ public class ExcelWriter {
 				rowlist.get(enTeteRow).getCell(col).setCellValue(codeName);
 				
 				double total = 0;
-				for (int i = 0; i < CircularCounter.imax; i++)
+				for (int i = 0; i < CircularCounter.imax; i++) // TODO
 				{
 					if (i%2 == 0)
 					{
@@ -345,15 +345,15 @@ public class ExcelWriter {
 					rowlist.get(i+1).getCell(col).setCellValue(Aiw1w2);
 					total += Aiw1w2;
 				}
-				rowlist.get(CircularCounter.imax+1).getCell(col).setCellStyle(ngray_float);
-				rowlist.get(CircularCounter.imax+1).getCell(col).setCellValue(total);
+				rowlist.get(CircularCounter.imax+1).getCell(col).setCellStyle(ngray_float); // TODO
+				rowlist.get(CircularCounter.imax+1).getCell(col).setCellValue(total); // TODO
 			}
 		}
 
 		col++;
 		rowlist.get(enTeteRow).getCell(col).setCellStyle(lblue);
 		rowlist.get(enTeteRow).getCell(col).setCellValue("Somme");
-		for (int i = 0; i < CircularCounter.imax; i++)
+		for (int i = 0; i < CircularCounter.imax; i++) // TODO
 		{
 			rowlist.get(i+1).getCell(col).setCellStyle(ngray_float);
 			rowlist.get(i+1).getCell(col).setCellType(XSSFCell.CELL_TYPE_FORMULA);
@@ -364,7 +364,7 @@ public class ExcelWriter {
 		// Clean-up
 		
 		//autosize column 
-		for (int row = 0; row<CircularCounter.imax+3; row++)
+		for (int row = 0; row<CircularCounter.imax+3; row++) //TODO
 		{
 			for (int c = 0; c<rowlist.get(row).getLastCellNum();c++) 
 			{

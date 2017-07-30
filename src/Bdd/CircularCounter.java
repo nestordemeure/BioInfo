@@ -1,6 +1,7 @@
 package Bdd;
 
 import exceptions.CDSInvalideException;
+import exceptions.CharInvalideException;
 
 public class CircularCounter 
 {
@@ -29,9 +30,8 @@ public class CircularCounter
 		codeOfTrinucleotide[3][3][3] = 3;
 	}
 	
-	// je perd 2 trinucleotides, où ?
-	public static int imax = /*3*/99; // TODO
-	public static int minGeneLength = /*0*/200; // TODO
+	public static int imax = 99;
+	public static int minGeneLength = 200;
 	
 	private int ciw1w2[][][];
 	private int trinucleotidesLeftToRead;
@@ -49,13 +49,11 @@ public class CircularCounter
 		}
 		else
 		{
-			// TODO are we losing nucleotides ?
-			//System.out.println("length " + geneLengthArg);
+			// TODO debug
+			geneLength = geneLengthArg - (imax + 3/*space to read forward*/);
+			trinucleotidesLeftToRead = geneLength / 3;
 			
-			// TODO -9 instead of -3, +3 in lefttoread
-			geneLength = geneLengthArg - imax - 9 /* TODO was - 6*/; // number of nucleotides minus two trinucleotides and imax
-			trinucleotidesLeftToRead = (geneLength+3)/3; //TODO added +3
-			ciw1w2 = new int[imax+1][4][4]; // +1 because i goes from 0 to imax included
+			ciw1w2 = new int[imax+1][4][4]; // +1 because i goes from 0 to imax included // TODO he should not go that far
 			codeArray = new CircularArray();
 		}
 	}
@@ -78,7 +76,18 @@ public class CircularCounter
 	public void AddTrinucleotide(int phase, int nucleotide1, int nucleotide2, int nucleotide3)
 	{
 		int w2 = codeOfTrinucleotide[nucleotide1][nucleotide2][nucleotide3];
-		//System.out.println("-"); //TODO
+		
+		// TODO debug
+		char c1 = '_';
+		char c2 = '_';
+		char c3 = '_';
+		try 
+		{
+			c1 = Bdd.charOfNucleotideInt(nucleotide1);
+			c2 = Bdd.charOfNucleotideInt(nucleotide2);
+			c3 = Bdd.charOfNucleotideInt(nucleotide3);
+		} 
+		catch (CharInvalideException e) {}
 		
 		// adding a code to the array if needed
 		if (phase == 0)
@@ -87,14 +96,14 @@ public class CircularCounter
 			
 			if (trinucleotidesLeftToRead > 0)
 			{
-				//System.out.println("ping " + trinucleotidesLeftToRead); // TODO
 				trinucleotidesLeftToRead--;
 				codeArray.addCode(w2);
+				//System.out.println("read :  " + c1 + c2 + c3); // TODO debug
 			}
 			else
 			{
-				//System.out.println("ding " + trinucleotidesLeftToRead); // TODO
 				codeArray.addCode();
+				System.out.println("nonRead :  " + c1 + c2 + c3); // TODO debug
 			}
 		}
 		
@@ -103,11 +112,12 @@ public class CircularCounter
 		{
 			int w1 = codeArray.getCode(w);
 			int i = phase + w*3;
-			if (i <= imax)
+			if (i < imax)
 			{
 				ciw1w2[i][w1][w2]++;
 			}
 		}
+		//System.out.println("memory size " + (codeArray.maxW - codeArray.minW));
 	}
 	
 	//-----------------------------------------------------------------------------	
@@ -116,10 +126,10 @@ public class CircularCounter
 	public class CircularArray
 	{
 		public int minW; // included
-		public int maxW; // excluded
-		public int offSet;
+		public int maxW; // excluded, the last trinucleotide should not be activated before its time
+		public int offSet; // -1 position, memory
 		private int[] codes;
-		private int codeNumber = imax/3 /* TODO + 1*/ + 1; // +1 to store the memory
+		private int codeNumber = imax/3 + 1; // +1 to store the memory
 		
 		public CircularArray()
 		{
@@ -132,7 +142,6 @@ public class CircularCounter
 		// get the code stored at the position
 		public int getCode(int w)
 		{
-			//System.out.println("w " + w); // TODO
 			return codes[ (offSet + 1 + w)%codeNumber ]; // w=-1 would return the memory hence the +1
 		}
 		

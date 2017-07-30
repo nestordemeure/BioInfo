@@ -320,7 +320,6 @@ public class automateLecteurDeGenes
 		return (position_relative+10) + ((position_relative-1)/10) + 10*((position_relative-1)/60);
 	}
 	
-	
 	void incrementer_phase()
 	{
 		phase3 = (phase3+1)%3;
