@@ -278,7 +278,7 @@ public class Bdd
 			str += "\n";
 			
 			// body
-			for (int i = 0; i <= CircularCounter.imax; i++)
+			for (int i = 0; i < CircularCounter.imax; i++)
 			{
 				str += i;
 				for (int w1 = 0; w1 < 4; w1++)
@@ -311,7 +311,7 @@ public class Bdd
 			nb_CDS = 0;
 			nb_CDS_non_traites = 0;
 			
-			oiw1w2 = new double[CircularCounter.imax+1][4][4];
+			oiw1w2 = new double[CircularCounter.imax][4][4];
 			
 			nb_items = 1;
 			organism = organismArg;
@@ -327,7 +327,7 @@ public class Bdd
 		//un contenus a un autre
 		public void fusionContent(content cont)
 		{			
-			for(int i = 0 ; i<=CircularCounter.imax ; i++)
+			for(int i = 0 ; i<CircularCounter.imax ; i++)
 			{
 				for(int w1 = 0 ; w1<4 ; w1++)
 				{

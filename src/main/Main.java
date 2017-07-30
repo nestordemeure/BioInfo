@@ -52,15 +52,15 @@ public class Main {
 			fullDatabase.fusionBase(database);
 			
 			// display
-			System.out.println(database.toString());
+			//System.out.println(database.toString());
 			// write excel
 			String[] chemin = {"kingdom","group","subgroup",inputFile,"bioproj","creadate","moddate"};
 			ExcelWriter.writer(".", inputFile, chemin, database, true);	
 		}
-		/*
+		
 		System.out.println(fullDatabase.toString());
 		String[] chemin = {"kingdom","group","subgroup","allSfuse","bioproj","creadate","moddate"};
-		ExcelWriter.writer(".", "fullDatabase", chemin, fullDatabase, true);*/	
+		ExcelWriter.writer(".", "fullDatabase", chemin, fullDatabase, true);
 	}
 	
 	/*

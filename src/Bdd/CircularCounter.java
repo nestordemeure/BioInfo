@@ -1,5 +1,7 @@
 package Bdd;
 
+import java.util.Arrays;
+
 import exceptions.CDSInvalideException;
 import exceptions.CharInvalideException;
 
@@ -34,7 +36,6 @@ public class CircularCounter
 	public static int minGeneLength = 200;
 	
 	private int ciw1w2[][][];
-	private int trinucleotidesLeftToRead;
 	private int geneLength;
 	private CircularArray codeArray;
 
@@ -49,11 +50,8 @@ public class CircularCounter
 		}
 		else
 		{
-			// TODO debug
 			geneLength = geneLengthArg - (imax + 3/*space to read forward*/);
-			trinucleotidesLeftToRead = geneLength / 3;
-			
-			ciw1w2 = new int[imax+1][4][4]; // +1 because i goes from 0 to imax included // TODO he should not go that far
+			ciw1w2 = new int[imax][4][4];
 			codeArray = new CircularArray();
 		}
 	}
@@ -61,7 +59,7 @@ public class CircularCounter
 	// add ciw1w2 to a oiw1w2
 	public void addCiw1w2(double[][][] oiw1w2)
 	{
-		for(int i = 0 ; i<=imax ; i++)
+		for(int i = 0 ; i<imax ; i++)
 		{
 			for(int w1 = 0 ; w1<4 ; w1++)
 			{
@@ -75,49 +73,23 @@ public class CircularCounter
 	
 	public void AddTrinucleotide(int phase, int nucleotide1, int nucleotide2, int nucleotide3)
 	{
-		int w2 = codeOfTrinucleotide[nucleotide1][nucleotide2][nucleotide3];
+		int code2 = codeOfTrinucleotide[nucleotide1][nucleotide2][nucleotide3];
 		
-		// TODO debug
-		char c1 = '_';
-		char c2 = '_';
-		char c3 = '_';
-		try 
-		{
-			c1 = Bdd.charOfNucleotideInt(nucleotide1);
-			c2 = Bdd.charOfNucleotideInt(nucleotide2);
-			c3 = Bdd.charOfNucleotideInt(nucleotide3);
-		} 
-		catch (CharInvalideException e) {}
-		
-		// adding a code to the array if needed
+		// update the counter
 		if (phase == 0)
-		{	
-			codeArray.incrWs();
-			
-			if (trinucleotidesLeftToRead > 0)
+		{				
+			if (codeArray.memorisationNumber*3 < geneLength)
 			{
-				trinucleotidesLeftToRead--;
-				codeArray.addCode(w2);
-				//System.out.println("read :  " + c1 + c2 + c3); // TODO debug
+				codeArray.incrWs(code2);
 			}
 			else
 			{
-				codeArray.addCode();
-				System.out.println("nonRead :  " + c1 + c2 + c3); // TODO debug
+				codeArray.incrWs();
 			}
 		}
 		
 		// incrementing ciw1w2
-		for (int w=codeArray.minW; w<codeArray.maxW; w++)
-		{
-			int w1 = codeArray.getCode(w);
-			int i = phase + w*3;
-			if (i < imax)
-			{
-				ciw1w2[i][w1][w2]++;
-			}
-		}
-		//System.out.println("memory size " + (codeArray.maxW - codeArray.minW));
+		codeArray.incrCiw1w2s(phase, code2);
 	}
 	
 	//-----------------------------------------------------------------------------	
@@ -125,54 +97,75 @@ public class CircularCounter
 	
 	public class CircularArray
 	{
-		public int minW; // included
-		public int maxW; // excluded, the last trinucleotide should not be activated before its time
-		public int offSet; // -1 position, memory
-		private int[] codes;
-		private int codeNumber = imax/3 + 1; // +1 to store the memory
-		
+		public int[] content;
+		public int memorisationNumber;
+		public int memory;
+		public int offSet;
+        
+		// constructor
 		public CircularArray()
 		{
-			minW = 0;
-			maxW = -1; // -1 because the first code will go into memory
+			content = new int[imax/3]; // TODO fill with -1
+			Arrays.fill(content, -1);
+			memorisationNumber = 0;
+			memory = -1;
 			offSet = 0;
-			codes = new int[codeNumber];
 		}
 		
-		// get the code stored at the position
-		public int getCode(int w)
+		// incr all w by decrementing the offset
+		private void incrOffSet()
 		{
-			return codes[ (offSet + 1 + w)%codeNumber ]; // w=-1 would return the memory hence the +1
-		}
-		
-		public void addCode(int code)
-		{
-			codes[offSet] = code;
-		}
-		
-		public void addCode()
-		{
-			minW++;
-		}
-		
-		// incr all w
-		public void incrWs()
-		{
-			// move offset
 			if (offSet==0)
 			{
-				offSet=codeNumber-1;
+				offSet=content.length-1;
 			}
 			else
 			{
 				offSet--;
 			}
-			
-			// move maxW if needed
-			if (maxW < codeNumber-1) // -1 we don't want to hit the memory
+		}
+		
+		// incr all w by one, get the value in memory replace it with the given value
+		public void incrWs(int newMemory)
+		{
+			incrOffSet();
+			content[offSet] = memory;
+			memory = newMemory;
+			memorisationNumber++;
+		}
+		
+		// incr all w by one, get the value in memory and put -1 in memory
+		public void incrWs()
+		{
+			incrOffSet();
+			content[offSet] = memory;
+			memory = -1;
+		}
+		
+		// iterate on all non -1 elements to incr the ciw1w2
+		public void incrCiw1w2s(int phase, int code2)
+		{
+			// before offSet
+			for(int w=0; w<offSet; w++)
 			{
-				maxW++;
+				int code1 = content[w];
+				if (code1 != -1)
+				{
+					int i = 3*(w + content.length - offSet) + phase;
+					ciw1w2[i][code1][code2]++;
+				}
+			}
+			// after offSet
+			for(int w=offSet; w<content.length; w++)
+			{
+				int code1 = content[w];
+				if (code1 != -1)
+				{
+					int i = 3*(w - offSet) + phase;
+					ciw1w2[i][code1][code2]++;
+				}
 			}
 		}
+
 	}
 }
