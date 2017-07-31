@@ -22,8 +22,8 @@ import tree.*;
 import ui.UIManager;
 public class Main {
 
-	// bdd tests
-	// TODO the constants in circularcounter have been altered to allow for very short CDS
+	/*
+	// test function that produces xlsx files for the given inputs
 	public static void main(String[] args) throws Exception 
 	{
 		String[] inputFiles = {"s1", "s2", "s3", "s4", "s5", "s6", "s7", "s8", "s9", "s10"};
@@ -65,8 +65,8 @@ public class Main {
 		String[] chemin = {"kingdom","group","subgroup","allSfuse","bioproj","creadate","moddate"};
 		ExcelWriter.writer(".", "fullDatabase", chemin, fullDatabase, true);
 	}
+	*/
 	
-	/*
 	public static void main(String[] args) throws Exception {
 		
 		parseArgs(args);
@@ -75,7 +75,6 @@ public class Main {
 		Tree tree = TreeManager.construct();
 		UIManager.startMainProcess(tree);
 	}
-	*/
 	
 	public static void parseArgs(String[] args){
 		Option help = new Option("h","help",false, "print this message");
