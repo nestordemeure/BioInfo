@@ -103,6 +103,7 @@ public class Bdd
 	public void ajoute_nucleotides (int phase, int nucleotide1, int nucleotide2, int nucleotide3) throws CharInvalideException
 	{
 		tampon_circularCounter.AddTrinucleotide(phase, nucleotide1, nucleotide2, nucleotide3);
+		//tampon_nb_trinucleotides++;
 		ecrit_nucleotideToStream(nucleotide1); // incrémente toStream pour le streamer
 	}
 	
@@ -157,6 +158,7 @@ public class Bdd
 			
 			// TODO : build oiw1w2
 			tampon_circularCounter.addCiw1w2(contenus_cleft.oiw1w2);
+			contenus_cleft.nb_trinucleotides += tampon_circularCounter.geneLength / 3;
 			tampon_circularCounter = null; // optional, clear memory until next use of the database
 		}
 		
@@ -300,6 +302,7 @@ public class Bdd
 	{
 		public long nb_CDS;
 		public long nb_CDS_non_traites;
+		public long nb_trinucleotides;
 		
 		public double oiw1w2[][][]; // sum of all oiw1w2
 
@@ -310,6 +313,7 @@ public class Bdd
 		{
 			nb_CDS = 0;
 			nb_CDS_non_traites = 0;
+			nb_trinucleotides = 0;
 			
 			oiw1w2 = new double[CircularCounter.imax][4][4];
 			
@@ -339,6 +343,7 @@ public class Bdd
 			}
 			nb_CDS += cont.nb_CDS;
 			nb_CDS_non_traites += cont.nb_CDS_non_traites;
+			nb_trinucleotides += cont.nb_trinucleotides;
 			nb_items += cont.nb_items;
 			// no fusion for the organisms
 		}
@@ -349,6 +354,7 @@ public class Bdd
 	   {
 		   nb_CDS = inputstream.readLong();
 		   nb_CDS_non_traites = inputstream.readLong();
+		   nb_trinucleotides = inputstream.readLong();
 		   oiw1w2 = (double[][][]) inputstream.readObject();
 		   organism = (Organism) inputstream.readObject();
 		   nb_items = inputstream.readLong();
@@ -358,6 +364,7 @@ public class Bdd
 	   {
 			outputstream.writeLong(nb_CDS);
 			outputstream.writeLong(nb_CDS_non_traites);
+			outputstream.writeLong(nb_trinucleotides);
 			outputstream.writeObject(oiw1w2);
 			outputstream.writeObject(organism);
 			outputstream.writeLong(nb_items);

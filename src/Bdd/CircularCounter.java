@@ -36,7 +36,7 @@ public class CircularCounter
 	public static int minGeneLength = 200;
 	
 	private int ciw1w2[][][];
-	private int geneLength;
+	public int geneLength;
 	private CircularArray codeArray;
 
 	//-----------------------------------------------------------------------------	

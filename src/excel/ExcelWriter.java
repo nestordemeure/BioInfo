@@ -71,7 +71,8 @@ public class ExcelWriter {
 //				folders.mkdirs();
 //			}
 			
-			String xlsfile = filepath+".xlsx";
+			// the replace makes sure that filenames are windows compatible
+			String xlsfile = filepath.replace(":*?\'\"<>|","_") + ".xlsx";
 			
 			FileOutputStream fileOut = new FileOutputStream(xlsfile);
 			Workbook workbook = new XSSFWorkbook();
@@ -205,7 +206,7 @@ public class ExcelWriter {
 		List<XSSFRow> rowlist = new ArrayList<XSSFRow>();	
 		
 		// create the cells (at least one per line of description)
-		for (int row = 0; row <= Math.max(20, CircularCounter.imax+2); row++) // TODO
+		for (int row = 0; row <= Math.max(22, CircularCounter.imax+2); row++) // TODO
 		{
 			rowlist.add(worksheet.createRow(row));
 			
@@ -283,7 +284,6 @@ public class ExcelWriter {
 		{
 			tmp_row=16;
 		}
-		
 		if (cleft.split("_")[0].equals("Sum"))
 		{
 			rowlist.get(tmp_row).getCell(descriptionCol).setCellValue("Nb of "+cleft.split("_")[1]);
@@ -292,8 +292,11 @@ public class ExcelWriter {
 		{
 			rowlist.get(tmp_row).getCell(descriptionCol).setCellValue("Nb of "+cleft.split("_")[0]);
 		}
-		
 		rowlist.get(tmp_row).getCell(descriptionCol+1).setCellValue(contenus.nb_items);
+		
+		// trinucleotides
+		rowlist.get(tmp_row+2).getCell(descriptionCol).setCellValue("Number of trinucleotides");
+		rowlist.get(tmp_row+2).getCell(descriptionCol+1).setCellValue(contenus.nb_trinucleotides);
 		
 		//-------------------------------------------------------------------------------------
 		// Tableau
