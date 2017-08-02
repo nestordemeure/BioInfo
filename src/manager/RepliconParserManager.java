@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.Scanner;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -33,29 +34,39 @@ public class RepliconParserManager {
 	private String replicon;
 	private Bdd mainDb;
 	
-	public Callable<Bdd> parser = new Callable<Bdd>(){
-		public Bdd call() throws MalformedURLException, IOException, ScannerNullException{
+	public Callable<Bdd> parser = new Callable<Bdd>()
+	{
+		public Bdd call() throws MalformedURLException, IOException, ScannerNullException
+		{
 			Bdd db = new Bdd();
 			String url = "";
-			try{
+			try
+			{
 				url = Configuration.GEN_DOWNLOAD_URL.replaceAll("<ID>", organism.getReplicons().get(replicon));
-				Scanner sc = new Scanner(Resources.asByteSource(new URL(url)).openBufferedStream());
+				Scanner sc = new Scanner(Resources.asByteSource(new URL(url)).openBufferedStream()); // TODO produces UnknownHostException
 				sc.useDelimiter("\n");
 				Parser parser = new Parser(db, sc);
-				if (Configuration.STORE_DATA) {
+				if (Configuration.STORE_DATA) 
+				{
 					File f = new File(organism.getPath());
-					if (f.isDirectory()) {
+					if (f.isDirectory()) 
+					{
 						parser.parse(replicon, organism, new FileOutputStream(organism.getPath()+Configuration.FOLDER_SEPARATOR+organism.getName()+"_"+replicon));
 					}
-					else {
+					else 
+					{
 						parser.parse(replicon, organism, null);
 					}				
 				}
-				else {
+				else 
+				{
 					parser.parse(replicon, organism, null);
 				}
-			}catch(Exception e){
-				System.out.println(url);
+				//throw new UnknownHostException("UNKNOWN....EXEPTION"); // TODO debug
+			}
+			catch(Exception e)
+			{
+				System.out.println("Error : " + url);
 				e.printStackTrace();
 			}
 			return db;
@@ -75,12 +86,15 @@ public class RepliconParserManager {
 				.build();
 	}
 	
-	public void run() {
+	public void run() 
+	{
 		UIManager.log("[RepliconParserManager] Start downloading "+this.organism.getName()+ " replicon: "+replicon);
 		Bdd db = null;
-		try {
+		try 
+		{
 			db = retryer.call(this.parser);
-		} catch (ExecutionException | RetryException e) {
+		} catch (/*ExecutionException | RetryException*/ Exception e) // TODO modified in hope of catching the UnknownHostException
+		{
 			UIManager.log("[RepliconParserManager] Unable to download "+this.organism.getName()+ " replicon: "+replicon);
 		}
 		if(db == null)
