@@ -23,106 +23,157 @@ import tree.Organism;
 import tree.Tree;
 import ui.UIManager;
 
-public class OrganismsFetcherService extends AbstractExecutionThreadService {
+public class OrganismsFetcherService extends AbstractExecutionThreadService 
+{
 	private TreeWalker walker;
 	private int id;
 	
-	public OrganismsFetcherService(TreeWalker walker, int id){
+	public OrganismsFetcherService(TreeWalker walker, int id)
+	{
 		this.walker = walker;
 		this.id = id;
 	}
 
-	public ArrayList<String> readProcessed(Organism o){
+	public ArrayList<String> readProcessed(Organism o)
+	{
 		String file = o.getPath()+Configuration.FOLDER_SEPARATOR+o.getName()+".rpcs";
 		
 		ArrayList<String> res = null;
 		AccessManager.accessFile(file);
-		ObjectInputStream inputstream;
-		FileInputStream chan;
-		try{
+		ObjectInputStream inputstream = null;
+		FileInputStream chan = null;
+		try
+		{
 			chan = new FileInputStream(file);
 			inputstream = new ObjectInputStream(chan);
 			res = (ArrayList<String>) inputstream.readObject();
 			inputstream.close();
 			chan.close();
-		}catch(Exception e){
+		}
+		catch(Exception e)
+		{
 			UIManager.log("[Organism fetcher "+this.id+"] Unable to read "+o.getName()+" file.");
+			// TODO safely close everything
+			res = null;
+			try 
+			{
+				if (inputstream != null)
+				{
+					inputstream.close();
+				}
+			} 
+			catch (IOException e1) {}
+			try 
+			{
+				if (chan != null)
+				{
+					chan.close();
+				}
+			} 
+			catch (IOException e1) {}
 		}
 		AccessManager.doneWithFile(file);
 		return res;
 	}
 	
-	public void writeProcessed(Organism o){
+	public void writeProcessed(Organism o)
+	{
 		String file = o.getPath()+Configuration.FOLDER_SEPARATOR+o.getName()+".rpcs";
 		AccessManager.accessFile(file);
 		Path p = FileSystems.getDefault().getPath(file);
-		try {
+		try 
+		{
 			Files.deleteIfExists(p);
-		}catch(IOException e){
 		}
+		catch(IOException e){}
 		
-		try{
+		try
+		{
 			FileOutputStream chan = new FileOutputStream(file);
 			ObjectOutputStream outputstream = new ObjectOutputStream(chan);
 			outputstream.writeObject(o.getProcessedReplicons());
 			outputstream.close();
-		} catch (IOException e) {
-		}
+		} 
+		catch (IOException e) {}
 	}
 	
-	public void launchParser(Organism o){
+	public void launchParser(Organism o)
+	{
 		UIManager.log("[Organism fetcher "+this.id+"] Starting organism: "+o.getName());
-		if(!o.createPath()){
-			UIManager.log("[Organism fetcher "+this.id+"] Cannot create path for "+o.getName());
-			return;
-		}
 		
-		Bdd maindb;
-		ArrayList<String> processedReplicons = this.readProcessed(o);
-		String dbPath = o.getPath()+Configuration.FOLDER_SEPARATOR+o.getName();
-		if(processedReplicons == null) {
-			maindb = new Bdd();
-		} else {
-			try {
-				maindb = new Bdd(dbPath);
-			} catch (IOException e) {
-				maindb = new Bdd();
+		try
+		{
+			if(!o.createPath())
+			{
+				UIManager.log("[Organism fetcher "+this.id+"] Cannot create path for "+o.getName());
+				return;
 			}
-			o.removeReplicons(processedReplicons);
-		}
-						
-		for(String replicon : o.getReplicons().keySet()){
-			try{
-				RepliconParserManager manager = new RepliconParserManager(o, replicon, maindb);
-				manager.run();
-			}catch(Exception e){
-				UIManager.log("[Organism fetcher" +this.id+"] Error while processing request.");
+			
+			Bdd maindb;
+			ArrayList<String> processedReplicons = this.readProcessed(o);
+			String dbPath = o.getPath()+Configuration.FOLDER_SEPARATOR+o.getName();
+			if(processedReplicons == null) 
+			{
+				maindb = new Bdd();
+			} 
+			else 
+			{
+				try 
+				{
+					maindb = new Bdd(dbPath);
+				} 
+				catch (IOException e) 
+				{
+					maindb = new Bdd();
+				}
+				o.removeReplicons(processedReplicons);
+			}
+							
+			for(String replicon : o.getReplicons().keySet())
+			{
+				try
+				{
+					RepliconParserManager manager = new RepliconParserManager(o, replicon, maindb);
+					manager.run();
+				}
+				catch(Exception e)
+				{
+					UIManager.log("[Organism fetcher" +this.id+"] Error while processing request.");
+					e.printStackTrace();
+				}
+			}
+				
+			this.writeProcessed(o);
+			
+			try 
+			{
+				maindb.exportBase(dbPath);
+			} 
+			catch (IOException e) 
+			{
+				UIManager.log("[Organism fetcher "+this.id+"] Cannot write db file : "+o.getName()+" : "+dbPath);
+			}
+			
+			String[] chemin=new String[4];
+			chemin[0]=o.getKingdom();
+			chemin[1]=o.getGroup();
+			chemin[2]=o.getSubgroup();
+			chemin[3]=o.getName();
+			
+			UIManager.log("Writing Excel file for : "+o.getName());
+			try
+			{
+				ExcelWriter.writer(o.getPath(),o.getPath()+Configuration.FOLDER_SEPARATOR+o.getName(), chemin, maindb, true);
+			}
+			catch(Exception e)
+			{
+				UIManager.log("Error while writing excel file for : "+o.getName());
 				e.printStackTrace();
 			}
 		}
-			
-		this.writeProcessed(o);
-		
-		try {
-			maindb.exportBase(dbPath);
-		} catch (IOException e) {
-			UIManager.log("[Organism fetcher "+this.id+"] Cannot write db file : "+o.getName()+" : "+dbPath);
-		}
-		
-		String[] chemin=new String[4];
-		chemin[0]=o.getKingdom();
-		chemin[1]=o.getGroup();
-		chemin[2]=o.getSubgroup();
-		chemin[3]=o.getName();
-		
-		UIManager.log("Writing Excel file for : "+o.getName());
-		try
-		{
-			ExcelWriter.writer(o.getPath(),o.getPath()+Configuration.FOLDER_SEPARATOR+o.getName(), chemin, maindb, true);
-		}
 		catch(Exception e)
 		{
-			UIManager.log("Error while writing excel file for : "+o.getName());
+			UIManager.log("[Organism fetcher "+this.id+"] Error (" + e.getMessage() + ") while dealing with organism : " + o.getName());
 			e.printStackTrace();
 		}
 		
@@ -130,21 +181,25 @@ public class OrganismsFetcherService extends AbstractExecutionThreadService {
 	}
 	
 	@Override
-	protected void run() throws Exception {
+	protected void run() throws Exception 
+	{
 		UIManager.log("[Organism fetcher "+this.id+"] Starting...");
 		Organism cur = walker.next();
-		while(cur != null){
+		while(cur != null)
+		{
 			this.launchParser(cur);
 			cur = walker.next();
 		}
 		UIManager.log("[Organism fetcher "+this.id+"] Ending !");
 	}
 	
-	public static void launch(Tree t){
+	public static void launch(Tree t)
+	{
 		TreeWalker walker = new TreeWalker(t);
 		
 		Set<Service> services =  new LinkedHashSet<Service>();
-		for(int i = 0; i < Configuration.THREADS_NUMBER; i++){
+		for(int i = 0; i < Configuration.THREADS_NUMBER; i++)
+		{
 			services.add(new OrganismsFetcherService(walker, i));
 		}
 		
