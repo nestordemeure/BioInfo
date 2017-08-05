@@ -12,7 +12,8 @@ import java.util.Map;
 import configuration.Configuration;
 import manager.AccessManager;
 
-public class Organism implements Serializable {
+public class Organism implements Serializable 
+{
 	private static final long serialVersionUID = -2867789287775171672L;
 	private String kingdom;
 	private String group;
@@ -27,11 +28,12 @@ public class Organism implements Serializable {
 	private Map<String, String> replicons;
 	private ArrayList<String> processed_replicons;
 	
-	public Organism(String kingdom, String group, String subgroup, String name, String bioproject, String creation_date, String modification_date){
-		this.kingdom = kingdom.replace("/", "_").replace(" ", "_");
-		this.group = group.replace("/", "_").replace(" ", "_");
-		this.subgroup = subgroup.replace("/", "_").replace(" ", "_");
-		this.name = name.replace("/", "_").replace(" ", "_");
+	public Organism(String kingdom, String group, String subgroup, String name, String bioproject, String creation_date, String modification_date)
+	{
+		this.kingdom = legaliseName(kingdom);
+		this.group = legaliseName(group);
+		this.subgroup = legaliseName(subgroup);
+		this.name = legaliseName(name);
 		this.bioproject = bioproject;
 		this.creation_date = creation_date;
 		this.modification_date = modification_date;
@@ -40,42 +42,58 @@ public class Organism implements Serializable {
 		this.activated = true;
 	}
 	
-	public Organism(){
+	public Organism()
+	{
 		this.replicons = new HashMap<String, String>();
 		this.processed_replicons = new ArrayList<String>();
 		this.activated = true;
 	}
 	
-	public boolean addReplicon(String name, String id){
-		if(this.replicons.containsKey(name)){
+	public boolean addReplicon(String name, String id)
+	{
+		if(this.replicons.containsKey(name))
+		{
 			return false;
-		} else {
+		} 
+		else 
+		{
 			this.replicons.put(name, id);
 			return true;
 		}
 	}
 	
-	public void updateTree(Tree mainT){
+	public void updateTree(Tree mainT)
+	{
 		Tree kingdomT;
 		Tree groupT;
 		Tree subgroupT;
-		if(mainT.contains(this.kingdom)){
+		
+		if(mainT.contains(this.kingdom))
+		{
 			kingdomT = (Tree)mainT.get(this.kingdom);
-		} else {
+		} 
+		else 
+		{
 			kingdomT = new Tree<Tree>();
 			mainT.add(this.kingdom, kingdomT);
 		}
 		
-		if(kingdomT.contains(this.group)){
+		if(kingdomT.contains(this.group))
+		{
 			groupT = (Tree)kingdomT.get(this.group);
-		} else {
+		} 
+		else 
+		{
 			groupT = new Tree<Tree>();
 			kingdomT.add(this.group, groupT);
 		}
 		
-		if(groupT.contains(this.subgroup)){
+		if(groupT.contains(this.subgroup))
+		{
 			subgroupT = (Tree)groupT.get(this.subgroup);
-		} else {
+		} 
+		else 
+		{
 			subgroupT = new Tree<Organism>();
 			groupT.add(this.subgroup, subgroupT);
 		}
@@ -84,11 +102,13 @@ public class Organism implements Serializable {
 	}
 
 	@Override
-	public String toString(){
-		
+	public String toString()
+	{	
 		String str = this.kingdom+"/"+this.group+"/"+this.subgroup+"/"+this.name+"("+this.bioproject+")";
 		str += "\nReplicons :";
-		for(String name : this.replicons.keySet()){
+		
+		for(String name : this.replicons.keySet())
+		{
 			str += "\n - "+name+" - "+this.replicons.get(name);
 		}
 		return str;
@@ -124,114 +144,142 @@ public class Organism implements Serializable {
 		outputstream.writeObject(processed_replicons);
 	}
 
-	public String getKingdom() {
+	public String getKingdom() 
+	{
 		return kingdom;
 	}
 
-	public void setKingdom(String kingdom) {
-		this.kingdom = kingdom.replace("/", "_").replace(" ", "_");
+	public void setKingdom(String kingdom) 
+	{
+		this.kingdom = legaliseName(kingdom);
 	}
 
-	public String getGroup() {
+	public String getGroup() 
+	{
 		return group;
 	}
 
-	public void setGroup(String group) {
-		this.group = group.replace("/", "_").replace(" ", "_");
+	public void setGroup(String group) 
+	{
+		this.group = legaliseName(group);
 	}
 
-	public String getSubgroup() {
+	public String getSubgroup() 
+	{
 		return subgroup;
 	}
 
-	public void setSubgroup(String subgroup) {
-		this.subgroup = subgroup.replace("/", "_").replace(" ", "_");
+	public void setSubgroup(String subgroup) 
+	{
+		this.subgroup = legaliseName(subgroup);
 	}
 
-	public String getName() {
+	public String getName() 
+	{
 		return name;
 	}
 
-	public void setName(String name) {
-		this.name = name.replace("/", "_").replace(" ", "_");
+	public void setName(String name) 
+	{
+		this.name = legaliseName(name);
 	}
 
-	public String getBioproject() {
+	public String getBioproject() 
+	{
 		return bioproject;
 	}
 
-	public void setBioproject(String bioproject) {
+	public void setBioproject(String bioproject) 
+	{
 		this.bioproject = bioproject;
 	}
 
-	public String getTaxonomy() {
+	public String getTaxonomy() 
+	{
 		return taxonomy;
 	}
 
-	public void setTaxonomy(String taxonomy) {
+	public void setTaxonomy(String taxonomy) 
+	{
 		this.taxonomy = taxonomy;
 	}
 
-	public String getAccession() {
+	public String getAccession() 
+	{
 		return accession;
 	}
 
-	public void setAccession(String accession) {
+	public void setAccession(String accession) 
+	{
 		this.accession = accession;
 	}
 
-	public String getCreationDate() {
+	public String getCreationDate() 
+	{
 		return creation_date;
 	}
 
-	public void setCreationDate(String creation_date) {
+	public void setCreationDate(String creation_date) 
+	{
 		this.creation_date = creation_date;
 	}
 
-	public String getModificationDate() {
+	public String getModificationDate() 
+	{
 		return modification_date;
 	}
 
-	public void setModificationDate(String modification_date) {
+	public void setModificationDate(String modification_date) 
+	{
 		this.modification_date = modification_date;
 	}
 
-	public Map<String, String> getReplicons() {
+	public Map<String, String> getReplicons() 
+	{
 		return replicons;
 	}
 
-	public void setReplicons(Map<String, String> replicons) {
+	public void setReplicons(Map<String, String> replicons) 
+	{
 		this.replicons = replicons;
 	}
 	
-	public void setActivated(boolean a){
+	public void setActivated(boolean a)
+	{
 		this.activated = a;
 	}
 	
-	public boolean getActivated(){
+	public boolean getActivated()
+	{
 		return this.activated;
 	}
 	
-	public int size(){
+	public int size()
+	{
 		return this.activated ? this.replicons.size() : 0;
 	}
 	
-	public void addProcessedReplicon(String replicon){
+	public void addProcessedReplicon(String replicon)
+	{
 		this.processed_replicons.add(replicon);
 	}
 	
-	public ArrayList<String> getProcessedReplicons(){
+	public ArrayList<String> getProcessedReplicons()
+	{
 		return this.processed_replicons;
 	}
 	
-	public void removeReplicons(ArrayList<String> replicons){
-		for(String replicon : replicons){
+	public void removeReplicons(ArrayList<String> replicons)
+	{
+		for(String replicon : replicons)
+		{
 			this.replicons.remove(replicon);
 		}
 	}
 	
 	// Creation du dossier sur le système de fichiers local
-	public String getPath(){
+	public String getPath()
+	{
 		// Construction de la chaine de charactere
 		String cur = Configuration.BASE_FOLDER;
 		cur += Configuration.FOLDER_SEPARATOR+this.getKingdom();
@@ -241,22 +289,37 @@ public class Organism implements Serializable {
 		return cur;
 	}
 	
-	public boolean createPath(){
+	public boolean createPath()
+	{
 		String path = this.getPath();
-		// Création du dossier
 		
+		// Création du dossier
 		AccessManager.accessFile(path);
 		File p = new File(path);
 		
-		if(p.exists() && p.isDirectory()) {
+		if(p.exists() && p.isDirectory()) 
+		{
 			// Si le dossier existe déjà
 			AccessManager.doneWithFile(path);
 			return true;
-		}else{
+		}
+		else
+		{
 			// Si le fichier n'existe pas
 			boolean ok = p.mkdirs();
 			AccessManager.doneWithFile(path);
 			return ok;
 		}
+	}
+	
+	// takes a string and returns a string that can be included in a windows path name
+	public static String legaliseName(String str)
+	{
+		String newStr = 
+			str.replace(':','_').replace('?','_').replace('*','_').replace('|','_')
+			   .replace('<','_').replace('>','_').replace('\'','_').replace('\"','_')
+			   .replace('/', '_').replace('\\', '_').replace(' ', '_');
+		
+		return newStr;
 	}
 }

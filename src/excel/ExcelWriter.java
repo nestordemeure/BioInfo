@@ -32,6 +32,7 @@ import org.apache.poi.ss.usermodel.CellStyle;
 
 import exceptions.CharInvalideException;
 import tree.Organism;
+import ui.UIManager;
 import Parser.*;
 import configuration.Configuration;
 import Bdd.*;
@@ -46,19 +47,22 @@ public class ExcelWriter {
 		return String.valueOf((char)(x + 'A')) + (y+1);
 	}
 	
-	public static byte[] hexStringToByteArray(String s) {
+	public static byte[] hexStringToByteArray(String s) 
+	{
 	    int len = s.length();
 	    byte[] data = new byte[len / 2];
-	    for (int i = 0; i < len; i += 2) {
+	    for (int i = 0; i < len; i += 2) 
+	    {
 	        data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
 	                             + Character.digit(s.charAt(i+1), 16));
 	    }
 	    return data;
 	}
 	
-	public static void writer(String folderpath, String filepath, String[] chemin, Bdd base, boolean is_leaf) {
-		try {
-			
+	public static void writer(String folderpath, String filepath, String[] chemin, Bdd base, boolean is_leaf) 
+	{
+		try 
+		{
 			//Boolean is_leaf = filepath.length() - filepath.replace(Configuration.FOLDER_SEPARATOR, "").length()==4;
 			//Boolean is_leaf=!chemin[3].equals("");
 			
@@ -71,8 +75,7 @@ public class ExcelWriter {
 //				folders.mkdirs();
 //			}
 			
-			// the replace makes sure that filenames are windows compatible
-			String xlsfile = filepath.replace(":*?\'\"<>|","_") + ".xlsx";
+			String xlsfile = filepath + ".xlsx";
 			
 			FileOutputStream fileOut = new FileOutputStream(xlsfile);
 			Workbook workbook = new XSSFWorkbook();
@@ -87,15 +90,15 @@ public class ExcelWriter {
 				cleft = entry.getKey(); //"mitochondrie", "chloroplaste", "general"
 				
 				contenus = entry.getValue(); //un objet content équipé de toute les fonction que vous appliquiez a la base avant
-				
-				//System.out.println(":"+cleft+":");
-				
-				if (!cleft.equals("")){
+								
+				if (!cleft.equals(""))
+				{
 					writeTab(cleft, contenus, baseSum, workbook, chemin);
 				}
 			}
 			
-			if (is_leaf){
+			if (is_leaf)
+			{
 				baseSum.exportBase(folderpath+Configuration.FOLDER_SEPARATOR+"Sums_"+chemin[3]);
 				
 				Bdd empty = new Bdd();
@@ -105,34 +108,40 @@ public class ExcelWriter {
 					cleft = entry.getKey(); //"Sum_Chromosomes", "Sum..."
 					
 					contenus = entry.getValue();
-					
-					//System.out.println(":"+cleft+":");
-					
-					if (!cleft.equals("")){
+										
+					if (!cleft.equals(""))
+					{
 						writeTab(cleft, contenus, empty, workbook, chemin);
 					}
 				}
 			}
-			
-			
-			
+
 			workbook.write(fileOut);
 			workbook.close();
 			fileOut.flush();
 			fileOut.close();
 
-			if (!is_leaf){
+			if (!is_leaf)
+			{
 				base.exportBase(folderpath+Configuration.FOLDER_SEPARATOR+"Sums");
 			}
-			else{
+			else
+			{
 				base.exportBase(filepath);
 			}
-		} catch (FileNotFoundException e) {
+		} 
+		/*catch (FileNotFoundException e) 
+		{
 			e.printStackTrace();
-		} catch (IOException e) {
+		} 
+		catch (IOException e) 
+		{
 			e.printStackTrace();
+		}*/
+		catch (Exception e) // TODO modified to catch all excel exceptions
+		{
+			UIManager.log("Error while writing excel file : " + e.getMessage() + " " + chemin);
 		}
-
 	}
 
 	private static void writeTab(String cleft, content contenus, Bdd baseSum, Workbook wb, String[] chemin)
@@ -206,7 +215,7 @@ public class ExcelWriter {
 		List<XSSFRow> rowlist = new ArrayList<XSSFRow>();	
 		
 		// create the cells (at least one per line of description)
-		for (int row = 0; row <= Math.max(22, CircularCounter.imax+2); row++) // TODO
+		for (int row = 0; row <= Math.max(22, CircularCounter.imax+2); row++)
 		{
 			rowlist.add(worksheet.createRow(row));
 			
@@ -309,7 +318,7 @@ public class ExcelWriter {
 		// i
 		rowlist.get(enTeteRow).getCell(col).setCellStyle(lblue);
 		rowlist.get(enTeteRow).getCell(col).setCellValue("i");
-		for (int i = 0; i < CircularCounter.imax; i++) // TODO
+		for (int i = 0; i < CircularCounter.imax; i++)
 		{
 			if (i%2 == 0)
 			{
@@ -321,7 +330,7 @@ public class ExcelWriter {
 			}
 			rowlist.get(i+1).getCell(col).setCellValue(i);
 		}
-		rowlist.get(CircularCounter.imax+1).getCell(col).setCellValue("Total"); // TODO
+		rowlist.get(CircularCounter.imax+1).getCell(col).setCellValue("Total");
 		
 		// A(X1, X2)
 		for (int w1 = 0; w1 < 4; w1++)
@@ -334,7 +343,7 @@ public class ExcelWriter {
 				rowlist.get(enTeteRow).getCell(col).setCellValue(codeName);
 				
 				double total = 0;
-				for (int i = 0; i < CircularCounter.imax; i++) // TODO
+				for (int i = 0; i < CircularCounter.imax; i++)
 				{
 					if (i%2 == 0)
 					{
@@ -348,15 +357,15 @@ public class ExcelWriter {
 					rowlist.get(i+1).getCell(col).setCellValue(Aiw1w2);
 					total += Aiw1w2;
 				}
-				rowlist.get(CircularCounter.imax+1).getCell(col).setCellStyle(ngray_float); // TODO
-				rowlist.get(CircularCounter.imax+1).getCell(col).setCellValue(total); // TODO
+				rowlist.get(CircularCounter.imax+1).getCell(col).setCellStyle(ngray_float);
+				rowlist.get(CircularCounter.imax+1).getCell(col).setCellValue(total);
 			}
 		}
 
 		col++;
 		rowlist.get(enTeteRow).getCell(col).setCellStyle(lblue);
 		rowlist.get(enTeteRow).getCell(col).setCellValue("Somme");
-		for (int i = 0; i < CircularCounter.imax; i++) // TODO
+		for (int i = 0; i < CircularCounter.imax; i++)
 		{
 			rowlist.get(i+1).getCell(col).setCellStyle(ngray_float);
 			rowlist.get(i+1).getCell(col).setCellType(XSSFCell.CELL_TYPE_FORMULA);
@@ -367,7 +376,7 @@ public class ExcelWriter {
 		// Clean-up
 		
 		//autosize column 
-		for (int row = 0; row<CircularCounter.imax+3; row++) //TODO
+		for (int row = 0; row<CircularCounter.imax+3; row++)
 		{
 			for (int c = 0; c<rowlist.get(row).getLastCellNum();c++) 
 			{

@@ -116,9 +116,12 @@ public class OrganismsFetcherService extends AbstractExecutionThreadService {
 		chemin[3]=o.getName();
 		
 		UIManager.log("Writing Excel file for : "+o.getName());
-		try{
+		try
+		{
 			ExcelWriter.writer(o.getPath(),o.getPath()+Configuration.FOLDER_SEPARATOR+o.getName(), chemin, maindb, true);
-		}catch(Exception e){
+		}
+		catch(Exception e)
+		{
 			UIManager.log("Error while writing excel file for : "+o.getName());
 			e.printStackTrace();
 		}
