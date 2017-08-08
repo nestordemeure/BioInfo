@@ -62,7 +62,7 @@ public class OrganismsFetcherService extends AbstractExecutionThreadService
 					inputstream.close();
 				}
 			} 
-			catch (IOException e1) {}
+			catch (Exception e1) {}
 			try 
 			{
 				if (chan != null)
@@ -70,7 +70,7 @@ public class OrganismsFetcherService extends AbstractExecutionThreadService
 					chan.close();
 				}
 			} 
-			catch (IOException e1) {}
+			catch (Exception e1) {}
 		}
 		AccessManager.doneWithFile(file);
 		return res;
@@ -80,13 +80,14 @@ public class OrganismsFetcherService extends AbstractExecutionThreadService
 	{
 		String file = o.getPath()+Configuration.FOLDER_SEPARATOR+o.getName()+".rpcs";
 		AccessManager.accessFile(file);
+
 		Path p = FileSystems.getDefault().getPath(file);
 		try 
 		{
 			Files.deleteIfExists(p);
 		}
 		catch(IOException e){}
-		
+
 		try
 		{
 			FileOutputStream chan = new FileOutputStream(file);
@@ -109,9 +110,11 @@ public class OrganismsFetcherService extends AbstractExecutionThreadService
 				return;
 			}
 			
+			//UIManager.log("[Organism fetcher " +this.id+"] Reading file."); // TODO
 			Bdd maindb;
 			ArrayList<String> processedReplicons = this.readProcessed(o);
 			String dbPath = o.getPath()+Configuration.FOLDER_SEPARATOR+o.getName();
+			//UIManager.log("[Organism fetcher " +this.id+"] Getting bdd."); // TODO
 			if(processedReplicons == null) 
 			{
 				maindb = new Bdd();
@@ -128,7 +131,8 @@ public class OrganismsFetcherService extends AbstractExecutionThreadService
 				}
 				o.removeReplicons(processedReplicons);
 			}
-							
+			
+			UIManager.log("[Organism fetcher " +this.id+"] Running replicon manager."); // TODO ERROR
 			for(String replicon : o.getReplicons().keySet())
 			{
 				try
@@ -138,13 +142,15 @@ public class OrganismsFetcherService extends AbstractExecutionThreadService
 				}
 				catch(Exception e)
 				{
-					UIManager.log("[Organism fetcher" +this.id+"] Error while processing request.");
+					UIManager.log("[Organism fetcher " +this.id+"] Error while processing request.");
 					e.printStackTrace();
 				}
 			}
 				
+			UIManager.log("[Organism fetcher " +this.id+"] Writing processed."); // TODO
 			this.writeProcessed(o);
 			
+			UIManager.log("[Organism fetcher " +this.id+"] Writing db file.");
 			try 
 			{
 				maindb.exportBase(dbPath);

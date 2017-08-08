@@ -3,7 +3,6 @@ package Bdd;
 import java.util.Arrays;
 
 import exceptions.CDSInvalideException;
-import exceptions.CharInvalideException;
 
 public class CircularCounter 
 {

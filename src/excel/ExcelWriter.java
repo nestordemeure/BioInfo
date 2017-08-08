@@ -63,23 +63,10 @@ public class ExcelWriter {
 	{
 		try 
 		{
-			//Boolean is_leaf = filepath.length() - filepath.replace(Configuration.FOLDER_SEPARATOR, "").length()==4;
-			//Boolean is_leaf=!chemin[3].equals("");
-			
-//			Pattern regex1 = Pattern.compile(".*"+Configuration.FOLDER_SEPARATOR);
-//			Matcher m = regex1.matcher(filepath);
-//			String folderpath ="";
-//			if (m.find()){
-//				folderpath = m.group(0);
-//				File folders = new File(folderpath);
-//				folders.mkdirs();
-//			}
-			
 			String xlsfile = filepath + ".xlsx";
 			
 			FileOutputStream fileOut = new FileOutputStream(xlsfile);
 			Workbook workbook = new XSSFWorkbook();
-						
 
 			String cleft;
 			content contenus;
@@ -121,26 +108,18 @@ public class ExcelWriter {
 			fileOut.flush();
 			fileOut.close();
 
-			if (!is_leaf)
-			{
-				base.exportBase(folderpath+Configuration.FOLDER_SEPARATOR+"Sums");
-			}
-			else
+			if (is_leaf)
 			{
 				base.exportBase(filepath);
 			}
-		} 
-		/*catch (FileNotFoundException e) 
-		{
-			e.printStackTrace();
-		} 
-		catch (IOException e) 
-		{
-			e.printStackTrace();
-		}*/
+			else
+			{
+				base.exportBase(folderpath+Configuration.FOLDER_SEPARATOR+"Sums");
+			}
+		}
 		catch (Exception e) // TODO modified to catch all excel exceptions
 		{
-			UIManager.log("Error while writing excel file : " + e.getMessage() + " " + chemin);
+			UIManager.log("Error while writing excel file : " + e.getMessage() + " " + chemin.toString());
 		}
 	}
 

@@ -10,6 +10,7 @@ import java.net.UnknownHostException;
 import java.util.Scanner;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import com.github.rholder.retry.RetryException;
 import com.github.rholder.retry.Retryer;
@@ -73,7 +74,8 @@ public class RepliconParserManager {
 		}
 	};
 	
-	public RepliconParserManager(Organism o, String r, Bdd db){
+	public RepliconParserManager(Organism o, String r, Bdd db)
+	{
 		this.organism = o;
 		this.replicon = r;
 		this.mainDb = db;
@@ -81,22 +83,28 @@ public class RepliconParserManager {
 		this.retryer = RetryerBuilder.<Bdd>newBuilder()
 				.retryIfException()
 				.retryIfRuntimeException()
-				.withStopStrategy(StopStrategies.stopAfterAttempt(Configuration.NET_MAX_DOWNLOAD_TRIES))
 				.withWaitStrategy(WaitStrategies.fibonacciWait())
+				//.withStopStrategy(StopStrategies.stopAfterAttempt(Configuration.NET_MAX_DOWNLOAD_TRIES))
+				//.withStopStrategy(StopStrategies.stopAfterDelay(Configuration.NET_MAX_DOWNLOAD_TIME, TimeUnit.MINUTES ) )
+				.withStopStrategy(new combinedStopStrategy(Configuration.NET_MAX_DOWNLOAD_TRIES, Configuration.NET_MAX_DOWNLOAD_TIME, TimeUnit.MINUTES) )
 				.build();
 	}
 	
 	public void run() 
 	{
 		UIManager.log("[RepliconParserManager] Start downloading "+this.organism.getName()+ " replicon: "+replicon);
+
 		Bdd db = null;
 		try 
 		{
+			// TODO that part goes into an infinite loop
 			db = retryer.call(this.parser);
-		} catch (/*ExecutionException | RetryException*/ Exception e) // TODO modified in hope of catching the UnknownHostException
+		}
+		catch (/*ExecutionException | RetryException*/ Exception e) // TODO modified in hope of catching the UnknownHostException
 		{
 			UIManager.log("[RepliconParserManager] Unable to download "+this.organism.getName()+ " replicon: "+replicon);
 		}
+
 		if(db == null)
 		{
 			UIManager.log("[RepliconParserManager] Unable to download "+this.organism.getName()+ " replicon: "+replicon);
@@ -106,6 +114,7 @@ public class RepliconParserManager {
 			this.mainDb.fusionBase(db);
 			UIManager.log("[RepliconParserManager] Finished downloading "+this.organism.getName()+ " replicon: "+replicon);
 		}
+
 		organism.addProcessedReplicon(replicon);
 		UIManager.addProgress(1);
 	}
