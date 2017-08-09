@@ -7,21 +7,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ae8e7fe7-7105-4792-88ba-edfcb8277fec" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/artifacts/bioinfo_jar/bioinfo.jar" afterPath="$PROJECT_DIR$/out/artifacts/bioinfo_jar/bioinfo.jar" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/bioinfo/manager/RepliconParserManager$1.class" afterPath="$PROJECT_DIR$/out/production/bioinfo/manager/RepliconParserManager$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/bioinfo/manager/RepliconParserManager.class" afterPath="$PROJECT_DIR$/out/production/bioinfo/manager/RepliconParserManager.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/excel/ExcelWriter_deprecated.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Parser/Parser.java" afterPath="$PROJECT_DIR$/src/Parser/Parser.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/excel/ExcelManager.java" afterPath="$PROJECT_DIR$/src/excel/ExcelManager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/excel/ExcelReader.java" afterPath="$PROJECT_DIR$/src/excel/ExcelReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/README.md" afterPath="$PROJECT_DIR$/README.md" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/excel/ExcelWriter.java" afterPath="$PROJECT_DIR$/src/excel/ExcelWriter.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/io/IdFetcher.java" afterPath="$PROJECT_DIR$/src/io/IdFetcher.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/io/Net.java" afterPath="$PROJECT_DIR$/src/io/Net.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/manager/AccessManager.java" afterPath="$PROJECT_DIR$/src/manager/AccessManager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/manager/OrganismsFetcherService.java" afterPath="$PROJECT_DIR$/src/manager/OrganismsFetcherService.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/manager/RepliconParserManager.java" afterPath="$PROJECT_DIR$/src/manager/RepliconParserManager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/manager/TreeWalker.java" afterPath="$PROJECT_DIR$/src/manager/TreeWalker.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/Main.java" afterPath="$PROJECT_DIR$/src/main/Main.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -73,11 +63,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="ExcelWriter.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="ExcelWriter.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/excel/ExcelWriter.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1440">
-              <caret line="117" column="93" lean-forward="true" selection-start-line="117" selection-start-column="93" selection-end-line="117" selection-end-column="93" />
+            <state relative-caret-position="180">
+              <caret line="23" column="40" lean-forward="false" selection-start-line="23" selection-start-column="40" selection-end-line="23" selection-end-column="40" />
               <folding />
             </state>
           </provider>
@@ -106,8 +96,18 @@
       <file leaf-file-name="Main.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="36">
-              <caret line="22" column="13" lean-forward="false" selection-start-line="22" selection-start-column="13" selection-end-line="22" selection-end-column="13" />
+            <state relative-caret-position="-498">
+              <caret line="79" column="4" lean-forward="false" selection-start-line="79" selection-start-column="4" selection-end-line="79" selection-end-column="4" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="README.md" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/README.md">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="144">
+              <caret line="8" column="0" lean-forward="false" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -121,6 +121,14 @@
         <option value="Class" />
       </list>
     </option>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>rowlist.get</find>
+    </findStrings>
+    <replaceStrings>
+      <replace>worksheet.getRow</replace>
+    </replaceStrings>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -137,7 +145,6 @@
         <option value="$PROJECT_DIR$/src/manager/combinedStopStrategy.java" />
         <option value="$PROJECT_DIR$/src/manager/RepliconParserManager.java" />
         <option value="$PROJECT_DIR$/src/Parser/Parser.java" />
-        <option value="$PROJECT_DIR$/src/excel/ExcelWriter.java" />
         <option value="$PROJECT_DIR$/src/excel/ExcelReader.java" />
         <option value="$PROJECT_DIR$/src/excel/ExcelManager.java" />
         <option value="$PROJECT_DIR$/src/io/IdFetcher.java" />
@@ -145,6 +152,9 @@
         <option value="$PROJECT_DIR$/src/manager/AccessManager.java" />
         <option value="$PROJECT_DIR$/src/manager/OrganismsFetcherService.java" />
         <option value="$PROJECT_DIR$/src/manager/TreeWalker.java" />
+        <option value="$PROJECT_DIR$/src/excel/ExcelWriter.java" />
+        <option value="$PROJECT_DIR$/src/main/Main.java" />
+        <option value="$PROJECT_DIR$/README.md" />
       </list>
     </option>
   </component>
@@ -222,12 +232,6 @@
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="excel" type="462c0819:PsiDirectoryNode" />
             </path>
-            <path>
-              <item name="bioinfo" type="b2602c69:ProjectViewProjectNode" />
-              <item name="bioinfo" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="manager" type="462c0819:PsiDirectoryNode" />
-            </path>
           </expand>
           <select />
         </subPane>
@@ -246,6 +250,11 @@
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="settings.editor.selected.configurable" value="Errors" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../bioinfoResult" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="excel" />
+    </key>
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -376,10 +385,10 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="65" y="-4" width="1303" height="780" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32882884" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -401,7 +410,6 @@
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32882884" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
@@ -665,14 +673,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/Main.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="36">
-          <caret line="22" column="13" lean-forward="false" selection-start-line="22" selection-start-column="13" selection-end-line="22" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/excel/ExcelReader.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="256">
@@ -749,8 +749,24 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/excel/ExcelWriter.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1440">
-          <caret line="117" column="93" lean-forward="true" selection-start-line="117" selection-start-column="93" selection-end-line="117" selection-end-column="93" />
+        <state relative-caret-position="180">
+          <caret line="23" column="40" lean-forward="false" selection-start-line="23" selection-start-column="40" selection-end-line="23" selection-end-column="40" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/Main.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-498">
+          <caret line="79" column="4" lean-forward="false" selection-start-line="79" selection-start-column="4" selection-end-line="79" selection-end-column="4" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="144">
+          <caret line="8" column="0" lean-forward="false" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
           <folding />
         </state>
       </provider>

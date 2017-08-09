@@ -20,8 +20,8 @@ import excel.ExcelWriter;
 import io.Net;
 import tree.*;
 import ui.UIManager;
-public class Main {
-
+public class Main
+{
 	/*
 	// test function that produces xlsx files for the given inputs
 	public static void main(String[] args) throws Exception 
@@ -66,9 +66,9 @@ public class Main {
 		ExcelWriter.writer(".", "fullDatabase", chemin, fullDatabase, true);
 	}
 	*/
-	
-	public static void main(String[] args) throws Exception {
-		
+
+	public static void main(String[] args) throws Exception
+	{
 		parseArgs(args);
 
 		UIManager.startPreloading();
@@ -76,7 +76,8 @@ public class Main {
 		UIManager.startMainProcess(tree);
 	}
 	
-	public static void parseArgs(String[] args){
+	public static void parseArgs(String[] args)
+	{
 		Option help = new Option("h","help",false, "print this message");
 		Option nogui = new Option("g", "no-gui",false, "Text mode only");
 		Option path = new Option("p","path", true, "Path to the ressources");
