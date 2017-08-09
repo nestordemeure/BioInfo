@@ -37,15 +37,15 @@ public class Organism implements Serializable
 		this.bioproject = bioproject;
 		this.creation_date = creation_date;
 		this.modification_date = modification_date;
-		this.replicons = new HashMap<String, String>();
-		this.processed_replicons = new ArrayList<String>();
+		this.replicons = new HashMap<>();
+		this.processed_replicons = new ArrayList<>();
 		this.activated = true;
 	}
 	
 	public Organism()
 	{
-		this.replicons = new HashMap<String, String>();
-		this.processed_replicons = new ArrayList<String>();
+		this.replicons = new HashMap<>();
+		this.processed_replicons = new ArrayList<>();
 		this.activated = true;
 	}
 	

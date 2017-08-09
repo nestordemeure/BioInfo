@@ -1,13 +1,14 @@
 package ui;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import configuration.Configuration;
 import tree.Organism;
 
 public class InfoNode {
 	private String name;
-	private ArrayList<String> path = new ArrayList<String>();
+	private ArrayList<String> path = new ArrayList<>();
 	private String rootPath = Configuration.BASE_FOLDER;
 	private String separator = Configuration.FOLDER_SEPARATOR;
 	private Organism organism = null;
@@ -33,7 +34,7 @@ public class InfoNode {
 	public String getRealPath() {
 		String res = rootPath;
 		for (String element : path) {
-			if(element == path.get(path.size() - 1)){
+			if(Objects.equals(element, path.get(path.size() - 1))){
 				break;
 			}
 			res += separator;
@@ -45,7 +46,7 @@ public class InfoNode {
 	public String getTreePath() {
 		String res = "";
 		for (String element : path) {
-			if(element == path.get(path.size() - 1)){
+			if(Objects.equals(element, path.get(path.size() - 1))){
 				break;
 			}
 			res += "/";
@@ -76,7 +77,7 @@ public class InfoNode {
 			return true;
 		}
 		
-		int length = 0;
+		int length;
 		if(this.path.size() < r_path.size()) {
 			length = this.path.size();
 		} else {

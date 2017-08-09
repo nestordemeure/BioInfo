@@ -40,14 +40,8 @@ public class MainFrame extends Frame {
 
 	private JProgressBar progress;
 	private JTextArea logger;
-	private JScrollPane scroll;
-	private JTree tree;
-	private JScrollPane scrolltree;
-	private JSplitPane split;
-	private JButton start;
 	private JPanel rightpanel;
 	private JButton openButton;
-	private JPanel infospanel;
 	private JLabel CDSCount;
 	private JLabel CDSFailed;
 	private JLabel dinucleotideCount;
@@ -68,10 +62,10 @@ public class MainFrame extends Frame {
 		DefaultCaret c = (DefaultCaret) logger.getCaret();
 		c.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 
-		scroll = new JScrollPane(logger);
+		JScrollPane scroll = new JScrollPane(logger);
 		scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
-		start = new JButton("Commencer");
+		JButton start = new JButton("Commencer");
 
 		progress = new JProgressBar();
 		progress.setDoubleBuffered(true);
@@ -82,16 +76,16 @@ public class MainFrame extends Frame {
 		openButton = new JButton("Ouvrir le fichier");
 		openButton.setVisible(false);
 
-		DefaultMutableTreeNode root = new DefaultMutableTreeNode(new InfoNode("All", new ArrayList<String>()));
-		MainFrame.createJTree(t, root, new ArrayList<String>());
-		tree = new JTree(root);
+		DefaultMutableTreeNode root = new DefaultMutableTreeNode(new InfoNode("All", new ArrayList<>()));
+		MainFrame.createJTree(t, root, new ArrayList<>());
+		JTree tree = new JTree(root);
 		model = new TreeCheckBoxSelectionModel(tree.getModel());
 		tree.setCellRenderer(new TreeCheckBoxRenderer(model));
 		tree.addMouseListener(new TreeCheckBoxMouseListener(tree, model, this));
 		// tree.addTreeSelectionListener(new TreeInfosListener(tree, infosFile,
 		// openButton));
 
-		scrolltree = new JScrollPane(tree);
+		JScrollPane scrolltree = new JScrollPane(tree);
 		scrolltree.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
 		pathLabel = new JLabel("Inconnu");
@@ -102,7 +96,7 @@ public class MainFrame extends Frame {
 
 		JPanel gInfosPanel = new JPanel(new BorderLayout());
 
-		infospanel = new JPanel(new GridLayout(5, 2));
+		JPanel infospanel = new JPanel(new GridLayout(5, 2));
 		infospanel.add(new JLabel("Chemin : "));
 		infospanel.add(pathLabel);
 		infospanel.add(new JLabel("Nombre de CDS : "));
@@ -128,7 +122,7 @@ public class MainFrame extends Frame {
 		rightpanel.add(scroll, BorderLayout.CENTER);
 		rightpanel.add(infosProcess, BorderLayout.PAGE_END);
 
-		split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scrolltree, rightpanel);
+		JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scrolltree, rightpanel);
 		this.add(split);
 
 		this.addWindowListener(new WindowAdapter() {
@@ -145,12 +139,7 @@ public class MainFrame extends Frame {
 
 		start.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(download.isSelected()){
-					Configuration.STORE_DATA = true;
-				}
-				else {
-					Configuration.STORE_DATA = false;
-				}
+				Configuration.STORE_DATA = download.isSelected();
 				infosProcess.setVisible(false);
 				rightpanel.remove(infosProcess);
 				rightpanel.add(progress, BorderLayout.PAGE_END);
@@ -210,7 +199,6 @@ public class MainFrame extends Frame {
 			this.dinucleotideCount.setText("Inconnu");
 			this.trinucleotideCount.setText("Inconnu");
 			openButton.setVisible(false);
-			return;
 		} else {
 			Organism o = infos.getOrganism();
 			if(o != null) {
@@ -258,7 +246,7 @@ public class MainFrame extends Frame {
 		for (Object o : nodes) {
 
 			String node = (String) o;
-			ArrayList<String> new_path = new ArrayList<String>(path);
+			ArrayList<String> new_path = new ArrayList<>(path);
 			new_path.add(node);
 
 			if (t.isLeaf(node)) {

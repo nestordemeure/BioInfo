@@ -26,7 +26,8 @@ import ui.UIManager;
 
 public class TreeBuilderService extends AbstractExecutionThreadService {
 	
-	public static enum OrganismType {
+	public enum OrganismType
+	{
 		EUKARYOTES,
 		PROKARYOTES,
 		VIRUSES,
@@ -40,7 +41,7 @@ public class TreeBuilderService extends AbstractExecutionThreadService {
 	private Retryer<List<Organism>> retryer;
 	
 	private Callable<List<Organism>> pageCallable = new Callable<List<Organism>>(){
-		public List<Organism> call() throws MalformedURLException, IOException{
+		public List<Organism> call() throws IOException{
 			return parseCurrentPage();
 		}
 	};
@@ -64,7 +65,7 @@ public class TreeBuilderService extends AbstractExecutionThreadService {
 			this.baseURL = configuration.Configuration.TREE_VIRUSES_URL;
 		}
 		this.type = type;
-		this.organismList = new ArrayList<Organism>();
+		this.organismList = new ArrayList<>();
 	}
 	
 	public void readAllPages(){
@@ -88,84 +89,82 @@ public class TreeBuilderService extends AbstractExecutionThreadService {
 		}
 	}
 	
-	public List<Organism> parseCurrentPage() throws MalformedURLException, IOException{
+	public List<Organism> parseCurrentPage() throws IOException{
 		String webPage = new String(Resources.toByteArray(new URL(this.baseURL+this.currentPage)));
 		
 		if(webPage.split("-->")[1].trim().length() == 0){
 			return null;
 		}
 		
-		List<Organism> organismsList = new ArrayList<Organism>();
+		List<Organism> organismsList = new ArrayList<>();
 		
 		Document doc = Jsoup.parse("<table>"+webPage+"</table>");
 		
 		Elements organisms = doc.select(".Odd,.Even");
-		
-		for(Iterator<Element> it = organisms.iterator(); it.hasNext();){
-			Element organism = it.next();
+
+		for (Element organism : organisms) {
 			Elements replicons = organism.select("table");
-			
-			if(replicons.size() != 0){
+
+			if (replicons.size() != 0) {
 				Elements organismTDs = organism.select("td");
 				Iterator<Element> tdIterator = organismTDs.iterator();
 				String organismName = tdIterator.next().text();
-				if(type == OrganismType.PROKARYOTES) {
+				if (type == OrganismType.PROKARYOTES) {
 					tdIterator.next(); // Skip CladeID
 				}
-				if(type != OrganismType.VIRUSES) {
+				if (type != OrganismType.VIRUSES) {
 					tdIterator.next(); // Skip Strain
 					tdIterator.next(); // Skip BioSample
 				}
 				String organismBioProject = tdIterator.next().text();
 				String organismGroup = tdIterator.next().text();
 				String organismSubGroup = tdIterator.next().text();
-				String creationDate =  "";
+				String creationDate = "";
 				String modificationDate = "";
 				String buffer = "";
-				while(tdIterator.hasNext()){
+				while (tdIterator.hasNext()) {
 					creationDate = modificationDate;
 					modificationDate = buffer;
 					buffer = tdIterator.next().text();
 				}
-				
+
 				Organism currentOrganism = new Organism(type.name(), organismGroup, organismSubGroup, organismName, organismBioProject, creationDate, modificationDate);
 
 				boolean validOrganism = false;
-				
+
 				Elements repliconsTDs = replicons.iterator().next().select("td");
-				for(Iterator<Element> it2 = repliconsTDs.iterator(); it2.hasNext();) {
-					Element replicon = it2.next();
-					if(replicon.id().length() != 0) {
+				for (Element replicon : repliconsTDs) {
+					if (replicon.id().length() != 0) {
 						// Skip the "show more button"
 						// The show more button is the only one with an id
 						continue;
 					}
 					String repliconName = "";
-					if(type != OrganismType.VIRUSES) {
+					if (type != OrganismType.VIRUSES) {
 						repliconName = replicon.text().split("/")[0].replace(" ", "_").replace(":", "_");
 					}
 					String[] repliconIDs = replicon.select("a").text().split(" ");
 					String repliconID = "";
 					boolean validRepliconFound = false;
-					for(String rID : repliconIDs) {
-						if(rID.startsWith("NC") ||
-						   rID.startsWith("MT") ||
-						   rID.startsWith("CL") ||
-						   rID.startsWith("CH")){
+					for (String rID : repliconIDs) {
+						if (rID.startsWith("NC") ||
+								rID.startsWith("MT") ||
+								rID.startsWith("CL") ||
+								rID.startsWith("CH")) {
 							repliconID = rID;
 							validRepliconFound = true;
 							break;
 						}
 					}
-					if(validRepliconFound){
+					if (validRepliconFound) {
 						validOrganism = true;
-						if(type ==OrganismType.VIRUSES){
+						if (type == OrganismType.VIRUSES) {
 							repliconName = repliconID;
 						}
 						currentOrganism.addReplicon(repliconName, repliconID);
 					}
 				}
-				if(validOrganism){
+				if (validOrganism) {
 					organismsList.add(currentOrganism);
 				}
 			}

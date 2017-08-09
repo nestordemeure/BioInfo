@@ -10,7 +10,7 @@ public class Tree<T> {
 	int size = -1;
 
 	public Tree() {
-		this.nodes = new HashMap<String, T>();
+		this.nodes = new HashMap<>();
 	}
 
 	public boolean contains(String node) {
@@ -48,18 +48,20 @@ public class Tree<T> {
 		return res.toArray();
 	}
 
-	public void printTree_aux(int level) {
-		if (this != null) {
-			Object[] nodess = this.nodes();
-			for (Object node : nodess) {
-				for (int i = 0; i < level; i++) {
-					System.out.print("-");
-				}
-				System.out.println(node);
+	public void printTree_aux(int level)
+	{
+		Object[] nodess = this.nodes();
+		for (Object node : nodess)
+		{
+			for (int i = 0; i < level; i++)
+			{
+				System.out.print("-");
+			}
+			System.out.println(node);
 
-				if (this.get((String) node) != null) {
-					((Tree<?>) this.get((String) node)).printTree_aux(level + 1);
-				}
+			if (this.get((String) node) != null)
+			{
+				((Tree<?>) this.get((String) node)).printTree_aux(level + 1);
 			}
 		}
 	}

@@ -10,13 +10,12 @@ import javax.swing.JProgressBar;
 public class PreLoaderFrame extends Frame{
 
 	private static final long serialVersionUID = 4371905080346793316L;
-	private Label title;
 	private Label info;
 	private JProgressBar progress;
 	
 	public PreLoaderFrame(){
 		this.setLayout(new BorderLayout());
-		title = new Label("Construction de l'arbre...");
+		Label title = new Label("Construction de l'arbre...");
 		title.setFont(new Font("Arial", Font.BOLD, 30));
 		
 		info = new Label();

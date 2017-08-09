@@ -12,7 +12,7 @@ public class TreeManager {
 	
 	public static Tree construct(){
 		UIManager.setMaxProgress(37+72+60+10);
-		List<TreeBuilderService> services = new ArrayList<TreeBuilderService>();
+		List<TreeBuilderService> services = new ArrayList<>();
 		TreeBuilderService eukaryotes = new TreeBuilderService(OrganismType.EUKARYOTES);
 		TreeBuilderService prokaryotes = new TreeBuilderService(OrganismType.PROKARYOTES);
 		TreeBuilderService viruses = new TreeBuilderService(OrganismType.VIRUSES);
@@ -27,7 +27,7 @@ public class TreeManager {
 		
 		UIManager.log("End of tree fetch !");
 		UIManager.log("Starting tree build.");
-		List<Organism> organisms = new ArrayList<Organism>();
+		List<Organism> organisms = new ArrayList<>();
 		organisms.addAll(eukaryotes.organisms());
 		organisms.addAll(prokaryotes.organisms());
 		organisms.addAll(viruses.organisms());

@@ -23,12 +23,11 @@ public class TreeInfosListener implements TreeSelectionListener {
         if (node == null) {
         	infosFile.setText("Pas d'information disponible");
         	openButton.setVisible(false);
-        	return;
         }
         else {
         	InfoNode nodeInfo = (InfoNode) node.getUserObject();
         	String file = FindExtension.check(nodeInfo.getRealPath(), ".xls");
-        	if (file != "") {
+        	if (!file.isEmpty()) {
         		openButton.addActionListener(new OpenFileListener(file));
         		openButton.setVisible(true);
         	} else {

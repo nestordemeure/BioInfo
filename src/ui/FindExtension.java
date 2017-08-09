@@ -14,7 +14,7 @@ public class FindExtension {
 
         File dir = new File(folder);
 
-        if(dir.isDirectory()==false){
+        if(!dir.isDirectory()){
             System.out.println("Directory does not exists : " + folder);
             return "";
         }
@@ -27,7 +27,7 @@ public class FindExtension {
             return "";
         }
 
-        String xls = new StringBuffer(folder).append(File.separator).append(list[0]).toString();
+        String xls = folder + File.separator + list[0];
         return xls;
     }
 

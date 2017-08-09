@@ -151,7 +151,7 @@ public class TreeCheckBoxSelectionModel extends DefaultTreeSelectionModel{
 	}
 	
 	public ArrayList<InfoNode> getSelectedSubNodes(Object root){
-		ArrayList<InfoNode> nodes = new ArrayList<InfoNode>();
+		ArrayList<InfoNode> nodes = new ArrayList<>();
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode) root;
 		Object userObject = node.getUserObject();
 		
@@ -188,8 +188,7 @@ public class TreeCheckBoxSelectionModel extends DefaultTreeSelectionModel{
 		if(mutable != null){
 			Object userObject = mutable.getUserObject();
 			if(userObject != null && userObject instanceof InfoNode){
-				InfoNode node = (InfoNode) userObject;
-				return node;
+				return (InfoNode) userObject;
 			}
 		}
 		return null;

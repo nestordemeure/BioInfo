@@ -23,16 +23,13 @@ import configuration.Configuration;
 import main.Main;
 
 public class FileChooserDialog extends JDialog {
-	private JFileChooser fileChooser;
 	private JDialog dialog;
-	private MainFrame mainFrame;
-	private JLabel title;
-	
+
 	public FileChooserDialog(MainFrame mainFrame) {
 		super();
-		this.mainFrame = mainFrame;
-		
+
 		String preferencePath = this.getPreferencePath();
+		JFileChooser fileChooser;
 		if (preferencePath != null) {
 			fileChooser = new JFileChooser(preferencePath);
 		}
@@ -79,7 +76,7 @@ public class FileChooserDialog extends JDialog {
 		this.add(fileChooser);
 		
 		this.setSize(500,500);
-		this.setLocationRelativeTo(this.mainFrame);
+		this.setLocationRelativeTo(mainFrame);
 		this.setVisible(true);
 	}
 	
@@ -125,7 +122,7 @@ public class FileChooserDialog extends JDialog {
 				}
 			}
 			return str;
-			
+
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 			return null;

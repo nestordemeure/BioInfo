@@ -15,10 +15,7 @@ public class TreeCheckBoxMouseListener extends MouseAdapter{
 	private JTree tree;
 	private TreeCheckBoxSelectionModel model;
 	private MainFrame mf;
-	
-	private static int HITBOX_START = 30;
-	private static int HITBOX_SIZE  = 20;
-	
+
 	public TreeCheckBoxMouseListener(JTree tree, TreeCheckBoxSelectionModel model, MainFrame m){
 		this.tree = tree;
 		this.model = model;
@@ -31,7 +28,9 @@ public class TreeCheckBoxMouseListener extends MouseAdapter{
 		if(tp == null){
 			return;
 		}
-		
+
+		int HITBOX_START = 30;
+		int HITBOX_SIZE = 20;
 		if(me.getX() < HITBOX_START + (tp.getPathCount() - 1 ) * HITBOX_SIZE){
 			this.model.toggleSelect(tp);
 			tree.treeDidChange();

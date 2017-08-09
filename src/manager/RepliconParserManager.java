@@ -44,7 +44,7 @@ public class RepliconParserManager {
 			{*/
 			UIManager.log("[Parser caller] getting scanner and bdd for "+ organism.getName() + " replicon: " + replicon);
 			String url = Configuration.GEN_DOWNLOAD_URL.replaceAll("<ID>", organism.getReplicons().get(replicon));
-			Scanner sc = new Scanner(Resources.asByteSource(new URL(url)).openBufferedStream()); // TODO produces UnknownHostException
+			Scanner sc = new Scanner(Resources.asByteSource(new URL(url)).openBufferedStream()); // produces UnknownHostException
 			sc.useDelimiter("\n");
 			Parser parser = new Parser(db, sc);
 
@@ -66,7 +66,6 @@ public class RepliconParserManager {
 				parser.parse(replicon, organism, null);
 			}
 			UIManager.log("[Parser caller] Finished parsing "+ organism.getName() + " replicon: " + replicon);
-
 			/*}
 			catch(Exception e)
 			{
@@ -88,7 +87,7 @@ public class RepliconParserManager {
 				.retryIfRuntimeException()
 				.withWaitStrategy(WaitStrategies.fibonacciWait())
 				.withStopStrategy(StopStrategies.stopAfterAttempt(Configuration.NET_MAX_DOWNLOAD_TRIES))
-				//.withStopStrategy(StopStrategies.stopAfterDelay(Configuration.NET_MAX_DOWNLOAD_TIME, TimeUnit.MINUTES ) )
+				//.withStopStrategy(StopStrategies.stopAfterDelay(Configuration.NET_MAX_DOWNLOAD_TIME, TimeUnit.MINUTES ) ) // TODO
 				//.withStopStrategy(new combinedStopStrategy(Configuration.NET_MAX_DOWNLOAD_TRIES, Configuration.NET_MAX_DOWNLOAD_TIME, TimeUnit.MINUTES) )
 				.build();
 	}
@@ -102,7 +101,7 @@ public class RepliconParserManager {
 		{
 			db = retryer.call(this.parser);
 		}
-		catch (/*ExecutionException | RetryException*/ Exception e) // TODO modified to catch UnknownHostException
+		catch (/*ExecutionException | RetryException*/ Exception e) // Modified to catch UnknownHostException
 		{
 			UIManager.log("[RepliconParserManager] Unable to download "+this.organism.getName()+ " replicon: "+replicon);
 		}
