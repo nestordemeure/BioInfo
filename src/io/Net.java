@@ -21,26 +21,36 @@ public class Net {
 		}
 	}
 	
-	public static InputStream getUrlIS(String url){
+	public static InputStream getUrlIS(String url)
+	{
 		int nb_try = 0;
-		while(nb_try < Configuration.NET_MAX_DOWNLOAD_TRIES){
-			try {
+		while(nb_try < Configuration.NET_MAX_DOWNLOAD_TRIES)
+		{
+			try
+			{
 				return new URL(url).openStream();
-			} catch (MalformedURLException e) {
+			}
+			catch (MalformedURLException e)
+			{
 				return null;
-			} catch (IOException e) {
-				if(nb_try >= Configuration.NET_MAX_DOWNLOAD_TRIES - 2){
+			}
+			catch (IOException e)
+			{
+				if(nb_try >= Configuration.NET_MAX_DOWNLOAD_TRIES - 2)
+				{
 					UIManager.log("Error while downloading : "+url+" (Try "+(nb_try + 1)+"/"+Configuration.NET_MAX_DOWNLOAD_TRIES+")");
 				}
 				nb_try ++;
-				if(nb_try == Configuration.NET_MAX_DOWNLOAD_TRIES){
+				if(nb_try == Configuration.NET_MAX_DOWNLOAD_TRIES)
+				{
 					e.printStackTrace();
 				}
-				try {
+				try
+				{
 					long sleep_time = (long)Math.floor(Math.random() * Configuration.NET_TIME_BETWEEN_TRIES);
 					Thread.sleep(sleep_time);
-				} catch (InterruptedException e1) {
 				}
+				catch (InterruptedException e1) {}
 			}
 		}
 		return null;

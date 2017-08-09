@@ -8,36 +8,45 @@ import java.util.concurrent.locks.ReentrantLock;
 import tree.Organism;
 import tree.Tree;
 
-public class TreeWalker {
+public class TreeWalker
+{
 	private Queue<Organism> organisms;
 	private static Lock mainLock;
 
-	public TreeWalker(Tree t){
+	public TreeWalker(Tree t)
+	{
 		mainLock = new ReentrantLock();
 		mainLock.lock();
-		this.organisms = new ConcurrentLinkedDeque<Organism>();
+		this.organisms = new ConcurrentLinkedDeque<>();
 		this.toQueue(t);
 		mainLock.unlock();
 	}
 	
-	private void toQueue(Tree t){
-		for(Object o : t.activatedNodes()){
-			if(t.isLeaf((String)o)){
+	private void toQueue(Tree t)
+	{
+		for(Object o : t.activatedNodes())
+		{
+			if(t.isLeaf((String)o))
+			{
 				this.organisms.add((Organism)t.get((String)o));
-			} else {
+			}
+			else
+			{
 				toQueue((Tree) t.get((String)o));
 			}
 		}
 	}
 	
-	public boolean hasNext(){
+	public boolean hasNext()
+	{
 		mainLock.lock();
 		boolean res = ! this.organisms.isEmpty();
 		mainLock.unlock();
 		return res;
 	}
 	
-	public Organism next(){
+	public Organism next()
+	{
 		mainLock.lock();
 		Organism res = this.organisms.poll();
 		mainLock.unlock();

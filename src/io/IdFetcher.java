@@ -13,16 +13,19 @@ import configuration.Configuration;
 import ui.UIManager;
 
 
-public class IdFetcher {
-	public static ArrayList<Integer> getIds(String specie, int minObjects){
-		ArrayList<Integer> list = new ArrayList<Integer>();
+public class IdFetcher
+{
+	public static ArrayList<Integer> getIds(String specie, int minObjects)
+	{
+		ArrayList<Integer> list = new ArrayList<>();
 		int retstart = 0;
 		int tries = 0;
 		boolean done = false;
 		
-		while(tries < Configuration.IDS_MAX_TRIES  && !done){
-			
-			try{
+		while(tries < Configuration.IDS_MAX_TRIES  && !done)
+		{
+			try
+			{
 				String url = Configuration.IDS_SEARCH_URL.replaceAll("<TERM>", URLEncoder.encode(specie,"UTF-8"))
 						.replaceAll("<PER_PAGE>", String.valueOf(Configuration.IDS_PER_PAGE))
 						.replaceAll("<START>", String.valueOf(retstart));
@@ -36,7 +39,7 @@ public class IdFetcher {
 
 				int count = Integer.parseInt(doc.getElementsByTagName("Count").item(0).getTextContent());
 				if(count <= minObjects){
-					return new ArrayList<Integer>();
+					return new ArrayList<>();
 				}
 				
 				NodeList nl = doc.getElementsByTagName("Id");

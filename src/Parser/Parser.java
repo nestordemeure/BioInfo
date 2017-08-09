@@ -184,7 +184,7 @@ public class Parser
 //fonctions pour le scanner
 	
 	//la dernière ligne importée par le scanner
-	private String ligne_actuelle = new String();
+	private String ligne_actuelle;
 	
 	//fait avancer un scanner jusqu'a atteindre le préfixe donné
 	//consomme la ligne qui contient le préfixe
@@ -385,7 +385,8 @@ public class Parser
 		int index_sequence; //l'index de la séquence dans la liste de séquences du cds
 			
 		//on lit le premier entier
-		try { 
+		try
+		{
 			while ( true )
 			{
 				debut = debut*10 + chiffre_of_int(ligne_actuelle, new_position);

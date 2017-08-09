@@ -39,23 +39,19 @@ import Bdd.*;
 import Bdd.Bdd.content;
 import configuration.Configuration;
 
-public class ExcelWriter {
-	
-	// returns a string representation of the given Cell
-	private static String Cell(int x, int y)
-	{
-		return String.valueOf((char)(x + 'A')) + (y+1);
-	}
-	
+public class ExcelWriter
+{
 	public static byte[] hexStringToByteArray(String s) 
 	{
 	    int len = s.length();
 	    byte[] data = new byte[len / 2];
+
 	    for (int i = 0; i < len; i += 2) 
 	    {
 	        data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
 	                             + Character.digit(s.charAt(i+1), 16));
 	    }
+
 	    return data;
 	}
 	
@@ -191,7 +187,7 @@ public class ExcelWriter {
 		// build a 90x40 spreadsheet
 		
 		XSSFSheet worksheet = (XSSFSheet) wb.createSheet(cleft);
-		List<XSSFRow> rowlist = new ArrayList<XSSFRow>();	
+		List<XSSFRow> rowlist = new ArrayList<>();
 		
 		// create the cells (at least one per line of description)
 		for (int row = 0; row <= Math.max(22, CircularCounter.imax+2); row++)
@@ -211,20 +207,24 @@ public class ExcelWriter {
 		int descriptionCol = 19;
 		
 		// Name
-		String filename = "";
-		if (chemin[3] != null && chemin[3] != "" ) {
+		String filename;
+		if (chemin[3] != null && ! chemin[3].isEmpty() )
+		{
 			filename = chemin[3];
 			rowlist.get(2).getCell(descriptionCol).setCellValue("Organism Name");
 		}
-		else if (chemin[2] != null && chemin[2] != "" ) {
+		else if (chemin[2] != null && ! chemin[2].isEmpty() )
+		{
 			filename = chemin[2];
 			rowlist.get(2).getCell(descriptionCol).setCellValue("SubGroup Name");
 		}
-		else if (chemin[1] != null && chemin[1] != "") {
+		else if (chemin[1] != null && ! chemin[1].isEmpty())
+		{
 			filename = chemin[1];
 			rowlist.get(2).getCell(descriptionCol).setCellValue("Group Name");
 		}
-		else {
+		else
+		{
 			filename = chemin[0];
 			rowlist.get(2).getCell(descriptionCol).setCellValue("Kingdom Name");
 		}
@@ -263,7 +263,7 @@ public class ExcelWriter {
 		}
 		
 		// Sums : Nombre de Chromosomes, DNA, Mitochondrion, etc...
-		Integer tmp_row=16;
+		Integer tmp_row;
 		if ((bioproject==null || bioproject.isEmpty()) && (accession==null || accession.isEmpty()) && (taxonomy==null || taxonomy.isEmpty()) && (mod_date==null || mod_date.isEmpty()))
 		{
 			tmp_row=8;
@@ -365,166 +365,6 @@ public class ExcelWriter {
 		
 		baseSum.get_contenu(new_cleft, empty_org).fusionContent(contenus);
 	}
-	
-	// deal with the style of cells according to their positions
-	private static XSSFCellStyle getCellStyle(int i, int j, Workbook wb, XSSFCellStyle dblue, XSSFCellStyle lblue, XSSFCellStyle lgray, XSSFCellStyle ngray, XSSFCellStyle float_type, XSSFCellStyle int_type, XSSFCellStyle ngray_float, XSSFCellStyle ngray_int, XSSFCellStyle lgray_int, XSSFCellStyle default_type){
-		
-		
-		if (i == 0 && j == 0){
-			//Couleur foncée chelou
-			return dblue;
-		}
-		//Couleur et style pour trinucléotides et dinucléotides et entête
-		else if (i%2 == 0 && i < 68){
-			//trinucléotides sans pref phase ou première ligne
-			if ((j<7)|| (i==0 && j<10)){
-				//Couleur foncée
-				//Style de chiffres
-				if (i>0 && i<68){
-					//trinucléotides sans pref de phase
-					if (j%2==1 && j<6){
-						return ngray_int;
-					}
-					else if(j%2==0 && j<7 && j>0){
-						return ngray_float;
-					}
-					//tri. pref de phase
-					else if(j>6 && j<10){
-						return ngray_int;
-					}
-					
-					//dinculéotides sans pref de phase
-					else if (i<19 && j%2==0 && j<16){
-						return ngray_int;
-					}
-					else if(i<19 && j%2==1 && j<16){
-						return ngray_float;
-					}
-					else{
-						return ngray;
-					}
-				}
-				else{
-					return ngray;
-				}
-			}
-			//pref phase trinucléotides
-			else if (j<10 || ((j==17 || j==18) && i>0 && i<19)){
-				//Couleur Claire
-				//Style de chiffres
-				if (i>0 && i<68){
-					//trinucléotides sans pref de phase
-					if (j%2==1 && j<6){
-						return lgray_int;
-					}
-					//tri. pref de phase
-					else if(j>6 && j<10){
-						return lgray_int;
-					}
-					
-					//dinculéotides sans pref de phase
-					else if (i<19 && j%2==0 && j<16){
-						return lgray_int;
-					}
-					else{
-						return lgray;
-					}
-				}
-			}
-			//dinuclotides sans pref phase
-			else if (i<19 && ((j>10 && j <16)||(i==0 && j<16 && j>10))){
-				//Couleur foncée
-				//Style de chiffres
-				if (i>0 && i<68){
-					//trinucléotides sans pref de phase
-					if (j%2==1 && j<6){
-						return ngray_int;
-					}
-					else if(j%2==0 && j<7 && j>0){
-						return ngray_float;
-					}
-					//tri. pref de phase
-					else if(j>6 && j<10){
-						return ngray_int;
-					}
-					
-					//dinculéotides sans pref de phase
-					else if (i<19 && j%2==0 && j<16){
-						return ngray_int;
-					}
-					else if(i<19 && j%2==1 && j<16){
-						return ngray_float;
-					}
-					else{
-						return ngray;
-					}
-				}
-				else{
-					return ngray;
-				}
-			}
-			
-			//Entête
-			else if(i<17 && j>19){
-				if (i>1 && i<17){
-					if (j==18){
-						//Très CLair
-						return lblue;
-					}
-					else if(j==19){
-						//Intermédiaire
-						//Style de chiffres
-						if (i>0 && i<68){
-							//trinucléotides sans pref de phase
-							if (j%2==1 && j<6){
-								return lgray_int;
-							}
-							//tri. pref de phase
-							else if(j>6 && j<10){
-								return lgray_int;
-							}
-							
-							//dinculéotides sans pref de phase
-							else if (i<19 && j%2==0 && j<16){
-								return lgray_int;
-							}
-							else{
-								return lgray;
-							}
-						}
-					}
-				}
-			}
-		}
-		
-		//Style de chiffres
-		if (i>0 && i<68){
-			//trinucléotides sans pref de phase
-			if (j%2==1 && j<6){
-				return int_type;
-			}
-			else if(j%2==0 && j<7 && j>0){
-				return float_type;
-			}
-			//tri. pref de phase
-			else if(j>6 && j<10){
-				return int_type;
-			}
-			
-			//dinculéotides sans pref de phase
-			else if (i<19 && j%2==0 && j<16){
-				return int_type;
-			}
-			else if(i<19 && j%2==1 && j<16){
-				return float_type;
-			}
-		}
-		
-		
-		
-		return default_type;
-	}
-
 }
 
 	

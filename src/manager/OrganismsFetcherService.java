@@ -203,7 +203,7 @@ public class OrganismsFetcherService extends AbstractExecutionThreadService
 	{
 		TreeWalker walker = new TreeWalker(t);
 		
-		Set<Service> services =  new LinkedHashSet<Service>();
+		Set<Service> services =  new LinkedHashSet<>();
 		for(int i = 0; i < Configuration.THREADS_NUMBER; i++)
 		{
 			services.add(new OrganismsFetcherService(walker, i));

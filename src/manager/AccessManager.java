@@ -14,7 +14,7 @@ public class AccessManager {
 	public static void accessFile(String file){
 		mainLock.lock();
 		if(AccessManager.lockers == null){
-			AccessManager.lockers = new HashMap<String, Lock>(10);
+			AccessManager.lockers = new HashMap<>(10);
 		}
 		
 		if(! AccessManager.lockers.containsKey(file)){
