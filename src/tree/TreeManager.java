@@ -8,9 +8,10 @@ import com.google.common.util.concurrent.ServiceManager;
 import tree.TreeBuilderService.OrganismType;
 import ui.UIManager;
 
-public class TreeManager {
-	
-	public static Tree construct(){
+public class TreeManager
+{
+	public static Tree construct()
+	{
 		UIManager.setMaxProgress(37+72+60+10);
 		List<TreeBuilderService> services = new ArrayList<>();
 		TreeBuilderService eukaryotes = new TreeBuilderService(OrganismType.EUKARYOTES);
@@ -24,8 +25,8 @@ public class TreeManager {
 		sm.startAsync();
 		UIManager.log("Tree builder services launched");
 		sm.awaitStopped();
-		
 		UIManager.log("End of tree fetch !");
+
 		UIManager.log("Starting tree build.");
 		List<Organism> organisms = new ArrayList<>();
 		organisms.addAll(eukaryotes.organisms());
@@ -33,8 +34,8 @@ public class TreeManager {
 		organisms.addAll(viruses.organisms());
 		
 		Tree mainTree = new Tree<Tree>();
-		
-		for(Organism o : organisms){
+		for(Organism o : organisms)
+		{
 			o.updateTree(mainTree);
 		}
 		
