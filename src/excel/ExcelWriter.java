@@ -116,93 +116,34 @@ public class ExcelWriter
 	{
 		Sheet worksheet = wb.createSheet(cleft);
 
-		//-------------------------------------------------------------------------------------
-		// Tableau
+        //-------------------------------------------------------------------------------------
+		// Tableaux
 
-		int rowNumber = Math.max(18, Configuration.PARSER_IMAX+2);
-		int enTeteRow = 0;
-		int col = 0;
-		
-		// First col (i)
-		Cell firstICell = worksheet.createRow(enTeteRow).createCell(col);
-		firstICell.setCellValue("i");
-		firstICell.setCellStyle(lblue);
-		for (int i = 0; i < Configuration.PARSER_IMAX; i++)
-		{
-			Cell cell = worksheet.createRow(i+1).createCell(col);
-			cell.setCellValue(i);
+        // write all the matrixes
+        int enTeteRow = 0;
+        /*enTeteRow = */writeMatrix(enTeteRow, contenus, worksheet, lblue, lgray, float_type, ngray_float);
 
-			if (i%2 == 0)
-			{
-				cell.setCellStyle(lgray);
-			}
-		}
-		worksheet.createRow(Configuration.PARSER_IMAX+1).createCell(col).setCellValue("Total");
-		worksheet.autoSizeColumn(col);
-		
-		// A(X1, X2)
-		String codes[] = {"X", "X1", "X2", "Xp"};
-		for (int w1 = 0; w1 < 4; w1++)
-		{
-			for (int w2 = 0; w2 < 4; w2++)
-			{
-				col++;
-				String codeName = String.format("A(%s, %s)", codes[w1], codes[w2]);
-				Cell headerCell = worksheet.getRow(enTeteRow).createCell(col);
-				headerCell.setCellValue(codeName);
-				headerCell.setCellStyle(lblue);
-
-				double total = 0;
-				for (int i = 0; i < Configuration.PARSER_IMAX; i++)
-				{
-					Cell cell = worksheet.getRow(i+1).createCell(col);
-					double Aiw1w2 = contenus.A(i, w1, w2);
-					cell.setCellValue(Aiw1w2);
-
-					if (i%2 == 0)
-					{
-						cell.setCellStyle(ngray_float);
-					}
-					else
-					{
-						cell.setCellStyle(float_type);
-					}
-
-					total += Aiw1w2;
-				}
-
-				Cell footerCell = worksheet.getRow(Configuration.PARSER_IMAX+1).createCell(col);
-				footerCell.setCellValue(total);
-				footerCell.setCellStyle(ngray_float);
-				worksheet.autoSizeColumn(col);
-			}
-		}
-
-		// Sum column
-		col++;
-		Cell sumCell = worksheet.getRow(enTeteRow).createCell(col);
-		sumCell.setCellValue("Somme");
-		sumCell.setCellStyle(lblue);
-		for (int i = 0; i < Configuration.PARSER_IMAX; i++)
-		{
-			Cell cell = worksheet.getRow(i+1).createCell(col);
-			cell.setCellStyle(ngray_float);
-			cell.setCellType(XSSFCell.CELL_TYPE_FORMULA);
-			cell.setCellFormula(String.format("SUM(B%d:Q%d)",i+2,i+2));
-		}
-		worksheet.autoSizeColumn(col);
+        // compute the number of columns
+        int colNumber = 2; // i col and sum col
+        if (Configuration.PARSER_USEFULLALPHABET)
+        {
+            colNumber += 4096; // 64*64 (number of trinucleotides)
+        }
+        else
+        {
+            colNumber += 16; // 4*4 (number of code)
+        }
+        // resize all the columns
+        for (int col = 0; col <= colNumber; col++)
+        {
+            worksheet.autoSizeColumn(col);
+        }
 
 		//-------------------------------------------------------------------------------------
 		// Description de l'organisme
 
 		Row row;
-		int descriptionCol = col+2;
-
-		// create the missing rows if needed
-		for (int rowId = Configuration.PARSER_IMAX+2; rowId <= rowNumber; rowId++)
-		{
-			worksheet.createRow(rowId);
-		}
+		int descriptionCol = colNumber+1;
 
 		// Name
 		String filename;
@@ -256,8 +197,27 @@ public class ExcelWriter
 		row.createCell(descriptionCol).setCellValue("Number of trinucleotides");
 		row.createCell(descriptionCol+1).setCellValue(contenus.nb_trinucleotides);
 
+		// Imax
+        row = worksheet.getRow(12);
+        row.createCell(descriptionCol).setCellValue("Imax");
+        row.createCell(descriptionCol+1).setCellValue(Configuration.PARSER_IMAX);
+
+        // Mingenelength
+        row = worksheet.getRow(14);
+        row.createCell(descriptionCol).setCellValue("Minimum gene length");
+        row.createCell(descriptionCol+1).setCellValue(Configuration.PARSER_MINGENELENGTH);
+
+        // Maxgenelength
+        row = worksheet.getRow(16);
+        row.createCell(descriptionCol).setCellValue("Maximum gene length");
+        row.createCell(descriptionCol+1).setCellValue(Configuration.PARSER_MAXGENELENGTH);
+
+        // we resize here to avoid overly long column caused by the following fields
+        worksheet.autoSizeColumn(descriptionCol);
+        worksheet.autoSizeColumn(descriptionCol+1);
+
 		//Modification date
-		row = worksheet.getRow(12);
+		row = worksheet.getRow(18);
 		String mod_date = contenus.organism.getModificationDate();
 		if(mod_date!=null && !mod_date.isEmpty())
 		{
@@ -266,7 +226,7 @@ public class ExcelWriter
 		}
 
 		//Accession
-		row = worksheet.getRow(14);
+		row = worksheet.getRow(20);
 		String accession = contenus.organism.getAccession();
 		if (accession!=null && !accession.isEmpty())
 		{
@@ -275,7 +235,7 @@ public class ExcelWriter
 		}
 
 		//Taxonomy
-		row = worksheet.getRow(16);
+		row = worksheet.getRow(22);
 		String taxonomy = contenus.organism.getTaxonomy();
 		if (taxonomy!=null && !taxonomy.isEmpty())
 		{
@@ -284,7 +244,7 @@ public class ExcelWriter
 		}
 
 		// Bioproject
-		row = worksheet.getRow(18);
+		row = worksheet.getRow(24);
 		String bioproject = contenus.organism.getBioproject();
 		if (bioproject!=null && !bioproject.isEmpty())
 		{
@@ -292,15 +252,89 @@ public class ExcelWriter
 			row.createCell(descriptionCol+1).setCellValue(bioproject);
 		}
 
-		worksheet.autoSizeColumn(descriptionCol);
-		worksheet.autoSizeColumn(descriptionCol+1);
-
 		//-------------------------------------------------------------------------------------
 
 		String new_cleft = "Sum_" + cleft.split("_")[0];
 		Organism empty_org = new Organism("","","","","","","");
 		baseSum.get_contenu(new_cleft, empty_org).fusionContent(contenus);
 	}
+
+    private static int writeMatrix(int enTeteRow, content contenus, Sheet worksheet, XSSFCellStyle lblue, XSSFCellStyle lgray, XSSFCellStyle float_type, XSSFCellStyle ngray_float)
+    {
+        int col = 0;
+
+        // First col (i)
+        Cell firstICell = worksheet.createRow(enTeteRow).createCell(col);
+        firstICell.setCellValue("i");
+        firstICell.setCellStyle(lblue);
+        for (int i = enTeteRow; i < enTeteRow+Configuration.PARSER_IMAX; i++)
+        {
+            Cell cell = worksheet.createRow(i+1).createCell(col);
+            cell.setCellValue(i);
+
+            if (i%2 == 0)
+            {
+                cell.setCellStyle(lgray);
+            }
+        }
+        worksheet.createRow(enTeteRow+Configuration.PARSER_IMAX+1).createCell(col).setCellValue("Total");
+
+        // A(X1, X2)
+        String codes[] = {"X", "X1", "X2", "Xp"};
+        for (int w1 = 0; w1 < 4; w1++)
+        {
+            for (int w2 = 0; w2 < 4; w2++)
+            {
+                col++;
+                String codeName = String.format("A(%s, %s)", codes[w1], codes[w2]);
+                Cell headerCell = worksheet.getRow(enTeteRow).createCell(col);
+                headerCell.setCellValue(codeName);
+                headerCell.setCellStyle(lblue);
+
+                double total = 0;
+                for (int i = enTeteRow; i < enTeteRow + Configuration.PARSER_IMAX; i++)
+                {
+                    Cell cell = worksheet.getRow(i+1).createCell(col);
+                    double Aiw1w2 = contenus.A(i, w1, w2);
+                    cell.setCellValue(Aiw1w2);
+
+                    if (i%2 == 0)
+                    {
+                        cell.setCellStyle(ngray_float);
+                    }
+                    else
+                    {
+                        cell.setCellStyle(float_type);
+                    }
+
+                    total += Aiw1w2;
+                }
+
+                Cell footerCell = worksheet.getRow(enTeteRow + Configuration.PARSER_IMAX+1).createCell(col);
+                footerCell.setCellValue(total);
+                footerCell.setCellStyle(ngray_float);
+            }
+        }
+
+        // Sum column
+        col++;
+        Cell sumCell = worksheet.getRow(enTeteRow).createCell(col);
+        sumCell.setCellValue("Somme");
+        sumCell.setCellStyle(lblue);
+        for (int i = enTeteRow; i < enTeteRow + Configuration.PARSER_IMAX; i++)
+        {
+            Cell cell = worksheet.getRow(i+1).createCell(col);
+            cell.setCellStyle(ngray_float);
+            cell.setCellType(XSSFCell.CELL_TYPE_FORMULA);
+            cell.setCellFormula(String.format("SUM(B%d:Q%d)",i+2,i+2));
+        }
+
+        // add some space for the analysis
+        int newEnTeteRow = enTeteRow + (Configuration.PARSER_IMAX+1) + 20;
+
+        return newEnTeteRow;
+    }
+
 }
 
 	

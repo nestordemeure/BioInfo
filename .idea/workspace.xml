@@ -7,40 +7,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ae8e7fe7-7105-4792-88ba-edfcb8277fec" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/manager/TimeLimitedCodeBlock.java" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/bioinfo/excel/ExcelWriter_deprecated.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/bioinfo/manager/combinedStopStrategy.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/excel/ExcelWriter_deprecated.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/manager/combinedStopStrategy.java" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/artifacts/bioinfo_jar/bioinfo.jar" afterPath="$PROJECT_DIR$/out/artifacts/bioinfo_jar/bioinfo.jar" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/bioinfo/Bdd/Bdd$content.class" afterPath="$PROJECT_DIR$/out/production/bioinfo/Bdd/Bdd$content.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/bioinfo/Bdd/Bdd.class" afterPath="$PROJECT_DIR$/out/production/bioinfo/Bdd/Bdd.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/bioinfo/Bdd/CircularCounter$CircularArray.class" afterPath="$PROJECT_DIR$/out/production/bioinfo/Bdd/CircularCounter$CircularArray.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/bioinfo/Bdd/CircularCounter.class" afterPath="$PROJECT_DIR$/out/production/bioinfo/Bdd/CircularCounter.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/bioinfo/Parser/Parser.class" afterPath="$PROJECT_DIR$/out/production/bioinfo/Parser/Parser.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/bioinfo/configuration/Configuration.class" afterPath="$PROJECT_DIR$/out/production/bioinfo/configuration/Configuration.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/bioinfo/excel/ExcelWriter.class" afterPath="$PROJECT_DIR$/out/production/bioinfo/excel/ExcelWriter.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/bioinfo/manager/OrganismsFetcherService.class" afterPath="$PROJECT_DIR$/out/production/bioinfo/manager/OrganismsFetcherService.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/bioinfo/manager/RepliconParserManager$1.class" afterPath="$PROJECT_DIR$/out/production/bioinfo/manager/RepliconParserManager$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/bioinfo/manager/RepliconParserManager.class" afterPath="$PROJECT_DIR$/out/production/bioinfo/manager/RepliconParserManager.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/bioinfo/tree/TreeBuilderService$1.class" afterPath="$PROJECT_DIR$/out/production/bioinfo/tree/TreeBuilderService$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/bioinfo/tree/TreeBuilderService$OrganismType.class" afterPath="$PROJECT_DIR$/out/production/bioinfo/tree/TreeBuilderService$OrganismType.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/bioinfo/tree/TreeBuilderService.class" afterPath="$PROJECT_DIR$/out/production/bioinfo/tree/TreeBuilderService.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/bioinfo/tree/TreeManager.class" afterPath="$PROJECT_DIR$/out/production/bioinfo/tree/TreeManager.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/bioinfo/ui/MainFrame$1.class" afterPath="$PROJECT_DIR$/out/production/bioinfo/ui/MainFrame$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/bioinfo/ui/MainFrame$2.class" afterPath="$PROJECT_DIR$/out/production/bioinfo/ui/MainFrame$2.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/bioinfo/ui/MainFrame.class" afterPath="$PROJECT_DIR$/out/production/bioinfo/ui/MainFrame.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/README.md" afterPath="$PROJECT_DIR$/README.md" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Bdd/Bdd.java" afterPath="$PROJECT_DIR$/src/Bdd/Bdd.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Bdd/CircularCounter.java" afterPath="$PROJECT_DIR$/src/Bdd/CircularCounter.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Parser/CDS.java" afterPath="$PROJECT_DIR$/src/Parser/CDS.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Parser/Parser.java" afterPath="$PROJECT_DIR$/src/Parser/Parser.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/configuration/Configuration.java" afterPath="$PROJECT_DIR$/src/configuration/Configuration.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/excel/ExcelWriter.java" afterPath="$PROJECT_DIR$/src/excel/ExcelWriter.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/manager/OrganismsFetcherService.java" afterPath="$PROJECT_DIR$/src/manager/OrganismsFetcherService.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/manager/RepliconParserManager.java" afterPath="$PROJECT_DIR$/src/manager/RepliconParserManager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/ui/MainFrame.java" afterPath="$PROJECT_DIR$/src/ui/MainFrame.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -92,19 +60,6 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="README.md" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/README.md">
-          <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-            <state split_layout="FIRST">
-              <first_editor relative-caret-position="126">
-                <caret line="7" column="41" lean-forward="false" selection-start-line="7" selection-start-column="41" selection-end-line="7" selection-end-column="41" />
-                <folding />
-              </first_editor>
-              <second_editor />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="Configuration.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/configuration/Configuration.java">
           <provider selected="true" editor-type-id="text-editor">
@@ -115,11 +70,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ExcelWriter.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="ExcelWriter.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/excel/ExcelWriter.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="603">
-              <caret line="201" column="50" lean-forward="false" selection-start-line="201" selection-start-column="50" selection-end-line="201" selection-end-column="50" />
+            <state relative-caret-position="258">
+              <caret line="214" column="84" lean-forward="false" selection-start-line="214" selection-start-column="84" selection-end-line="214" selection-end-column="84" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="CircularCounter.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/Bdd/CircularCounter.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="746">
+              <caret line="45" column="63" lean-forward="false" selection-start-line="45" selection-start-column="63" selection-end-line="45" selection-end-column="63" />
               <folding />
             </state>
           </provider>
@@ -201,10 +166,10 @@
         <option value="$PROJECT_DIR$/src/manager/OrganismsFetcherService.java" />
         <option value="$PROJECT_DIR$/src/Parser/CDS.java" />
         <option value="$PROJECT_DIR$/src/Bdd/Bdd.java" />
-        <option value="$PROJECT_DIR$/src/excel/ExcelWriter.java" />
         <option value="$PROJECT_DIR$/src/Bdd/CircularCounter.java" />
         <option value="$PROJECT_DIR$/src/configuration/Configuration.java" />
         <option value="$PROJECT_DIR$/src/ui/MainFrame.java" />
+        <option value="$PROJECT_DIR$/src/excel/ExcelWriter.java" />
         <option value="$PROJECT_DIR$/README.md" />
       </list>
     </option>
@@ -287,24 +252,6 @@
               <item name="bioinfo" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="excel" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="bioinfo" type="b2602c69:ProjectViewProjectNode" />
-              <item name="bioinfo" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="bioinfo" type="b2602c69:ProjectViewProjectNode" />
-              <item name="bioinfo" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="manager" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="bioinfo" type="b2602c69:ProjectViewProjectNode" />
-              <item name="bioinfo" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="Parser" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -470,7 +417,7 @@
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32882884" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32882884" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32882884" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -800,14 +747,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Bdd/CircularCounter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="176">
-          <caret line="45" column="63" lean-forward="false" selection-start-line="45" selection-start-column="63" selection-end-line="45" selection-end-column="63" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/notes.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -820,8 +759,8 @@
         <state relative-caret-position="297">
           <caret line="126" column="16" lean-forward="false" selection-start-line="126" selection-start-column="16" selection-end-line="126" selection-end-column="16" />
           <folding>
-            <element signature="e#5064#5245#0" expanded="true" />
-            <element signature="e#5244#5245#0" expanded="true" />
+            <element signature="e#5064#5245#0" expanded="false" />
+            <element signature="e#5244#5245#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -842,10 +781,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/excel/ExcelWriter.java">
+    <entry file="file://$PROJECT_DIR$/src/Bdd/CircularCounter.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="603">
-          <caret line="201" column="50" lean-forward="false" selection-start-line="201" selection-start-column="50" selection-end-line="201" selection-end-column="50" />
+        <state relative-caret-position="746">
+          <caret line="45" column="63" lean-forward="false" selection-start-line="45" selection-start-column="63" selection-end-line="45" selection-end-column="63" />
           <folding />
         </state>
       </provider>
@@ -867,10 +806,18 @@
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="FIRST">
           <first_editor relative-caret-position="126">
-            <caret line="7" column="41" lean-forward="false" selection-start-line="7" selection-start-column="41" selection-end-line="7" selection-end-column="41" />
+            <caret line="7" column="0" lean-forward="false" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
             <folding />
           </first_editor>
           <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/excel/ExcelWriter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="258">
+          <caret line="214" column="84" lean-forward="false" selection-start-line="214" selection-start-column="84" selection-end-line="214" selection-end-column="84" />
+          <folding />
         </state>
       </provider>
     </entry>
