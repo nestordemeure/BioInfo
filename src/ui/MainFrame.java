@@ -1,7 +1,6 @@
 package ui;
 
 import java.awt.BorderLayout;
-import java.awt.Checkbox;
 import java.awt.Frame;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -14,28 +13,17 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTextArea;
-import javax.swing.JTree;
+import javax.swing.*;
 import javax.swing.text.DefaultCaret;
 import javax.swing.tree.DefaultMutableTreeNode;
-
-import org.w3c.dom.Node;
 
 import configuration.Configuration;
 import excel.ExcelManager;
 import tree.Organism;
 import tree.Tree;
 
-public class MainFrame extends Frame {
-
+public class MainFrame extends Frame
+{
 	private static final long serialVersionUID = -122067383988169509L;
 
 	private JProgressBar progress;
@@ -47,12 +35,20 @@ public class MainFrame extends Frame {
 	private JLabel dinucleotideCount;
 	private JLabel trinucleotideCount;
 	private JLabel pathLabel;
-	private JCheckBox download;
-	private TreeCheckBoxSelectionModel model;
+
+	// TODO added options
+    private JCheckBox useAlphabet;
+    private JFormattedTextField imax;
+    private JFormattedTextField minGeneLength;
+    private JFormattedTextField maxGeneLength;
+    private JCheckBox download;
+
+    private TreeCheckBoxSelectionModel model;
 	private Long startTime;
 	private JPanel infosProcess;
 
-	public MainFrame(Tree t) {
+	public MainFrame(Tree t)
+    {
 		this.setLayout(new BorderLayout());
 
 		// Dialog pour le choix d'un répertoire
@@ -110,14 +106,31 @@ public class MainFrame extends Frame {
 
 		gInfosPanel.add(infospanel, BorderLayout.NORTH);
 		gInfosPanel.add(openButton, BorderLayout.PAGE_END);
-		
-		infosProcess = new JPanel(new BorderLayout());
-		download = new JCheckBox("Telecharger les fichiers");
-		
-		infosProcess.add(download, BorderLayout.NORTH);
-		infosProcess.add(start, BorderLayout.PAGE_END);
 
-		rightpanel = new JPanel(new BorderLayout());
+		// TODO config
+        JPanel configGrid = new JPanel(new GridLayout(3, 2));
+        imax = new JFormattedTextField(Configuration.PARSER_IMAX-1);
+        configGrid.add(new JLabel("Imax: ", JLabel.TRAILING));
+        configGrid.add(imax);
+        minGeneLength = new JFormattedTextField(Configuration.PARSER_MINGENELENGTH);
+        configGrid.add(new JLabel("Taille minimale d'un gene: ", JLabel.TRAILING));
+        configGrid.add(minGeneLength);
+        maxGeneLength = new JFormattedTextField(Configuration.PARSER_MAXGENELENGTH);
+        configGrid.add(new JLabel("Taille maximale d'un gene: ", JLabel.TRAILING));
+        configGrid.add(maxGeneLength);
+        // TODO checkboxes
+        JPanel checkboxesGrid = new JPanel(new BorderLayout());
+        useAlphabet = new JCheckBox("Calculer toutes les paires de trinucleotides");
+        checkboxesGrid.add(useAlphabet, BorderLayout.WEST);
+        download = new JCheckBox("Telecharger les fichiers");
+        checkboxesGrid.add(download, BorderLayout.EAST);
+        // TODO building infoprocess
+        infosProcess = new JPanel(new BorderLayout());
+        infosProcess.add(configGrid, BorderLayout.PAGE_START);
+        infosProcess.add(checkboxesGrid, BorderLayout.CENTER);
+        infosProcess.add(start, BorderLayout.PAGE_END);
+
+        rightpanel = new JPanel(new BorderLayout());
 		rightpanel.add(gInfosPanel, BorderLayout.NORTH);
 		rightpanel.add(scroll, BorderLayout.CENTER);
 		rightpanel.add(infosProcess, BorderLayout.PAGE_END);
@@ -137,16 +150,39 @@ public class MainFrame extends Frame {
 		setSize(800, 600);
 		setVisible(true);
 
-		start.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Configuration.STORE_DATA = download.isSelected();
-				infosProcess.setVisible(false);
-				rightpanel.remove(infosProcess);
-				rightpanel.add(progress, BorderLayout.PAGE_END);
-				progress.setVisible(true);
-				startTime = System.currentTimeMillis();
+		start.addActionListener(new ActionListener()
+        {
+			public void actionPerformed(ActionEvent e)
+			{
+			    // TODO store configuration
+				Configuration.PARSER_USEFULLALPHABET = useAlphabet.isSelected();
+				Configuration.PARSER_IMAX = 1 + ((Number)imax.getValue()).intValue(); // TODO test value
+                Configuration.PARSER_MINGENELENGTH = ((Number)minGeneLength.getValue()).intValue();
+                Configuration.PARSER_MAXGENELENGTH = ((Number)maxGeneLength.getValue()).intValue();
+                Configuration.STORE_DATA = download.isSelected();
+                // validate the configuration
+                if (Configuration.PARSER_IMAX%3 != 0)
+                {
+                    UIManager.log("[INVALID CONFIGURATION] Please make sure that imax = 2 modulo 3.");
+                }
+                else if (Configuration.PARSER_MINGENELENGTH < 0)
+                {
+                    UIManager.log("[INVALID CONFIGURATION] Please make sure that min gene length >= 0 ");
+                }
+                else if (Configuration.PARSER_MAXGENELENGTH < Configuration.PARSER_MINGENELENGTH)
+                {
+                    UIManager.log("[INVALID CONFIGURATION] Please make sure that max gene length > min gene length ");
+                }
+                else
+                {
+                    infosProcess.setVisible(false);
+                    rightpanel.remove(infosProcess);
+                    rightpanel.add(progress, BorderLayout.PAGE_END);
+                    progress.setVisible(true);
+                    startTime = System.currentTimeMillis();
 
-				UIManager.launchProcess(MainFrame.this.model.getSelectedNodes());
+                    UIManager.launchProcess(MainFrame.this.model.getSelectedNodes());
+                }
 			}
 		});
 

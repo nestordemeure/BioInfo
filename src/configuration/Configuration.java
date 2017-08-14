@@ -2,8 +2,8 @@ package configuration;
 
 import java.io.File;
 
-public class Configuration {
-	
+public class Configuration
+{
 	// --- General configuration ---
 	public static String FOLDER_SEPARATOR = File.separator; // Separateur pour les dossiers (/ sous linux et \ sous windows)
 	public static String BASE_FOLDER = "/tmp/results/"; // Dossier de base pour le stockage de nos résultats
@@ -11,9 +11,9 @@ public class Configuration {
 	public static boolean STORE_DATA = false; // Permet de stocker les fichiers
 	
 	// --- Net configuration ---
+	public static int NET_MINUTES_BEFORE_TIMEOUT = 10; // Nombre de minutes avant qu'un essais ne timeout
 	public static int NET_MAX_DOWNLOAD_TRIES = 10; // Nombre d'essais pour télécharger un fichier.
 	public static int NET_TIME_BETWEEN_TRIES = 10000; // Temps entre deux essais (en ms).
-	public static int NET_MAX_DOWNLOAD_TIME = 30; // TODO temps maximal autorisé pour télécharger un fichier (en minutes)
 
 	// --- IdFetcher Configuration ---
 	public static int IDS_PER_PAGE = 100; // Id par page
@@ -32,4 +32,10 @@ public class Configuration {
 	public static String TREE_EUKARYOTES_URL = "https://www.ncbi.nlm.nih.gov/genomes/Genome2BE/genome2srv.cgi?action=GetGenomes4Grid&king=Eukaryota&mode=2&filterText=%7C%7C--+All+Eukaryota+--%7C--+All+Eukaryota+--%7C%7C50%2C40%2C30%2C20%7Cnopartial%7Cnoanomalous&pageSize=100&page=";
 	public static String TREE_PROKARYOTES_URL = "https://www.ncbi.nlm.nih.gov/genomes/Genome2BE/genome2srv.cgi?action=GetGenomes4Grid&king=Bacteria&mode=2&filterText=%7C%7C--+All+Prokaryotes+--%7C--+All+Prokaryotes+--%7C%7C50%2C40%7Cnopartial%7Cnoanomalous&pageSize=100&page=";
 	public static String TREE_VIRUSES_URL = "https://www.ncbi.nlm.nih.gov/genomes/Genome2BE/genome2srv.cgi?action=GetGenomes4Grid&king=Viruses&mode=2&pageSize=100&page=";
+
+    // --- Parser ---
+    public static int PARSER_IMAX = 99;
+    public static int PARSER_MINGENELENGTH = 200;
+    public static int PARSER_MAXGENELENGTH = Integer.MAX_VALUE;
+    public static boolean PARSER_USEFULLALPHABET = false;
 }

@@ -11,6 +11,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
+import configuration.Configuration;
 import exceptions.CDSInvalideException;
 import exceptions.CharInvalideException;
 import manager.AccessManager;
@@ -277,7 +278,7 @@ public class Bdd
 			str += "\n";
 			
 			// body
-			for (int i = 0; i < CircularCounter.imax; i++)
+			for (int i = 0; i < Configuration.PARSER_IMAX; i++)
 			{
 				str += i;
 				for (int w1 = 0; w1 < 4; w1++)
@@ -312,7 +313,7 @@ public class Bdd
 			nb_CDS_non_traites = 0;
 			nb_trinucleotides = 0;
 			
-			oiw1w2 = new double[CircularCounter.imax][4][4];
+			oiw1w2 = new double[Configuration.PARSER_IMAX][4][4];
 			
 			nb_items = 1;
 			organism = organismArg;
@@ -328,7 +329,7 @@ public class Bdd
 		//un contenus a un autre
 		public void fusionContent(content cont)
 		{			
-			for(int i = 0 ; i<CircularCounter.imax ; i++)
+			for(int i = 0 ; i<Configuration.PARSER_IMAX ; i++)
 			{
 				for(int w1 = 0 ; w1<4 ; w1++)
 				{

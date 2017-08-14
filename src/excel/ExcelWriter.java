@@ -119,7 +119,7 @@ public class ExcelWriter
 		//-------------------------------------------------------------------------------------
 		// Tableau
 
-		int rowNumber = Math.max(18, CircularCounter.imax+2);
+		int rowNumber = Math.max(18, Configuration.PARSER_IMAX+2);
 		int enTeteRow = 0;
 		int col = 0;
 		
@@ -127,7 +127,7 @@ public class ExcelWriter
 		Cell firstICell = worksheet.createRow(enTeteRow).createCell(col);
 		firstICell.setCellValue("i");
 		firstICell.setCellStyle(lblue);
-		for (int i = 0; i < CircularCounter.imax; i++)
+		for (int i = 0; i < Configuration.PARSER_IMAX; i++)
 		{
 			Cell cell = worksheet.createRow(i+1).createCell(col);
 			cell.setCellValue(i);
@@ -137,7 +137,7 @@ public class ExcelWriter
 				cell.setCellStyle(lgray);
 			}
 		}
-		worksheet.createRow(CircularCounter.imax+1).createCell(col).setCellValue("Total");
+		worksheet.createRow(Configuration.PARSER_IMAX+1).createCell(col).setCellValue("Total");
 		worksheet.autoSizeColumn(col);
 		
 		// A(X1, X2)
@@ -153,7 +153,7 @@ public class ExcelWriter
 				headerCell.setCellStyle(lblue);
 
 				double total = 0;
-				for (int i = 0; i < CircularCounter.imax; i++)
+				for (int i = 0; i < Configuration.PARSER_IMAX; i++)
 				{
 					Cell cell = worksheet.getRow(i+1).createCell(col);
 					double Aiw1w2 = contenus.A(i, w1, w2);
@@ -171,7 +171,7 @@ public class ExcelWriter
 					total += Aiw1w2;
 				}
 
-				Cell footerCell = worksheet.getRow(CircularCounter.imax+1).createCell(col);
+				Cell footerCell = worksheet.getRow(Configuration.PARSER_IMAX+1).createCell(col);
 				footerCell.setCellValue(total);
 				footerCell.setCellStyle(ngray_float);
 				worksheet.autoSizeColumn(col);
@@ -183,7 +183,7 @@ public class ExcelWriter
 		Cell sumCell = worksheet.getRow(enTeteRow).createCell(col);
 		sumCell.setCellValue("Somme");
 		sumCell.setCellStyle(lblue);
-		for (int i = 0; i < CircularCounter.imax; i++)
+		for (int i = 0; i < Configuration.PARSER_IMAX; i++)
 		{
 			Cell cell = worksheet.getRow(i+1).createCell(col);
 			cell.setCellStyle(ngray_float);
@@ -199,7 +199,7 @@ public class ExcelWriter
 		int descriptionCol = col+2;
 
 		// create the missing rows if needed
-		for (int rowId = CircularCounter.imax+2; rowId <= rowNumber; rowId++)
+		for (int rowId = Configuration.PARSER_IMAX+2; rowId <= rowNumber; rowId++)
 		{
 			worksheet.createRow(rowId);
 		}

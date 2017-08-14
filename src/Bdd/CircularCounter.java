@@ -2,6 +2,7 @@ package Bdd;
 
 import java.util.Arrays;
 
+import configuration.Configuration;
 import exceptions.CDSInvalideException;
 
 public class CircularCounter 
@@ -30,10 +31,7 @@ public class CircularCounter
 		codeOfTrinucleotide[2][2][2] = 3;
 		codeOfTrinucleotide[3][3][3] = 3;
 	}
-	
-	public static int imax = 99;
-	public static int minGeneLength = 200;
-	
+
 	private int ciw1w2[][][];
 	public int geneLength;
 	private CircularArray codeArray;
@@ -43,14 +41,14 @@ public class CircularCounter
 	
 	public CircularCounter(int geneLengthArg) throws CDSInvalideException
 	{
-		if (geneLengthArg < minGeneLength)
+		if (geneLengthArg < Configuration.PARSER_MINGENELENGTH || geneLengthArg > Configuration.PARSER_MAXGENELENGTH)
 		{
-			throw new CDSInvalideException("gene too short");
+			throw new CDSInvalideException("invalid gene length");
 		}
 		else
 		{
-			geneLength = geneLengthArg - (imax + 3/*space to read forward*/);
-			ciw1w2 = new int[imax][4][4];
+			geneLength = geneLengthArg - (Configuration.PARSER_IMAX + 3/*space to read forward*/);
+			ciw1w2 = new int[Configuration.PARSER_IMAX][4][4];
 			codeArray = new CircularArray();
 		}
 	}
@@ -58,13 +56,13 @@ public class CircularCounter
 	// add ciw1w2 to a oiw1w2
 	public void addCiw1w2(double[][][] oiw1w2)
 	{
-		for(int i = 0 ; i<imax ; i++)
+		for(int i = 0 ; i<Configuration.PARSER_IMAX ; i++)
 		{
 			for(int w1 = 0 ; w1<4 ; w1++)
 			{
 				for(int w2 = 0 ; w2<4 ; w2++)
 				{
-					oiw1w2[i][w1][w2]+= 3.0*((double)ciw1w2[i][w1][w2])/((double)geneLength);
+					oiw1w2[i][w1][w2] += 3.0*((double)ciw1w2[i][w1][w2])/((double)geneLength);
 				}
 			}
 		}
@@ -104,7 +102,7 @@ public class CircularCounter
 		// constructor
 		public CircularArray()
 		{
-			content = new int[imax/3]; // TODO fill with -1
+			content = new int[Configuration.PARSER_IMAX/3];
 			Arrays.fill(content, -1);
 			memorisationNumber = 0;
 			memory = -1;
@@ -145,7 +143,7 @@ public class CircularCounter
 		public void incrCiw1w2s(int phase, int code2)
 		{
 			// before offSet
-			for(int w=0; w<offSet; w++)
+			for(int w = 0; w < offSet; w++)
 			{
 				int code1 = content[w];
 				if (code1 != -1)
@@ -155,7 +153,7 @@ public class CircularCounter
 				}
 			}
 			// after offSet
-			for(int w=offSet; w<content.length; w++)
+			for(int w = offSet; w < content.length; w++)
 			{
 				int code1 = content[w];
 				if (code1 != -1)

@@ -37,12 +37,12 @@ public class OrganismsFetcherService extends AbstractExecutionThreadService
 	public ArrayList<String> readProcessed(Organism o)
 	{
 		String file = o.getPath()+Configuration.FOLDER_SEPARATOR+o.getName()+".rpcs";
-		
-		ArrayList<String> res = null;
 		AccessManager.accessFile(file);
-		ObjectInputStream inputstream = null;
+
 		FileInputStream chan = null;
-		try
+        ObjectInputStream inputstream = null;
+        ArrayList<String> res;
+        try
 		{
 			chan = new FileInputStream(file);
 			inputstream = new ObjectInputStream(chan);
@@ -72,6 +72,7 @@ public class OrganismsFetcherService extends AbstractExecutionThreadService
 			} 
 			catch (Exception e1) {}
 		}
+
 		AccessManager.doneWithFile(file);
 		return res;
 	}
@@ -114,6 +115,7 @@ public class OrganismsFetcherService extends AbstractExecutionThreadService
 			Bdd maindb;
 			ArrayList<String> processedReplicons = this.readProcessed(o);
 			String dbPath = o.getPath()+Configuration.FOLDER_SEPARATOR+o.getName();
+
 			//UIManager.log("[Organism fetcher " +this.id+"] Getting bdd."); // TODO
 			if(processedReplicons == null) 
 			{
@@ -139,6 +141,8 @@ public class OrganismsFetcherService extends AbstractExecutionThreadService
 				{
 					RepliconParserManager manager = new RepliconParserManager(o, replicon, maindb);
 					manager.run();
+					// TODO a runnable cannot throw exception
+                    // this one was modified by the exception is maybe still not launched...
 				}
 				catch(Exception e)
 				{

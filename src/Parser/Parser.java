@@ -76,11 +76,11 @@ public class Parser
 				trouverPrefix("LOCUS");
 				if(ligne_actuelle.contains("DNA"))
 				{
-					cleft="DNA_"+cleftComplement;
+					cleft = "DNA_" + cleftComplement;
 				}
 				else if(ligne_actuelle.contains("RNA"))
 				{
-					cleft="RNA_"+cleftComplement;
+					cleft = "RNA_" + cleftComplement;
 				}
 				else
 				{
@@ -95,7 +95,8 @@ public class Parser
 			//on va parser l'organisme
 			trouverPrefix("  ORGANISM");
 			String taxonomy = ligne_actuelle.substring(12) + "; ";
-			while (taxonomy.charAt(taxonomy.length()-1) != '.') {
+			while (taxonomy.charAt(taxonomy.length()-1) != '.')
+			{
 				importAndCheckNull();
 				taxonomy += ligne_actuelle.substring(12);
 			}
@@ -115,15 +116,15 @@ public class Parser
 			{
 				importAndCheckNull(); //succeptible de renvoyer une exception qu'on va catcher
 				
-				if (ligne_actuelle.startsWith("//")) //on est arrivé au bout du fichier sans succès
+				if (ligne_actuelle.startsWith("//")) // on est arrivé au bout du fichier sans succès
 				{
 					throw new NoOriginException("no origin");
 				}
-				else if (ligne_actuelle.startsWith("ORIGIN")) //on a finit
+				else if (ligne_actuelle.startsWith("ORIGIN")) // on a finit
 				{
-					recherche_en_cour=false;
+					recherche_en_cour = false;
 				}
-				else if (ligne_actuelle.startsWith("CDS",5)) //on a un CDS (5 espaces après le début de la ligne)
+				else if (ligne_actuelle.startsWith("CDS",5)) // on a un CDS (5 espaces après le début de la ligne)
 				{
 					parser_descripteur_CDS();
 				}
@@ -135,16 +136,16 @@ public class Parser
 		}
 	}
 		
-	//prend une ligne contenant un CDS en entrée et l'ajoute à la liste de CDS en le parsant
+	// prend une ligne contenant un CDS en entrée et l'ajoute à la liste de CDS en le parsant
 	void parser_descripteur_CDS() throws ScannerNullException
 	{		
 		CDS cds = new CDS(base_de_donnees,cleft,organism,streamer);
 		try 
 		{
-			table_des_reservations.open(); //on indique qu'on va passer de nouvelles réservations
-			automate_sequence(21, true, cds); //la description du CDS commence 21char après le début de la ligne
+			table_des_reservations.open(); // on indique qu'on va passer de nouvelles réservations
+			automate_sequence(21, true, cds); // la description du CDS commence 21char après le début de la ligne
 			CDS_list.add(cds);
-			table_des_reservations.close(); //on officialise les réservations passées
+			table_des_reservations.close(); // on officialise les réservations passées
 		} 
 		catch (CDSInvalideException e) 
 		{
