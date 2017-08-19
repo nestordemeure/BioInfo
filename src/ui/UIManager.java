@@ -37,11 +37,15 @@ public class UIManager {
 		progressLock.unlock();
 	}
 	
-	public static void log(String message){
+	public static void log(String message)
+	{
 		UIManager.check();
-		if(Configuration.USE_GUI){
+		if(Configuration.USE_GUI)
+		{
 			UIManager.graphics.log(message);
-		}else {
+		}
+		else
+        {
 			UIManager.console.log(message);
 		}
 	}

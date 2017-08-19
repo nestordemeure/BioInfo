@@ -163,7 +163,7 @@ public class Bdd
 		//s'assure que le tampon est vide pour avancer
 		public void open_tampon(int geneLength, String cleft, Organism organism, OutputStream streamer) throws CDSInvalideException
 		{
-			tampon_circularCounter = new CircularCounter(geneLength); // TODO
+			tampon_circularCounter = new CircularCounter(geneLength);
 			tampon_cleft = cleft;
 			tampon_organism = organism;
 			tampon_streamer = streamer;
@@ -252,7 +252,6 @@ public class Bdd
 				return -1;
 		}
 	}
-	
 
 	//sort un string qui représente le contenus de la base
 	public String toString ()
@@ -285,7 +284,8 @@ public class Bdd
 				{
 					for (int w2 = 0; w2 < 4; w2++)
 					{
-						str += "	" + String.format("%.3f",contenus_cleft.oiw1w2[i][w1][w2]);
+					    // TODO we display only mod0
+						str += "	" + String.format("%.3f",contenus_cleft.oiw1w2[0][i][w1][w2]);
 					}
 				}
 				str += "\n";
@@ -302,7 +302,7 @@ public class Bdd
 		public long nb_CDS_non_traites;
 		public long nb_trinucleotides;
 		
-		public double oiw1w2[][][]; // sum of all oiw1w2
+		public double oiw1w2[][][][]; // sum of all oiw1w2
 
 		public long nb_items;
 		public Organism organism;
@@ -313,7 +313,7 @@ public class Bdd
 			nb_CDS_non_traites = 0;
 			nb_trinucleotides = 0;
 			
-			oiw1w2 = new double[Configuration.PARSER_IMAX][4][4];
+			oiw1w2 = new double[4][Configuration.PARSER_IMAX][4][4];
 			
 			nb_items = 1;
 			organism = organismArg;
@@ -321,24 +321,28 @@ public class Bdd
 		
 		//----------
 		
-		public double A(int i, int w1, int w2)
+		public double A(int modulo, int i, int w1, int w2)
 		{
-			return oiw1w2[i][w1][w2]/((double)nb_CDS);
+			return oiw1w2[modulo][i][w1][w2]/((double)nb_CDS);
 		}
 				
 		//un contenus a un autre
 		public void fusionContent(content cont)
-		{			
-			for(int i = 0 ; i<Configuration.PARSER_IMAX ; i++)
-			{
-				for(int w1 = 0 ; w1<4 ; w1++)
-				{
-					for(int w2 = 0 ; w2<4 ; w2++)
-					{
-						oiw1w2[i][w1][w2] += cont.oiw1w2[i][w1][w2];
-					}
-				}
-			}
+		{
+			for(int modulo = 0; modulo < 4; modulo++)
+            {
+                for(int i = 0 ; i<Configuration.PARSER_IMAX ; i++)
+                {
+                    for(int w1 = 0 ; w1<4 ; w1++)
+                    {
+                        for(int w2 = 0 ; w2<4 ; w2++)
+                        {
+                            oiw1w2[modulo][i][w1][w2] += cont.oiw1w2[modulo][i][w1][w2];
+                        }
+                    }
+                }
+            }
+
 			nb_CDS += cont.nb_CDS;
 			nb_CDS_non_traites += cont.nb_CDS_non_traites;
 			nb_trinucleotides += cont.nb_trinucleotides;
@@ -353,7 +357,7 @@ public class Bdd
 		   nb_CDS = inputstream.readLong();
 		   nb_CDS_non_traites = inputstream.readLong();
 		   nb_trinucleotides = inputstream.readLong();
-		   oiw1w2 = (double[][][]) inputstream.readObject();
+		   oiw1w2 = (double[][][][]) inputstream.readObject();
 		   organism = (Organism) inputstream.readObject();
 		   nb_items = inputstream.readLong();
 	   }

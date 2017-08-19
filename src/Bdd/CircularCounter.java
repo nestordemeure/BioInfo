@@ -32,7 +32,7 @@ public class CircularCounter
 		codeOfTrinucleotide[3][3][3] = 3;
 	}
 
-	private int ciw1w2[][][];
+	private int ciw1w2[][][][];
 	public int geneLength;
 	private CircularArray codeArray;
 
@@ -47,44 +47,47 @@ public class CircularCounter
 		}
 		else
 		{
-			geneLength = geneLengthArg - (Configuration.PARSER_IMAX + 3/*space to read forward*/);
-			ciw1w2 = new int[Configuration.PARSER_IMAX][4][4];
+			geneLength = geneLengthArg - (Configuration.PARSER_IMAX + 3/*space to read forward*/) - 3 /*to equalize between mod0,1and2*/;
+			ciw1w2 = new int[3][Configuration.PARSER_IMAX][4][4];
 			codeArray = new CircularArray();
 		}
 	}
 	
 	// add ciw1w2 to a oiw1w2
-	public void addCiw1w2(double[][][] oiw1w2)
+	public void addCiw1w2(double[][][][] oiw1w2)
 	{
-		for(int i = 0 ; i<Configuration.PARSER_IMAX ; i++)
-		{
-			for(int w1 = 0 ; w1<4 ; w1++)
-			{
-				for(int w2 = 0 ; w2<4 ; w2++)
-				{
-					oiw1w2[i][w1][w2] += 3.0*((double)ciw1w2[i][w1][w2])/((double)geneLength);
-				}
-			}
-		}
-	}
+        for(int i = 0 ; i<Configuration.PARSER_IMAX ; i++)
+        {
+            for(int w1 = 0 ; w1<4 ; w1++)
+            {
+                for(int w2 = 0 ; w2<4 ; w2++)
+                {
+                    int mod1 = 0;
+                    for(int modulo = 0; modulo < 3; modulo++)
+                    {
+                        mod1 += ciw1w2[modulo][i][w1][w2];
+                        oiw1w2[modulo][i][w1][w2] += 3.0*((double)ciw1w2[modulo][i][w1][w2])/((double)geneLength);
+                    }
+                    oiw1w2[3][i][w1][w2] += ((double)mod1)/((double)geneLength);
+                }
+            }
+        }
+    }
 	
 	public void AddTrinucleotide(int phase, int nucleotide1, int nucleotide2, int nucleotide3)
 	{
 		int code2 = codeOfTrinucleotide[nucleotide1][nucleotide2][nucleotide3];
 		
 		// update the counter
-		if (phase == 0)
-		{				
-			if (codeArray.memorisationNumber*3 < geneLength)
-			{
-				codeArray.incrWs(code2);
-			}
-			else
-			{
-				codeArray.incrWs();
-			}
-		}
-		
+        if (codeArray.memorisationNumber < geneLength)
+        {
+            codeArray.incrWs(code2);
+        }
+        else
+        {
+            codeArray.incrWs();
+        }
+
 		// incrementing ciw1w2
 		codeArray.incrCiw1w2s(phase, code2);
 	}
@@ -96,17 +99,21 @@ public class CircularCounter
 	{
 		public int[] content;
 		public int memorisationNumber;
-		public int memory;
+        public int memory1;
+        public int memory2;
+        public int memory3;
 		public int offSet;
         
 		// constructor
 		public CircularArray()
 		{
-			content = new int[Configuration.PARSER_IMAX/3];
+			content = new int[Configuration.PARSER_IMAX];
 			Arrays.fill(content, -1);
 			memorisationNumber = 0;
-			memory = -1;
-			offSet = 0;
+			memory1 = -1;
+            memory2 = -1;
+            memory3 = -1;
+            offSet = 0;
 		}
 		
 		// incr all w by decrementing the offset
@@ -126,8 +133,10 @@ public class CircularCounter
 		public void incrWs(int newMemory)
 		{
 			incrOffSet();
-			content[offSet] = memory;
-			memory = newMemory;
+			content[offSet] = memory3;
+			memory3 = memory2;
+			memory2 = memory1;
+			memory1 = newMemory;
 			memorisationNumber++;
 		}
 		
@@ -135,8 +144,10 @@ public class CircularCounter
 		public void incrWs()
 		{
 			incrOffSet();
-			content[offSet] = memory;
-			memory = -1;
+			content[offSet] = memory3;
+            memory3 = memory2;
+            memory2 = memory1;
+            memory1 = -1;
 		}
 		
 		// iterate on all non -1 elements to incr the ciw1w2
@@ -148,8 +159,9 @@ public class CircularCounter
 				int code1 = content[w];
 				if (code1 != -1)
 				{
-					int i = 3*(w + content.length - offSet) + phase;
-					ciw1w2[i][code1][code2]++;
+					int i = w + content.length - offSet;
+                    int modulo = (phase - (i % 3 ) + 3) % 3;
+					ciw1w2[modulo][i][code1][code2]++;
 				}
 			}
 			// after offSet
@@ -158,8 +170,9 @@ public class CircularCounter
 				int code1 = content[w];
 				if (code1 != -1)
 				{
-					int i = 3*(w - offSet) + phase;
-					ciw1w2[i][code1][code2]++;
+					int i = w - offSet;
+                    int modulo = (phase - (i % 3 ) + 3) % 3;
+					ciw1w2[modulo][i][code1][code2]++;
 				}
 			}
 		}

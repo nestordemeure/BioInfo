@@ -16,6 +16,8 @@ tmp/
 local.properties
 .settings/
 .loadpath
+out/*
+.idea/*
 
 # Eclipse Core
 .project

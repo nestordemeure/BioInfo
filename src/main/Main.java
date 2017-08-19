@@ -75,7 +75,7 @@ public class Main
 		Tree tree = TreeManager.construct();
 		UIManager.startMainProcess(tree);
 	}
-	
+
 	public static void parseArgs(String[] args)
 	{
 		Option help = new Option("h","help",false, "print this message");

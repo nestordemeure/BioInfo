@@ -121,7 +121,10 @@ public class ExcelWriter
 
         // write all the matrixes
         int enTeteRow = 0;
-        /*enTeteRow = */writeMatrix(enTeteRow, contenus, worksheet, lblue, lgray, float_type, ngray_float);
+        for (int modulo = 0; modulo <= 3; modulo++)
+        {
+            enTeteRow = writeMatrix(modulo, enTeteRow, contenus, worksheet, lblue, lgray, float_type, ngray_float);
+        }
 
         // compute the number of columns
         int colNumber = 2; // i col and sum col
@@ -259,17 +262,30 @@ public class ExcelWriter
 		baseSum.get_contenu(new_cleft, empty_org).fusionContent(contenus);
 	}
 
-    private static int writeMatrix(int enTeteRow, content contenus, Sheet worksheet, XSSFCellStyle lblue, XSSFCellStyle lgray, XSSFCellStyle float_type, XSSFCellStyle ngray_float)
+    private static int writeMatrix(int modulo, int enTeteRow, content contenus, Sheet worksheet, XSSFCellStyle lblue, XSSFCellStyle lgray, XSSFCellStyle float_type, XSSFCellStyle ngray_float)
     {
         int col = 0;
+
+        // First ligne modulo
+        String modName;
+        if (modulo == 3)
+        {
+            modName = "Modulo 1";
+        }
+        else
+        {
+            modName = String.format("%d Modulo 3", modulo);
+        }
+        worksheet.createRow(enTeteRow).createCell(col).setCellValue(modName);
+        enTeteRow++;
 
         // First col (i)
         Cell firstICell = worksheet.createRow(enTeteRow).createCell(col);
         firstICell.setCellValue("i");
         firstICell.setCellStyle(lblue);
-        for (int i = enTeteRow; i < enTeteRow+Configuration.PARSER_IMAX; i++)
+        for (int i = 0; i < Configuration.PARSER_IMAX; i++)
         {
-            Cell cell = worksheet.createRow(i+1).createCell(col);
+            Cell cell = worksheet.createRow(i+enTeteRow+1).createCell(col);
             cell.setCellValue(i);
 
             if (i%2 == 0)
@@ -292,10 +308,10 @@ public class ExcelWriter
                 headerCell.setCellStyle(lblue);
 
                 double total = 0;
-                for (int i = enTeteRow; i < enTeteRow + Configuration.PARSER_IMAX; i++)
+                for (int i = 0; i < Configuration.PARSER_IMAX; i++)
                 {
-                    Cell cell = worksheet.getRow(i+1).createCell(col);
-                    double Aiw1w2 = contenus.A(i, w1, w2);
+                    Cell cell = worksheet.getRow(i+enTeteRow+1).createCell(col);
+                    double Aiw1w2 = contenus.A(modulo, i, w1, w2);
                     cell.setCellValue(Aiw1w2);
 
                     if (i%2 == 0)
@@ -321,18 +337,23 @@ public class ExcelWriter
         Cell sumCell = worksheet.getRow(enTeteRow).createCell(col);
         sumCell.setCellValue("Somme");
         sumCell.setCellStyle(lblue);
-        for (int i = enTeteRow; i < enTeteRow + Configuration.PARSER_IMAX; i++)
+        for (int r = enTeteRow; r < enTeteRow + Configuration.PARSER_IMAX; r++)
         {
-            Cell cell = worksheet.getRow(i+1).createCell(col);
+            Cell cell = worksheet.getRow(r+1).createCell(col);
             cell.setCellStyle(ngray_float);
             cell.setCellType(XSSFCell.CELL_TYPE_FORMULA);
-            cell.setCellFormula(String.format("SUM(B%d:Q%d)",i+2,i+2));
+            cell.setCellFormula(String.format("SUM(B%d:Q%d)",r+2,r+2));
         }
 
         // add some space for the analysis
-        int newEnTeteRow = enTeteRow + (Configuration.PARSER_IMAX+1) + 20;
+        enTeteRow += Configuration.PARSER_IMAX + 2;
+        for (int row = enTeteRow; row <= enTeteRow + 20; row++)
+        {
+            worksheet.createRow(row);
+        }
+        enTeteRow += 20;
 
-        return newEnTeteRow;
+        return enTeteRow;
     }
 
 }
