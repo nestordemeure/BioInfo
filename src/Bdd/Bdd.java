@@ -257,6 +257,7 @@ public class Bdd
 	public String toString ()
 	{
 		content contenus_cleft;
+		// TODO we display only codes and not all trinucleotides
 		String codes[] = {"X", "X1", "X2", "Xp"};
 		String str = "";
 	
@@ -313,7 +314,7 @@ public class Bdd
 			nb_CDS_non_traites = 0;
 			nb_trinucleotides = 0;
 			
-			oiw1w2 = new double[4][Configuration.PARSER_IMAX][4][4];
+			oiw1w2 = new double[4][Configuration.PARSER_IMAX][Configuration.PARSER_CODENUMBER][Configuration.PARSER_CODENUMBER];
 			
 			nb_items = 1;
 			organism = organismArg;
@@ -329,13 +330,13 @@ public class Bdd
 		//un contenus a un autre
 		public void fusionContent(content cont)
 		{
-			for(int modulo = 0; modulo < 4; modulo++)
+			for(int modulo = 0; modulo<4; modulo++)
             {
                 for(int i = 0 ; i<Configuration.PARSER_IMAX ; i++)
                 {
-                    for(int w1 = 0 ; w1<4 ; w1++)
+                    for(int w1 = 0 ; w1<Configuration.PARSER_CODENUMBER ; w1++)
                     {
-                        for(int w2 = 0 ; w2<4 ; w2++)
+                        for(int w2 = 0 ; w2<Configuration.PARSER_CODENUMBER ; w2++)
                         {
                             oiw1w2[modulo][i][w1][w2] += cont.oiw1w2[modulo][i][w1][w2];
                         }

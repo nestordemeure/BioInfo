@@ -17,6 +17,7 @@ import javax.swing.*;
 import javax.swing.text.DefaultCaret;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import Bdd.CircularCounter;
 import configuration.Configuration;
 import excel.ExcelManager;
 import tree.Organism;
@@ -155,11 +156,21 @@ public class MainFrame extends Frame
 			public void actionPerformed(ActionEvent e)
 			{
 			    // TODO store configuration
-				Configuration.PARSER_USEFULLALPHABET = useAlphabet.isSelected();
-				Configuration.PARSER_IMAX = 1 + ((Number)imax.getValue()).intValue(); // TODO test value
+				Configuration.PARSER_IMAX = 1 + ((Number)imax.getValue()).intValue();
                 Configuration.PARSER_MINGENELENGTH = ((Number)minGeneLength.getValue()).intValue();
                 Configuration.PARSER_MAXGENELENGTH = ((Number)maxGeneLength.getValue()).intValue();
                 Configuration.STORE_DATA = download.isSelected();
+                // deals with the use of the full alphabet or a partial alphabet
+                Configuration.PARSER_USEFULLALPHABET = useAlphabet.isSelected();
+                if (Configuration.PARSER_USEFULLALPHABET)
+                {
+                    Configuration.PARSER_CODENUMBER = 64;
+                }
+                else
+                {
+                    Configuration.PARSER_CODENUMBER = 4;
+                }
+
                 // validate the configuration
                 if (Configuration.PARSER_IMAX%3 != 0)
                 {

@@ -7,14 +7,22 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ae8e7fe7-7105-4792-88ba-edfcb8277fec" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/artifacts/bioinfo_jar/bioinfo.jar" afterPath="$PROJECT_DIR$/out/artifacts/bioinfo_jar/bioinfo.jar" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/bioinfo/Bdd/Bdd$content.class" afterPath="$PROJECT_DIR$/out/production/bioinfo/Bdd/Bdd$content.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/bioinfo/Bdd/Bdd.class" afterPath="$PROJECT_DIR$/out/production/bioinfo/Bdd/Bdd.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/bioinfo/Bdd/CircularCounter$CircularArray.class" afterPath="$PROJECT_DIR$/out/production/bioinfo/Bdd/CircularCounter$CircularArray.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/bioinfo/Bdd/CircularCounter.class" afterPath="$PROJECT_DIR$/out/production/bioinfo/Bdd/CircularCounter.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/bioinfo/configuration/Configuration.class" afterPath="$PROJECT_DIR$/out/production/bioinfo/configuration/Configuration.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/bioinfo/excel/ExcelWriter.class" afterPath="$PROJECT_DIR$/out/production/bioinfo/excel/ExcelWriter.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/bioinfo/main/Main.class" afterPath="$PROJECT_DIR$/out/production/bioinfo/main/Main.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/bioinfo/ui/MainFrame$1.class" afterPath="$PROJECT_DIR$/out/production/bioinfo/ui/MainFrame$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/bioinfo/ui/MainFrame$2.class" afterPath="$PROJECT_DIR$/out/production/bioinfo/ui/MainFrame$2.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/bioinfo/ui/MainFrame.class" afterPath="$PROJECT_DIR$/out/production/bioinfo/ui/MainFrame.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Bdd/Bdd.java" afterPath="$PROJECT_DIR$/src/Bdd/Bdd.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Bdd/CircularCounter.java" afterPath="$PROJECT_DIR$/src/Bdd/CircularCounter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/configuration/Configuration.java" afterPath="$PROJECT_DIR$/src/configuration/Configuration.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/excel/ExcelWriter.java" afterPath="$PROJECT_DIR$/src/excel/ExcelWriter.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/Main.java" afterPath="$PROJECT_DIR$/src/main/Main.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/ui/UIManager.java" afterPath="$PROJECT_DIR$/src/ui/UIManager.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/ui/MainFrame.java" afterPath="$PROJECT_DIR$/src/ui/MainFrame.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -66,11 +74,21 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="Configuration.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/configuration/Configuration.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="453">
+              <caret line="39" column="51" lean-forward="true" selection-start-line="39" selection-start-column="51" selection-end-line="39" selection-end-column="51" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="CircularCounter.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Bdd/CircularCounter.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="638">
-              <caret line="69" column="21" lean-forward="false" selection-start-line="69" selection-start-column="21" selection-end-line="69" selection-end-column="21" />
+            <state relative-caret-position="3510">
+              <caret line="198" column="26" lean-forward="false" selection-start-line="198" selection-start-column="20" selection-end-line="198" selection-end-column="26" />
               <folding />
             </state>
           </provider>
@@ -79,12 +97,19 @@
       <file leaf-file-name="Bdd.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Bdd/Bdd.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="247">
-              <caret line="325" column="25" lean-forward="false" selection-start-line="325" selection-start-column="19" selection-end-line="325" selection-end-column="25" />
-              <folding>
-                <element signature="e#7871#7872#0" expanded="true" />
-                <element signature="e#7929#7930#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="4266">
+              <caret line="259" column="64" lean-forward="false" selection-start-line="259" selection-start-column="64" selection-end-line="259" selection-end-column="64" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="MainFrame.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/ui/MainFrame.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="2718">
+              <caret line="172" column="0" lean-forward="false" selection-start-line="172" selection-start-column="0" selection-end-line="172" selection-end-column="0" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -92,9 +117,11 @@
       <file leaf-file-name="ExcelWriter.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/excel/ExcelWriter.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="210">
-              <caret line="273" column="9" lean-forward="true" selection-start-line="273" selection-start-column="9" selection-end-line="273" selection-end-column="9" />
-              <folding />
+            <state relative-caret-position="336">
+              <caret line="145" column="28" lean-forward="true" selection-start-line="145" selection-start-column="28" selection-end-line="145" selection-end-column="28" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -104,26 +131,6 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="72">
               <caret line="24" column="6" lean-forward="false" selection-start-line="24" selection-start-column="6" selection-end-line="24" selection-end-column="6" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="OrganismsFetcherService.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/manager/OrganismsFetcherService.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2214">
-              <caret line="144" column="92" lean-forward="false" selection-start-line="144" selection-start-column="92" selection-end-line="144" selection-end-column="92" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="RepliconParserManager.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/manager/RepliconParserManager.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="720">
-              <caret line="62" column="38" lean-forward="false" selection-start-line="62" selection-start-column="38" selection-end-line="62" selection-end-column="38" />
               <folding />
             </state>
           </provider>
@@ -183,14 +190,14 @@
         <option value="$PROJECT_DIR$/src/manager/RepliconParserManager.java" />
         <option value="$PROJECT_DIR$/src/manager/OrganismsFetcherService.java" />
         <option value="$PROJECT_DIR$/src/Parser/CDS.java" />
-        <option value="$PROJECT_DIR$/src/configuration/Configuration.java" />
-        <option value="$PROJECT_DIR$/src/ui/MainFrame.java" />
         <option value="$PROJECT_DIR$/README.md" />
-        <option value="$PROJECT_DIR$/src/Bdd/CircularCounter.java" />
         <option value="$PROJECT_DIR$/src/ui/UIManager.java" />
+        <option value="$PROJECT_DIR$/src/Bdd/CircularCounter.java" />
+        <option value="$PROJECT_DIR$/src/ui/MainFrame.java" />
         <option value="$PROJECT_DIR$/src/Bdd/Bdd.java" />
-        <option value="$PROJECT_DIR$/src/excel/ExcelWriter.java" />
         <option value="$PROJECT_DIR$/src/main/Main.java" />
+        <option value="$PROJECT_DIR$/src/configuration/Configuration.java" />
+        <option value="$PROJECT_DIR$/src/excel/ExcelWriter.java" />
       </list>
     </option>
   </component>
@@ -247,7 +254,7 @@
     </navigator>
     <panes>
       <pane id="AndroidView" />
-      <pane id="Scope" />
+      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -289,7 +296,7 @@
         </subPane>
       </pane>
       <pane id="Scratches" />
-      <pane id="PackagesPane" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -473,7 +480,9 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager />
+    <breakpoint-manager>
+      <option name="time" value="1" />
+    </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
@@ -748,13 +757,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/ui/MainFrame.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="297">
-          <caret line="126" column="16" lean-forward="false" selection-start-line="126" selection-start-column="16" selection-end-line="126" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/manager/RepliconParserManager.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="720">
@@ -772,11 +774,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
-      <provider editor-type-id="text-editor">
-        <state relative-caret-position="144">
-          <caret line="8" column="0" lean-forward="false" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
-        </state>
-      </provider>
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="FIRST">
           <first_editor relative-caret-position="126">
@@ -785,26 +782,22 @@
           <second_editor />
         </state>
       </provider>
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="144">
+          <caret line="8" column="0" lean-forward="false" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
+        </state>
+      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/prototype.fsx">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="238">
           <caret line="210" column="6" lean-forward="true" selection-start-line="210" selection-start-column="6" selection-end-line="210" selection-end-column="48" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Bdd/CircularCounter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="638">
-          <caret line="69" column="21" lean-forward="false" selection-start-line="69" selection-start-column="21" selection-end-line="69" selection-end-column="21" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/ui/UIManager.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
+        <state relative-caret-position="-844">
           <caret line="10" column="4" lean-forward="true" selection-start-line="10" selection-start-column="4" selection-end-line="10" selection-end-column="4" />
           <folding />
         </state>
@@ -812,28 +805,43 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Bdd/Bdd.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="247">
-          <caret line="325" column="25" lean-forward="false" selection-start-line="325" selection-start-column="19" selection-end-line="325" selection-end-column="25" />
-          <folding>
-            <element signature="e#7871#7872#0" expanded="true" />
-            <element signature="e#7929#7930#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="4266">
+          <caret line="259" column="64" lean-forward="false" selection-start-line="259" selection-start-column="64" selection-end-line="259" selection-end-column="64" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/excel/ExcelWriter.java">
+    <entry file="file://$PROJECT_DIR$/src/Bdd/CircularCounter.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="273" column="9" lean-forward="true" selection-start-line="273" selection-start-column="9" selection-end-line="273" selection-end-column="9" />
+        <state relative-caret-position="3510">
+          <caret line="198" column="26" lean-forward="false" selection-start-line="198" selection-start-column="20" selection-end-line="198" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/ui/MainFrame.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2718">
+          <caret line="172" column="0" lean-forward="false" selection-start-line="172" selection-start-column="0" selection-end-line="172" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/configuration/Configuration.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="324">
-          <caret line="27" column="4" lean-forward="false" selection-start-line="27" selection-start-column="4" selection-end-line="27" selection-end-column="4" />
+        <state relative-caret-position="453">
+          <caret line="39" column="51" lean-forward="true" selection-start-line="39" selection-start-column="51" selection-end-line="39" selection-end-column="51" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/excel/ExcelWriter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="336">
+          <caret line="145" column="28" lean-forward="true" selection-start-line="145" selection-start-column="28" selection-end-line="145" selection-end-column="28" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

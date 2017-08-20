@@ -3,11 +3,11 @@ package excel;
 import java.io.FileOutputStream;
 import java.util.Map.Entry;
 
+import exceptions.CharInvalideException;
+import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.*;
 
 import tree.Organism;
 import ui.UIManager;
@@ -35,6 +35,35 @@ public class ExcelWriter
 	static XSSFColor light_gray = new XSSFColor( hexStringToByteArray("e6e6e6") );
 	static XSSFColor gray = new XSSFColor( hexStringToByteArray("cecece") );
 
+	// Codes
+    static String[] codes4 = new String[]{"X", "X1", "X2", "Xp"};
+    static String[] codes64 = new String[64];
+    static
+    {
+        try
+        {
+            for (int n1 = 0; n1 < 4; n1++)
+            {
+                char c1 = Bdd.charOfNucleotideInt(n1);
+
+                for (int n2 = 0; n2 < 4; n2++)
+                {
+                    char c2 = Bdd.charOfNucleotideInt(n2);
+
+                    for (int n3 = 0; n3 < 4; n3++)
+                    {
+                        char c3 = Bdd.charOfNucleotideInt(n3);
+                        codes64[n1 * 16 + n2 * 4 + n3] = String.valueOf(new char[]{c1, c2, c3});
+                    }
+                }
+            }
+        }
+        catch (CharInvalideException e)
+        {
+            // will not happend
+        }
+    }
+
 	// Export a bdd tab by tab
 	public static void writer(String folderpath, String filepath, String[] chemin, Bdd base, boolean is_leaf) 
 	{
@@ -43,7 +72,18 @@ public class ExcelWriter
 			String cleft;
 			content contenus;
 			Bdd baseSum = new Bdd();
-			Workbook workbook = new XSSFWorkbook();
+
+			Workbook workbook;
+            if(Configuration.PARSER_USEFULLALPHABET)
+            {
+                // streaming workbook
+                workbook = new SXSSFWorkbook(25/*Configuration.PARSER_IMAX+2*/);
+            }
+            else
+            {
+                workbook = new XSSFWorkbook();
+            }
+
 
 			// Styles
 			int floatFormat = workbook.createDataFormat().getFormat("0.00");
@@ -116,8 +156,11 @@ public class ExcelWriter
 	{
 		Sheet worksheet = wb.createSheet(cleft);
 
-        //-------------------------------------------------------------------------------------
-		// Tableaux
+        // compute the number of columns
+        int colNumber = Configuration.PARSER_CODENUMBER*Configuration.PARSER_CODENUMBER + 2 /*i col and sum col*/;
+
+        // Description of the organisme
+        writeDescription(cleft, contenus, chemin, worksheet, colNumber+1);
 
         // write all the matrixes
         int enTeteRow = 0;
@@ -126,147 +169,150 @@ public class ExcelWriter
             enTeteRow = writeMatrix(modulo, enTeteRow, contenus, worksheet, lblue, lgray, float_type, ngray_float);
         }
 
-        // compute the number of columns
-        int colNumber = 2; // i col and sum col
-        if (Configuration.PARSER_USEFULLALPHABET)
-        {
-            colNumber += 4096; // 64*64 (number of trinucleotides)
-        }
-        else
-        {
-            colNumber += 16; // 4*4 (number of code)
-        }
         // resize all the columns
-        for (int col = 0; col <= colNumber; col++)
+        if (!Configuration.PARSER_USEFULLALPHABET)
         {
-            worksheet.autoSizeColumn(col);
+            for (int col = 0; col <= colNumber; col++)
+            {
+                worksheet.autoSizeColumn(col);
+            }
         }
-
-		//-------------------------------------------------------------------------------------
-		// Description de l'organisme
-
-		Row row;
-		int descriptionCol = colNumber+1;
-
-		// Name
-		String filename;
-		row = worksheet.getRow(2);
-		if (chemin[3] != null && !chemin[3].isEmpty() )
-		{
-			filename = chemin[3];
-			row.createCell(descriptionCol).setCellValue("Organism Name");
-		}
-		else if (chemin[2] != null && !chemin[2].isEmpty() )
-		{
-			filename = chemin[2];
-			row.createCell(descriptionCol).setCellValue("SubGroup Name");
-		}
-		else if (chemin[1] != null && !chemin[1].isEmpty())
-		{
-			filename = chemin[1];
-			row.createCell(descriptionCol).setCellValue("Group Name");
-		}
-		else
-		{
-			filename = chemin[0];
-			row.createCell(descriptionCol).setCellValue("Kingdom Name");
-		}
-		row.createCell(descriptionCol+1).setCellValue(filename);
-
-		// Nb CDS
-		row = worksheet.getRow(4);
-		row.createCell(descriptionCol).setCellValue("Number of valid cds sequences");
-		row.createCell(descriptionCol+1).setCellValue(contenus.nb_CDS);
-
-		// Nb Invalid CDS
-		row = worksheet.getRow(6);
-		row.createCell(descriptionCol).setCellValue("Number of invalid cds");
-		row.createCell(descriptionCol+1).setCellValue(contenus.nb_CDS_non_traites);
-
-		// Sums : Nombre de Chromosomes, DNA, Mitochondrion, etc...
-		row = worksheet.getRow(8);
-		if (cleft.split("_")[0].equals("Sum"))
-		{
-			row.createCell(descriptionCol).setCellValue("Nb of "+cleft.split("_")[1]);
-		}
-		else
-		{
-			row.createCell(descriptionCol).setCellValue("Nb of "+cleft.split("_")[0]);
-		}
-		row.createCell(descriptionCol+1).setCellValue(contenus.nb_items);
-
-		// Trinucleotides
-		row = worksheet.getRow(10);
-		row.createCell(descriptionCol).setCellValue("Number of trinucleotides");
-		row.createCell(descriptionCol+1).setCellValue(contenus.nb_trinucleotides);
-
-		// Imax
-        row = worksheet.getRow(12);
-        row.createCell(descriptionCol).setCellValue("Imax");
-        row.createCell(descriptionCol+1).setCellValue(Configuration.PARSER_IMAX);
-
-        // Mingenelength
-        row = worksheet.getRow(14);
-        row.createCell(descriptionCol).setCellValue("Minimum gene length");
-        row.createCell(descriptionCol+1).setCellValue(Configuration.PARSER_MINGENELENGTH);
-
-        // Maxgenelength
-        row = worksheet.getRow(16);
-        row.createCell(descriptionCol).setCellValue("Maximum gene length");
-        row.createCell(descriptionCol+1).setCellValue(Configuration.PARSER_MAXGENELENGTH);
-
-        // we resize here to avoid overly long column caused by the following fields
-        worksheet.autoSizeColumn(descriptionCol);
-        worksheet.autoSizeColumn(descriptionCol+1);
-
-		//Modification date
-		row = worksheet.getRow(18);
-		String mod_date = contenus.organism.getModificationDate();
-		if(mod_date!=null && !mod_date.isEmpty())
-		{
-			row.createCell(descriptionCol).setCellValue("Modification Date");
-			row.createCell(descriptionCol+1).setCellValue(mod_date);
-		}
-
-		//Accession
-		row = worksheet.getRow(20);
-		String accession = contenus.organism.getAccession();
-		if (accession!=null && !accession.isEmpty())
-		{
-			row.createCell(descriptionCol).setCellValue("Accession");
-			row.createCell(descriptionCol+1).setCellValue(accession);
-		}
-
-		//Taxonomy
-		row = worksheet.getRow(22);
-		String taxonomy = contenus.organism.getTaxonomy();
-		if (taxonomy!=null && !taxonomy.isEmpty())
-		{
-			row.createCell(descriptionCol).setCellValue("Taxonomy");
-			row.createCell(descriptionCol+1).setCellValue(taxonomy);
-		}
-
-		// Bioproject
-		row = worksheet.getRow(24);
-		String bioproject = contenus.organism.getBioproject();
-		if (bioproject!=null && !bioproject.isEmpty())
-		{
-			row.createCell(descriptionCol).setCellValue("Bioproject");
-			row.createCell(descriptionCol+1).setCellValue(bioproject);
-		}
-
-		//-------------------------------------------------------------------------------------
 
 		String new_cleft = "Sum_" + cleft.split("_")[0];
 		Organism empty_org = new Organism("","","","","","","");
 		baseSum.get_contenu(new_cleft, empty_org).fusionContent(contenus);
 	}
 
+	// adds columns to describe the organism
+    private static void writeDescription(String cleft, content contenus, String[] chemin, Sheet worksheet, int descriptionCol)
+    {
+        Row row;
+
+        // Name
+        String filename;
+        row = worksheet.createRow(2);
+        if (chemin[3] != null && !chemin[3].isEmpty() )
+        {
+            filename = chemin[3];
+            row.createCell(descriptionCol).setCellValue("Organism Name");
+        }
+        else if (chemin[2] != null && !chemin[2].isEmpty() )
+        {
+            filename = chemin[2];
+            row.createCell(descriptionCol).setCellValue("SubGroup Name");
+        }
+        else if (chemin[1] != null && !chemin[1].isEmpty())
+        {
+            filename = chemin[1];
+            row.createCell(descriptionCol).setCellValue("Group Name");
+        }
+        else
+        {
+            filename = chemin[0];
+            row.createCell(descriptionCol).setCellValue("Kingdom Name");
+        }
+        row.createCell(descriptionCol+1).setCellValue(filename);
+
+        // Nb CDS
+        row = worksheet.createRow(4);
+        row.createCell(descriptionCol).setCellValue("Number of valid cds sequences");
+        row.createCell(descriptionCol+1).setCellValue(contenus.nb_CDS);
+
+        // Nb Invalid CDS
+        row = worksheet.createRow(6);
+        row.createCell(descriptionCol).setCellValue("Number of invalid cds");
+        row.createCell(descriptionCol+1).setCellValue(contenus.nb_CDS_non_traites);
+
+        // Sums : Nombre de Chromosomes, DNA, Mitochondrion, etc...
+        row = worksheet.createRow(8);
+        if (cleft.split("_")[0].equals("Sum"))
+        {
+            row.createCell(descriptionCol).setCellValue("Nb of "+cleft.split("_")[1]);
+        }
+        else
+        {
+            row.createCell(descriptionCol).setCellValue("Nb of "+cleft.split("_")[0]);
+        }
+        row.createCell(descriptionCol+1).setCellValue(contenus.nb_items);
+
+        // Trinucleotides
+        row = worksheet.createRow(10);
+        row.createCell(descriptionCol).setCellValue("Number of trinucleotides");
+        row.createCell(descriptionCol+1).setCellValue(contenus.nb_trinucleotides);
+
+        // Imax
+        row = worksheet.createRow(12);
+        row.createCell(descriptionCol).setCellValue("Imax");
+        row.createCell(descriptionCol+1).setCellValue(Configuration.PARSER_IMAX);
+
+        // Mingenelength
+        row = worksheet.createRow(14);
+        row.createCell(descriptionCol).setCellValue("Minimum gene length");
+        row.createCell(descriptionCol+1).setCellValue(Configuration.PARSER_MINGENELENGTH);
+
+        // Maxgenelength
+        row = worksheet.createRow(16);
+        row.createCell(descriptionCol).setCellValue("Maximum gene length");
+        row.createCell(descriptionCol+1).setCellValue(Configuration.PARSER_MAXGENELENGTH);
+
+        // we resize here to avoid overly long column caused by the following fields
+        if (!Configuration.PARSER_USEFULLALPHABET)
+        {
+            worksheet.autoSizeColumn(descriptionCol);
+            worksheet.autoSizeColumn(descriptionCol+1);
+        }
+
+        //Modification date
+        row = worksheet.createRow(18);
+        String mod_date = contenus.organism.getModificationDate();
+        if(mod_date!=null && !mod_date.isEmpty())
+        {
+            row.createCell(descriptionCol).setCellValue("Modification Date");
+            row.createCell(descriptionCol+1).setCellValue(mod_date);
+        }
+
+        //Accession
+        row = worksheet.createRow(20);
+        String accession = contenus.organism.getAccession();
+        if (accession!=null && !accession.isEmpty())
+        {
+            row.createCell(descriptionCol).setCellValue("Accession");
+            row.createCell(descriptionCol+1).setCellValue(accession);
+        }
+
+        //Taxonomy
+        row = worksheet.createRow(22);
+        String taxonomy = contenus.organism.getTaxonomy();
+        if (taxonomy!=null && !taxonomy.isEmpty())
+        {
+            row.createCell(descriptionCol).setCellValue("Taxonomy");
+            row.createCell(descriptionCol+1).setCellValue(taxonomy);
+        }
+
+        // Bioproject
+        row = worksheet.createRow(24);
+        String bioproject = contenus.organism.getBioproject();
+        if (bioproject!=null && !bioproject.isEmpty())
+        {
+            row.createCell(descriptionCol).setCellValue("Bioproject");
+            row.createCell(descriptionCol+1).setCellValue(bioproject);
+        }
+    }
+
     private static int writeMatrix(int modulo, int enTeteRow, content contenus, Sheet worksheet, XSSFCellStyle lblue, XSSFCellStyle lgray, XSSFCellStyle float_type, XSSFCellStyle ngray_float)
     {
-        int col = 0;
+        // A(X1, X2)
+        String codes[];
+        if (Configuration.PARSER_USEFULLALPHABET)
+        {
+            codes = codes64;
+        }
+        else
+        {
+            codes = codes4;
+        }
 
-        // First ligne modulo
+        // First ligne : modulo
         String modName;
         if (modulo == 3)
         {
@@ -276,86 +322,133 @@ public class ExcelWriter
         {
             modName = String.format("%d Modulo 3", modulo);
         }
-        worksheet.createRow(enTeteRow).createCell(col).setCellValue(modName);
+        safeCreateRow(worksheet,enTeteRow).createCell(0).setCellValue(modName);
         enTeteRow++;
 
-        // First col (i)
-        Cell firstICell = worksheet.createRow(enTeteRow).createCell(col);
-        firstICell.setCellValue("i");
-        firstICell.setCellStyle(lblue);
-        for (int i = 0; i < Configuration.PARSER_IMAX; i++)
-        {
-            Cell cell = worksheet.createRow(i+enTeteRow+1).createCell(col);
-            cell.setCellValue(i);
+        // ----- header row -----
 
-            if (i%2 == 0)
-            {
-                cell.setCellStyle(lgray);
-            }
-        }
-        worksheet.createRow(enTeteRow+Configuration.PARSER_IMAX+1).createCell(col).setCellValue("Total");
-
-        // A(X1, X2)
-        String codes[] = {"X", "X1", "X2", "Xp"};
-        for (int w1 = 0; w1 < 4; w1++)
+        Row headerRow = safeCreateRow(worksheet,enTeteRow);
+        // i
+        Cell headerCell = headerRow.createCell(0);
+        headerCell.setCellValue("i");
+        headerCell.setCellStyle(lblue);
+        // codes
+        int colNumber = 1;
+        for (int w1=0 ; w1<Configuration.PARSER_CODENUMBER ; w1++)
         {
-            for (int w2 = 0; w2 < 4; w2++)
+            for (int w2 = 0; w2 < Configuration.PARSER_CODENUMBER; w2++)
             {
-                col++;
                 String codeName = String.format("A(%s, %s)", codes[w1], codes[w2]);
-                Cell headerCell = worksheet.getRow(enTeteRow).createCell(col);
+                headerCell = headerRow.createCell(colNumber);
                 headerCell.setCellValue(codeName);
                 headerCell.setCellStyle(lblue);
+                colNumber++;
+            }
+        }
+        // sum
+        headerCell = headerRow.createCell(colNumber);
+        headerCell.setCellValue("Somme");
+        headerCell.setCellStyle(lblue);
 
-                double total = 0;
-                for (int i = 0; i < Configuration.PARSER_IMAX; i++)
+        // ----- matrix row -----
+
+        Row matrixRow;
+        Cell matrixCell;
+        String lastColName = CellReference.convertNumToColString(colNumber-1);
+        for (int i=0 ; i<Configuration.PARSER_IMAX ; i++)
+        {
+            int row = enTeteRow + i + 1;
+            matrixRow = safeCreateRow(worksheet,row);
+            // i
+            matrixCell = matrixRow.createCell(0);
+            matrixCell.setCellValue(i);
+            if (i%2 == 0)
+            {
+                matrixCell.setCellStyle(lgray);
+            }
+            //codes
+            int col = 1;
+            for (int w1=0 ; w1<Configuration.PARSER_CODENUMBER ; w1++)
+            {
+                for (int w2 = 0; w2 < Configuration.PARSER_CODENUMBER; w2++)
                 {
-                    Cell cell = worksheet.getRow(i+enTeteRow+1).createCell(col);
                     double Aiw1w2 = contenus.A(modulo, i, w1, w2);
-                    cell.setCellValue(Aiw1w2);
+
+                    matrixCell = matrixRow.createCell(col);
+                    matrixCell.setCellValue(Aiw1w2);
 
                     if (i%2 == 0)
                     {
-                        cell.setCellStyle(ngray_float);
+                        matrixCell.setCellStyle(ngray_float);
                     }
                     else
                     {
-                        cell.setCellStyle(float_type);
+                        matrixCell.setCellStyle(float_type);
                     }
 
-                    total += Aiw1w2;
+                    col++;
                 }
-
-                Cell footerCell = worksheet.getRow(enTeteRow + Configuration.PARSER_IMAX+1).createCell(col);
-                footerCell.setCellValue(total);
-                footerCell.setCellStyle(ngray_float);
             }
+            // sum
+            matrixCell = matrixRow.createCell(col);
+            matrixCell.setCellStyle(ngray_float);
+            matrixCell.setCellType(XSSFCell.CELL_TYPE_FORMULA);
+            String formula = String.format("SUM(B%d:%s%d)",row+1,lastColName,row+1);
+            matrixCell.setCellFormula(formula);
         }
 
-        // Sum column
-        col++;
-        Cell sumCell = worksheet.getRow(enTeteRow).createCell(col);
-        sumCell.setCellValue("Somme");
-        sumCell.setCellStyle(lblue);
-        for (int r = enTeteRow; r < enTeteRow + Configuration.PARSER_IMAX; r++)
+        // ----- footer row -----
+
+        Row footerRow =  safeCreateRow(worksheet,enTeteRow+Configuration.PARSER_IMAX+1);
+        // i
+        Cell footerCell = footerRow.createCell(0);
+        footerCell.setCellValue("Total");
+        // codes
+        for (int col = 1 ; col<colNumber; col++)
         {
-            Cell cell = worksheet.getRow(r+1).createCell(col);
-            cell.setCellStyle(ngray_float);
-            cell.setCellType(XSSFCell.CELL_TYPE_FORMULA);
-            cell.setCellFormula(String.format("SUM(B%d:Q%d)",r+2,r+2));
+            footerCell = footerRow.createCell(col);
+            footerCell.setCellStyle(ngray_float);
+            footerCell.setCellType(XSSFCell.CELL_TYPE_FORMULA);
+
+            String colName = CellReference.convertNumToColString(col);
+            String formula = String.format("SUM(%s%d:%s%d)",colName, enTeteRow+2, colName, enTeteRow+Configuration.PARSER_IMAX+1);
+            footerCell.setCellFormula(formula);
         }
 
-        // add some space for the analysis
+        // ----- empty rows -----
+
         enTeteRow += Configuration.PARSER_IMAX + 2;
         for (int row = enTeteRow; row <= enTeteRow + 20; row++)
         {
-            worksheet.createRow(row);
+            safeCreateRow(worksheet,row);
         }
         enTeteRow += 20;
 
         return enTeteRow;
     }
 
+    // safely acces a row
+    // WARNING, we check only the 25 first lines to insure that we will not destroy some description. Afterward the fucntion becomes unsafe
+    private static Row safeCreateRow(Sheet worksheet, int rowIndex)
+    {
+        if (rowIndex <= 25)
+        {
+            Row result = worksheet.getRow(rowIndex);
+
+            if (result == null)
+            {
+                return worksheet.createRow(rowIndex);
+            }
+            else
+            {
+                return result;
+            }
+        }
+        else
+        {
+            return worksheet.createRow(rowIndex);
+        }
+    }
 }
 
 	

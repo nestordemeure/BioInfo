@@ -9,28 +9,43 @@ public class CircularCounter
 {
 	//-----------------------------------------------------------------------------
 	// variables
-	
-	// converts a trinucleotide into its circular code
-	static int[][][] codeOfTrinucleotide = new int[4][4][4];
-	static // Initialization
-	{
-		String[] X = {"AAC", "AAT", "ACC", "ATC", "ATT", "CAG", "CTC", "CTG", "GAA", "GAC",
-					  "GAG", "GAT", "GCC", "GGC", "GGT", "GTA", "GTC", "GTT", "TAC", "TTC"};
-		for (String trinucleotide : X)
-		{
-			int tri0 = Bdd.intOfNucleotideChar( trinucleotide.charAt(0) );
-			int tri1 = Bdd.intOfNucleotideChar( trinucleotide.charAt(1) );
-			int tri2 = Bdd.intOfNucleotideChar( trinucleotide.charAt(2) );
-			codeOfTrinucleotide[tri0][tri1][tri2] = 0; // X
-			codeOfTrinucleotide[tri1][tri2][tri0] = 1; // X1
-			codeOfTrinucleotide[tri2][tri0][tri1] = 2; // X2
-		}
-		// Xp
-		codeOfTrinucleotide[0][0][0] = 3;
-		codeOfTrinucleotide[1][1][1] = 3;
-		codeOfTrinucleotide[2][2][2] = 3;
-		codeOfTrinucleotide[3][3][3] = 3;
-	}
+
+    // converts a trinucleotide into its circular code
+    private int[][][] codeOfTrinucleotide;
+    static int[][][] codeOfTrinucleotide4 = new int[4][4][4];
+    static int[][][] codeOfTrinucleotide16 = new int[4][4][4];
+    static
+    {
+        // code number = 16
+        for(int n1 = 0; n1<4; n1++)
+        {
+            for(int n2 = 0; n2<4; n2++)
+            {
+                for(int n3 = 0; n3<4; n3++)
+                {
+                    codeOfTrinucleotide16[n1][n2][n3] = n1*16 + n2*4 + n3;
+                }
+            }
+        }
+
+        // code number = 4
+        String[] X = {"AAC", "AAT", "ACC", "ATC", "ATT", "CAG", "CTC", "CTG", "GAA", "GAC",
+                "GAG", "GAT", "GCC", "GGC", "GGT", "GTA", "GTC", "GTT", "TAC", "TTC"};
+        for (String trinucleotide : X)
+        {
+            int tri0 = Bdd.intOfNucleotideChar( trinucleotide.charAt(0) );
+            int tri1 = Bdd.intOfNucleotideChar( trinucleotide.charAt(1) );
+            int tri2 = Bdd.intOfNucleotideChar( trinucleotide.charAt(2) );
+            codeOfTrinucleotide4[tri0][tri1][tri2] = 0; // X
+            codeOfTrinucleotide4[tri1][tri2][tri0] = 1; // X1
+            codeOfTrinucleotide4[tri2][tri0][tri1] = 2; // X2
+        }
+        // Xp
+        codeOfTrinucleotide4[0][0][0] = 3;
+        codeOfTrinucleotide4[1][1][1] = 3;
+        codeOfTrinucleotide4[2][2][2] = 3;
+        codeOfTrinucleotide4[3][3][3] = 3;
+    }
 
 	private int ciw1w2[][][][];
 	public int geneLength;
@@ -48,8 +63,17 @@ public class CircularCounter
 		else
 		{
 			geneLength = geneLengthArg - (Configuration.PARSER_IMAX + 3/*space to read forward*/) - 3 /*to equalize between mod0,1and2*/;
-			ciw1w2 = new int[3][Configuration.PARSER_IMAX][4][4];
+			ciw1w2 = new int[3][Configuration.PARSER_IMAX][Configuration.PARSER_CODENUMBER][Configuration.PARSER_CODENUMBER];
 			codeArray = new CircularArray();
+
+			if (Configuration.PARSER_USEFULLALPHABET)
+            {
+                codeOfTrinucleotide = codeOfTrinucleotide16;
+            }
+            else
+            {
+                codeOfTrinucleotide = codeOfTrinucleotide4;
+            }
 		}
 	}
 	
@@ -58,9 +82,9 @@ public class CircularCounter
 	{
         for(int i = 0 ; i<Configuration.PARSER_IMAX ; i++)
         {
-            for(int w1 = 0 ; w1<4 ; w1++)
+            for(int w1 = 0 ; w1<Configuration.PARSER_CODENUMBER ; w1++)
             {
-                for(int w2 = 0 ; w2<4 ; w2++)
+                for(int w2 = 0 ; w2<Configuration.PARSER_CODENUMBER ; w2++)
                 {
                     int mod1 = 0;
                     for(int modulo = 0; modulo < 3; modulo++)

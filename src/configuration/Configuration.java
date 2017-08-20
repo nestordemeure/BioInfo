@@ -38,4 +38,5 @@ public class Configuration
     public static int PARSER_MINGENELENGTH = 200;
     public static int PARSER_MAXGENELENGTH = Integer.MAX_VALUE;
     public static boolean PARSER_USEFULLALPHABET = false;
+    public static int PARSER_CODENUMBER = 4;
 }
